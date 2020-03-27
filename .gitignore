@@ -26,4 +26,12 @@
 *.exe
 *.out
 *.app
-Bezier/x64/Debug/
+
+Bezier/.vs/
+
+Bezier/Bezier/x64/
+Bezier/x64/
+
+Bezier/x64/Debug/*.pdb
+Bezier/x64/Debug/*.ilk
+Bezier/x64/Debug/*.exe
