@@ -5,6 +5,7 @@
 *.slo
 *.lo
 *.o
+*.obj
 
 # Precompiled Headers
 *.gch
@@ -21,9 +22,13 @@
 # Compiled Static libraries
 *.lai
 *.la
+*.a
+*.lib
 
 # Executables
 *.exe
 *.out
 *.app
-x64/Debug/
+
+.vs/
+Bezier/x64/
