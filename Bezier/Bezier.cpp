@@ -124,8 +124,11 @@ void Display(GLFWwindow* window)
 	//Active VAO -> Render -> reset VAO
 	glBindVertexArray(VAO);
 
+	glLineWidth(5.f);
+
+
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	glDrawArrays(GL_POINTS, 0, vertices.size());
+	glDrawArrays(GL_LINES, 0, vertices.size());
 
 	glBindVertexArray(0);
 }

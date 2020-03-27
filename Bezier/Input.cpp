@@ -24,10 +24,28 @@ void Input::deleteVertex()
 
 void Input::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
 
+		if (xpos > 220)
+		{
+			Color col(1.0f, 1.0f, 1.0f);
+			Vertex newPoint = Vertex(-1.0f + 2 * xpos / width, 1.0f - 2 * ypos / height, col.x, col.y, col.z);
+
+			if(vertices.size() == 0)
+				vertices.push_back(newPoint);
+			else
+			{
+				vertices.push_back(newPoint);
+				vertices.push_back(vertices.back());
+			}
+		}
+	}
 }
 
 void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	
+
 }
