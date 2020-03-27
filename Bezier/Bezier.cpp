@@ -128,7 +128,11 @@ void Display(GLFWwindow* window)
 
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	glDrawArrays(GL_LINES, 0, vertices.size());
+	
+	if(vertices.size() == 1)
+		glDrawArrays(GL_POINTS, 0, 1);
+	else
+		glDrawArrays(GL_LINES, 0, vertices.size());
 
 	glBindVertexArray(0);
 }
