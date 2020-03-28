@@ -132,7 +132,7 @@ void Display(GLFWwindow* window)
 	if(vertices.size() == 1)
 		glDrawArrays(GL_POINTS, 0, 1);
 	else
-		glDrawArrays(GL_LINES, 0, vertices.size());
+		glDrawArrays(GL_POINTS, 0, vertices.size());
 
 	glBindVertexArray(0);
 }

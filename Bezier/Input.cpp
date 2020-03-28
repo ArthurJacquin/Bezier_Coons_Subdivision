@@ -6,11 +6,13 @@
 #include <vector>
 #include "Color.h"
 #include "imgui.h"
+#include "DeCasteljau.h"
 
 # define M_PI           3.14159265358979323846  /* pi */
 
 extern int width, height;
 extern std::vector<Vertex> vertices;
+std::vector<Vertex> bezierPoint;
 
 void Input::waitForBool()
 {
@@ -39,7 +41,7 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 			else
 			{
 				vertices.push_back(newPoint);
-				vertices.push_back(vertices.back());
+				//vertices.push_back(vertices.back());
 			}
 		}
 	}
@@ -47,5 +49,14 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 
 void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+	{
+		createBeziers(bezierPoint, vertices, 0.005f);
+		std::copy_n(bezierPoint.begin(), bezierPoint.size(), std::back_inserter(vertices));
+	}
 
+	/*if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+	{
+
+	}*/
 }
