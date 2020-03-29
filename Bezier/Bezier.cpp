@@ -39,6 +39,8 @@ Input input;
 
 //tableau de positions du tableau en cours
 std::vector<Vertex> vertices;
+Color choosedColor(1.f, 1.f, 1.f);
+float step;
 
 int width = 800;
 int height = 800;
@@ -132,7 +134,7 @@ void Display(GLFWwindow* window)
 	if(vertices.size() == 1)
 		glDrawArrays(GL_POINTS, 0, 1);
 	else
-		glDrawArrays(GL_POINTS, 0, vertices.size());
+		glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
 
 	glBindVertexArray(0);
 }
@@ -157,6 +159,27 @@ void displayGUI()
 	// render your GUI
 	ImGui::Begin("Bezier", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Bienvenue dans Bezier ");
+	ImGui::Separator();
+
+	static float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	ImGui::Text("");
+	ImGui::Text("Choississez la couleur de ");
+	ImGui::Text("   la courbe de Bezier");
+	if (ImGui::ColorEdit3("", color))
+	{
+		choosedColor = color;
+	}
+	ImGui::Columns(4, "", false);
+	ImGui::Text("Pas :");
+	//ImGui::Text(interface->step);
+	ImGui::NextColumn();
+	if (ImGui::Button("-"))
+	{
+	}
+	ImGui::NextColumn();
+	if (ImGui::Button("+"))
+	{
+	}
 
 	//choosedColor = color;
 	ImGui::End();
