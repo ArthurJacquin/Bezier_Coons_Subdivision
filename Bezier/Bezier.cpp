@@ -220,6 +220,27 @@ void displayGUI()
 		if (step > 1)
 			step = 1;
 	}
+	ImGui::Separator();
+	ImGui::Text("   Liste des courbes ");
+	for (int i = 0; i < curves.size(); i++)
+	{
+		ImGui::Text("Courbe %d", i);
+	}
+
+	if (curves.size() >= 1)
+	{
+		static int i = 0;
+		ImGui::InputInt("", &i, 0, 50);
+		ImGui::SameLine();
+		if (ImGui::Button("suppr"))
+		{
+			curves.erase(curves.begin() + i);
+		}
+		if (ImGui::Button("supprimer toutes les courbes"))
+		{
+			curves.clear();
+		}
+	}
 	ImGui::End();
 
 	// Render dear imgui into screen
@@ -236,7 +257,7 @@ int main(void)
 		return -1;
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(width, height, "PhotoGimp", NULL, NULL);
+	window = glfwCreateWindow(width, height, "Beziers", NULL, NULL);
 	InitialiseGUI(window);
 
 	if (!window)

@@ -21,6 +21,7 @@ public:
 	void updateCurve();
 
 	void clearControlPoints() { controlPoints.clear(); }
+	void clearCurvePoints() { curvePoints.clear(); }
 	void setControlPoints(vector<Vertex> v);
 	vector<Vertex> getControlPoints()const { return controlPoints; }
 	vector<Vertex> getCurvePoints()const { return curvePoints; }
