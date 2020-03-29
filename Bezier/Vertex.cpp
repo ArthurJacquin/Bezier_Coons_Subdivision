@@ -16,6 +16,13 @@ Vertex::Vertex(double x, double y, float r, float g, float b)
 {
 }
 
+void Vertex::setColor(Color color)
+{
+	this->r = color.x;
+	this->g = color.y;
+	this->b = color.z;
+}
+
 std::ostream& operator<<(std::ostream& os, const Vertex& obj)
 {
 	os << "(" << obj.x << "," << obj.y << "," << obj.r << "," << obj.g << "," << obj.b << ")" << std::endl;

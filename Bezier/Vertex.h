@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include "Color.h"
 
 struct Vertex
 {
@@ -10,5 +11,5 @@ struct Vertex
 	friend std::ostream& operator <<(std::ostream&, const Vertex& obj);
 	bool operator!=(const Vertex v) { return x != v.x || y != v.y || r != v.r || g != v.g || b != v.b; }
 	bool operator==(const Vertex v) { return !(*this != v); }
-	
+	void setColor(Color color);
 };

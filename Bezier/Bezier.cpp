@@ -44,10 +44,10 @@ std::vector<Vertex> vertices;
 std::vector<Curve> curves;
 int totalSize = 0;
 
-Color choosedColor(1.f, 1.f, 1.f);
+Color choosedColor(1.f, 0.f, 0.f);
 int width = 800;
 int height = 800;
-float step = 0.f;
+float step = 0.05f;
 
 bool Initialise() {
 
@@ -176,7 +176,7 @@ void displayGUI()
 	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Bienvenue dans Bezier ");
 	ImGui::Separator();
 
-	static float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static float color[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
 	ImGui::Text("");
 	ImGui::Text("   Choississez la couleur ");
 	ImGui::Text("       de la courbe: ");
@@ -187,23 +187,23 @@ void displayGUI()
 
 	ImGui::Text(" ");
 	ImGui::Text("   Choississez le pas ");
-	if (ImGui::ColorEdit3("Color", color))
-	{
-		choosedColor = color;
-	}
 	ImGui::Columns(1);
 	ImGui::Text("Pas :");
 	ImGui::SameLine();
-	ImGui::Text("%f", step);
+	ImGui::Text("%.2f", step);
 	ImGui::SameLine();
 	if (ImGui::Button("-"))
 	{
 		step = step - 0.01f;
+		if (step < 0.01)
+			step = 0.01;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("+"))
 	{
 		step = step + 0.01f;
+		if (step > 1)
+			step = 1;
 	}
 	ImGui::End();
 

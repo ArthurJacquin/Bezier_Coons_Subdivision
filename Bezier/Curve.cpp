@@ -1,5 +1,6 @@
 #include "Curve.h"
 #include "OpenGLcore.h"
+#include "Color.h"
 
 Curve::Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints)
 : controlPoints(controlPoints), curvePoints(curvePoints), step(0.1f) 
@@ -9,18 +10,17 @@ Curve::Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints)
 }
 
 
-Curve::Curve(vector<Vertex> controlPoints, float step)
+Curve::Curve(vector<Vertex> controlPoints, float step, Color choosedColor)
 : controlPoints(controlPoints), step(step)
 {
-	createBeziers(curvePoints, controlPoints, step);
+	createBeziers(curvePoints, controlPoints, step, choosedColor);
 	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
 	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
 }
 
-void Curve::createBeziers(std::vector<Vertex>& tabBezierPoints, std::vector<Vertex> tabControlPoints, float step)
+void Curve::createBeziers(std::vector<Vertex>& tabBezierPoints, std::vector<Vertex> tabControlPoints, float step, Color choosedColor)
 {
 	std::vector<Vertex> barycentre;
-
 	//teste si il y a plus d'un point de controle
 	if (tabControlPoints.size() > 2)
 	{
@@ -38,6 +38,7 @@ void Curve::createBeziers(std::vector<Vertex>& tabBezierPoints, std::vector<Vert
 				}
 			}
 
+			barycentre[0].setColor(choosedColor);
 			tabBezierPoints.push_back(barycentre[0]);
 		}
 

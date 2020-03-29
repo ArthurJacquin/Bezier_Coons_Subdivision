@@ -14,9 +14,9 @@ class Curve
 
 public:
 	Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints);
-	Curve(vector<Vertex> controlPoints, float step);
+	Curve(vector<Vertex> controlPoints, float step, Color choosedColor);
 
-	void createBeziers(std::vector<Vertex>& curvePoints, std::vector<Vertex> controlPoints, float step);
+	void createBeziers(std::vector<Vertex>& curvePoints, std::vector<Vertex> controlPoints, float step, Color choosedColor);
 
 	vector<Vertex> getControlPoints() { return controlPoints; }
 	vector<Vertex> getCurvePoints() { return curvePoints; }

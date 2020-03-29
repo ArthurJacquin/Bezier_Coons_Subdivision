@@ -10,6 +10,7 @@ extern int width, height;
 extern std::vector<Vertex> vertices;
 extern std::vector<Curve> curves;
 extern Color choosedColor;
+extern float step;
 
 void Input::waitForBool()
 {
@@ -46,9 +47,8 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 {
 	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
 	{
-		Curve c(vertices, 0.005f);
+		Curve c(vertices, step, choosedColor);
 		curves.push_back(c);
-
 		vertices.clear();
 	}
 }
