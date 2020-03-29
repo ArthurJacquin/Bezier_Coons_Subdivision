@@ -34,7 +34,7 @@ float Input::getDistance(float xa, float ya, Vertex v)
 	float x = xa - v.x;
 	float y = ya - v.y;
 
-	return abs(sqrtf(pow(x, 2) + pow(y, 2)));
+	return sqrtf(pow(x, 2) + pow(y, 2));
 }
 
 void Input::selectPoint(float x, float y)
@@ -74,7 +74,7 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 	{
-		selectPoint(xpos, ypos);
+		selectPoint(-1.0f + 2 * xpos / width, 1.0f - 2 * ypos / height);
 		movingPoint = true;
 	}
 
