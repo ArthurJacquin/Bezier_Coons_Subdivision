@@ -1,22 +1,23 @@
 #pragma once
 #include "Input.h"
-#include "Vertex.h"
 #include "UI.h"
 #include <iostream>
 #include <vector>
-#include "Color.h"
-#include "imgui.h"
-#include "DeCasteljau.h"
 
 # define M_PI           3.14159265358979323846  /* pi */
 
 extern int width, height;
 extern std::vector<Vertex> vertices;
-std::vector<Vertex> bezierPoint;
+extern std::vector<Curve> curves;
 
 void Input::waitForBool()
 {
 
+}
+
+void Input::deleteCurves()
+{
+	curves.clear();
 }
 
 void Input::deleteVertex()
@@ -35,14 +36,7 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 		{
 			Color col(1.0f, 1.0f, 1.0f);
 			Vertex newPoint = Vertex(-1.0f + 2 * xpos / width, 1.0f - 2 * ypos / height, col.x, col.y, col.z);
-
-			if(vertices.size() == 0)
-				vertices.push_back(newPoint);
-			else
-			{
-				vertices.push_back(newPoint);
-				//vertices.push_back(vertices.back());
-			}
+			vertices.push_back(newPoint);
 		}
 	}
 }
@@ -51,12 +45,9 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 {
 	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
 	{
-		createBeziers(bezierPoint, vertices, 0.005f);
-		std::copy_n(bezierPoint.begin(), bezierPoint.size(), std::back_inserter(vertices));
+		Curve c(vertices, 0.005f);
+		curves.push_back(c);
+
+		vertices.clear();
 	}
-
-	/*if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
-	{
-
-	}*/
 }
