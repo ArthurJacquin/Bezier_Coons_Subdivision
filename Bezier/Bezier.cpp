@@ -44,6 +44,10 @@ std::vector<Vertex> vertices;
 std::vector<Curve> curves;
 int totalSize = 0;
 
+bool movingPoint;
+int selectedPointId;
+int selectedCurveId;
+
 Color choosedColor(1.f, 0.f, 0.f);
 int width = 800;
 int height = 800;
@@ -107,7 +111,6 @@ void Terminate()
 
 void Display(GLFWwindow* window)
 {
-
 	glfwGetWindowSize(window, &width, &height);
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -119,6 +122,18 @@ void Display(GLFWwindow* window)
 
 	glLineWidth(5.f);
 	glEnable(GL_PROGRAM_POINT_SIZE);
+
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+
+	if (movingPoint)
+	{
+		vector<Vertex> v = curves[selectedCurveId].getControlPoints();
+		v[selectedPointId].setPositionUsingMouse(xpos, ypos);
+		curves[selectedCurveId].setControlPoints(v);
+		curves[selectedCurveId].updateCurve();
+	}
+
 
 	//Création VAO
 	glGenVertexArrays(1, &VAO);

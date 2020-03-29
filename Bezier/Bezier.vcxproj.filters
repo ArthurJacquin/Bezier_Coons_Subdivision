@@ -33,9 +33,6 @@
     <ClInclude Include="Color.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="DeCasteljau.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Curve.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>

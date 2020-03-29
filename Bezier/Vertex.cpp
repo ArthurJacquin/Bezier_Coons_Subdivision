@@ -23,6 +23,12 @@ void Vertex::setColor(Color color)
 	this->b = color.z;
 }
 
+void Vertex::setPositionUsingMouse(double x, double y)
+{
+	this->x = -1.0f + 2 * x / width;
+	this->y = 1.0f - 2 * y / height;
+}
+
 std::ostream& operator<<(std::ostream& os, const Vertex& obj)
 {
 	os << "(" << obj.x << "," << obj.y << "," << obj.r << "," << obj.g << "," << obj.b << ")" << std::endl;

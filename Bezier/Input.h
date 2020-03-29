@@ -13,6 +13,8 @@ public:
 	static void waitForBool();
 	static void deleteVertex();
 	static void deleteCurves();
+	static float getDistance(float xa, float ya, Vertex v);
+	static void selectPoint(float x, float y);
 
 	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 	static void keyboard_button_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

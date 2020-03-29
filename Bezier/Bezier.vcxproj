@@ -152,7 +152,6 @@
     <ClInclude Include="..\common\GLShader.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Curve.h" />
-    <ClInclude Include="DeCasteljau.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="OpenGLcore.h" />
     <ClInclude Include="stdafx.h" />

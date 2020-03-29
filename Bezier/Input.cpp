@@ -1,6 +1,5 @@
 #pragma once
 #include "Input.h"
-#include "UI.h"
 #include <iostream>
 #include <vector>
 
@@ -11,6 +10,9 @@ extern std::vector<Vertex> vertices;
 extern std::vector<Curve> curves;
 extern Color choosedColor;
 extern float step;
+extern bool movingPoint;
+extern int selectedPointId;
+extern int selectedCurveId;
 
 void Input::waitForBool()
 {
@@ -27,12 +29,40 @@ void Input::deleteVertex()
 	vertices.clear();
 }
 
+float Input::getDistance(float xa, float ya, Vertex v)
+{
+	float x = xa - v.x;
+	float y = ya - v.y;
+
+	return abs(sqrtf(pow(x, 2) + pow(y, 2)));
+}
+
+void Input::selectPoint(float x, float y)
+{
+	float minDist = 99999.9f;
+
+	for (int i = 0; i < curves.size(); ++i)
+	{
+		for (int j = 0; j < curves[i].getControlPoints().size(); ++j)
+		{
+			float d = getDistance(x, y, curves[i].getControlPoints()[j]);
+			if (d < minDist)
+			{
+				minDist = d;
+				selectedPointId = j;
+				selectedCurveId = i;
+			}
+		}
+	}
+}
+
 void Input::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos);
 
 		if (xpos > 220)
 		{
@@ -40,6 +70,17 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 			Vertex newPoint = Vertex(-1.0f + 2 * xpos / width, 1.0f - 2 * ypos / height, col.x, col.y, col.z);
 			vertices.push_back(newPoint);
 		}
+	}
+
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+	{
+		selectPoint(xpos, ypos);
+		movingPoint = true;
+	}
+
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+	{
+		movingPoint = false;
 	}
 }
 
