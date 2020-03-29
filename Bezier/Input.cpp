@@ -9,6 +9,7 @@
 extern int width, height;
 extern std::vector<Vertex> vertices;
 extern std::vector<Curve> curves;
+extern Color choosedColor;
 
 void Input::waitForBool()
 {
