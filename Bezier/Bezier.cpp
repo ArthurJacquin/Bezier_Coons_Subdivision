@@ -173,6 +173,8 @@ void displayGUI()
 	ImGui::Begin("Bezier", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Bienvenue dans Bezier ");
 
+
+
 	//choosedColor = color;
 	ImGui::End();
 
