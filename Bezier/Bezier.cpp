@@ -185,7 +185,7 @@ void displayGUI()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(220, 570));
+	ImGui::SetNextWindowSize(ImVec2(230, 570));
 	// render your GUI
 	ImGui::Begin("Bezier", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Bienvenue dans Bezier ");
@@ -241,6 +241,22 @@ void displayGUI()
 			curves.clear();
 		}
 	}
+
+	ImGui::Separator();
+	ImGui::Text("");
+	ImGui::Text("  Pour selectionner un point :");
+	ImGui::Text("  clique droit");
+	ImGui::Text("");
+	ImGui::Separator();
+	ImGui::Text("");
+	ImGui::Text("  Pour selectionner une courbe :");
+	ImGui::Text("  ctlr et clique droit");
+	//TODO : link courbe
+	if (ImGui::Button("raccordement"))
+	{
+		
+	}
+
 	ImGui::End();
 
 	// Render dear imgui into screen
