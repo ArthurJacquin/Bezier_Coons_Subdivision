@@ -257,15 +257,19 @@ void displayGUI()
 	{
 		if (selectedCurves.size() > 1)
 		{
+			Curve* firstCurve = &curves[selectedCurves[0]];
+
 			for (int i = 1; i < selectedCurves.size(); ++i)
 			{
-				curves[selectedCurves[0]].link(curves[selectedCurves[i]]);
+				firstCurve->link(curves[selectedCurves[i]]);
 			}
 
 			for (int i = 1; i < selectedCurves.size(); ++i)
 			{
 				curves.erase(curves.begin() + selectedCurves[i]);
 			}
+
+			firstCurve->setCurveColor(choosedColor);
 		}
 
 		selectedCurves.clear();
