@@ -47,6 +47,7 @@ int totalSize = 0;
 bool movingPoint;
 int selectedPointId;
 int selectedCurveId;
+std::vector<int> selectedCurves;
 
 Color choosedColor(1.f, 0.f, 0.f);
 int width = 800;
@@ -254,7 +255,20 @@ void displayGUI()
 	//TODO : link courbe
 	if (ImGui::Button("raccordement"))
 	{
-		
+		if (selectedCurves.size() > 1)
+		{
+			for (int i = 1; i < selectedCurves.size(); ++i)
+			{
+				curves[selectedCurves[0]].link(curves[selectedCurves[i]]);
+			}
+
+			for (int i = 1; i < selectedCurves.size(); ++i)
+			{
+				curves.erase(curves.begin() + selectedCurves[i]);
+			}
+		}
+
+		selectedCurves.clear();
 	}
 
 	ImGui::End();

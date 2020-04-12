@@ -20,6 +20,7 @@ public:
 
 	void createBeziers(std::vector<Vertex>& curvePoints, std::vector<Vertex> controlPoints, float step, Color choosedColor);
 	void updateCurve();
+	void updateBuffers();
 	void link(Curve& c2);
 
 	//Curve point functions

@@ -69,6 +69,12 @@ void Curve::updateCurve()
 	*this = newCurve;
 }
 
+void Curve::updateBuffers()
+{
+	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
+	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
+}
+
 void Curve::link(Curve& c2)
 {
 	std::vector<Vertex>* cp1 = &this->controlPoints;
@@ -91,6 +97,17 @@ void Curve::link(Curve& c2)
 	updateCurve();
 }
 
+void Curve::setCurveColor(Color col)
+{
+	for (int i = 0; i < curvePoints.size(); ++i)
+	{
+		curvePoints[i].setColor(col);
+	}
+
+	color = col;
+	updateBuffers();
+}
+
 void Curve::setControlPoints(vector<Vertex> v)
 {
 	controlPoints.resize(v.size());
@@ -110,7 +127,7 @@ void Curve::setControlPointColor(int id, Color col)
 	Vertex v = getControlPoints()[id];
 	v.setColor(col);
 	setControlPoints(id, v);
-	updateCurve();
+	updateBuffers();
 }
 
 
