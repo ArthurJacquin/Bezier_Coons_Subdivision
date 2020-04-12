@@ -232,15 +232,18 @@ void displayGUI()
 		static int i = 0;
 		ImGui::InputInt("", &i, 0, 50);
 		ImGui::SameLine();
+
 		if (ImGui::Button("suppr"))
 		{
 			curves.erase(curves.begin() + i);
 		}
+
 		if (ImGui::Button("supprimer toutes les courbes"))
 		{
 			curves.clear();
 		}
 	}
+
 	ImGui::End();
 
 	// Render dear imgui into screen

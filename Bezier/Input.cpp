@@ -13,6 +13,9 @@ extern float step;
 extern bool movingPoint;
 extern int selectedPointId;
 extern int selectedCurveId;
+bool selectingCurve;
+std::vector<int> selectedCurves;
+
 
 void Input::waitForBool()
 {
@@ -37,7 +40,7 @@ float Input::getDistance(float xa, float ya, Vertex v)
 	return sqrtf(pow(x, 2) + pow(y, 2));
 }
 
-void Input::selectPoint(float x, float y)
+void Input::select(float x, float y)
 {
 	float minDist = 99999.9f;
 
@@ -54,7 +57,10 @@ void Input::selectPoint(float x, float y)
 			}
 		}
 	}
+
+	curves[selectedCurveId].setControlPointColor(selectedPointId, Color(0.0f, 1.0f, 0.0f));
 }
+
 
 void Input::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
@@ -74,14 +80,28 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 	{
-		selectPoint(-1.0f + 2 * xpos / width, 1.0f - 2 * ypos / height);
-		movingPoint = true;
+		select(-1.0f + 2 * xpos / width, 1.0f - 2 * ypos / height);
+
+		if (selectingCurve)
+		{
+			selectedCurves.push_back(selectedCurveId);
+		}
+		else 
+		{
+			movingPoint = true;
+		}
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
 	{
-		movingPoint = false;
+		if (movingPoint)
+		{
+			movingPoint = false;
+			curves[selectedCurveId].setControlPointColor(selectedPointId, Color(1.0f, 1.0f, 1.0f));
+		}
 	}
+
+
 }
 
 void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -93,9 +113,13 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 		vertices.clear();
 	}
 
-	if (key == GLFW_KEY_L && action == GLFW_PRESS)
+	if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS)
 	{
-		curves[0].link(curves[1]);
-		curves.erase(curves.begin() + 1);
+		selectingCurve = true;
+	}
+
+	if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS)
+	{
+		selectingCurve = false;
 	}
 }

@@ -100,4 +100,17 @@ void Curve::setControlPoints(vector<Vertex> v)
 	}
 }
 
+void Curve::setControlPoints(int id, Vertex v)
+{
+	controlPoints[id] = v;
+}
+
+void Curve::setControlPointColor(int id, Color col)
+{
+	Vertex v = getControlPoints()[id];
+	v.setColor(col);
+	setControlPoints(id, v);
+	updateCurve();
+}
+
 

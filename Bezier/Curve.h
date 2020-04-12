@@ -22,13 +22,20 @@ public:
 	void updateCurve();
 	void link(Curve& c2);
 
-	void clearControlPoints() { controlPoints.clear(); }
+	//Curve point functions
 	void clearCurvePoints() { curvePoints.clear(); }
+	void setCurveColor(Color col);
+
+	//Control pojnts functions
+	void clearControlPoints() { controlPoints.clear(); }
 	void setControlPoints(vector<Vertex> v);
+	void setControlPoints(int id, Vertex v);
+	void setControlPointColor(int id, Color col);
 
 	vector<Vertex> getControlPoints()const { return controlPoints; }
 	vector<Vertex> getCurvePoints()const { return curvePoints; }
 	uint32_t getVBOControl()const { return VBOControl; }
 	uint32_t getVBOCurve()const { return VBOCurve; }
+	Color getColor() const { return color; }
 };
 
