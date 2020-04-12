@@ -9,30 +9,35 @@ Curve::Curve()
 	step = 0;
 	VBOControl = 0;
 	VBOCurve = 0;
+	color = Color(1.0f, 0.0f, 0.0f);
 }
 
-Curve::Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints)
-: controlPoints(controlPoints), curvePoints(curvePoints), step(0.1f) 
+Curve::Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color color)
+: controlPoints(controlPoints), curvePoints(curvePoints), step(0.1f), color(color)
 {
 	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
 	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
 }
 
-
-Curve::Curve(vector<Vertex> controlPoints, float step, Color choosedColor)
-: controlPoints(controlPoints), step(step)
+Curve::Curve(vector<Vertex> controlPoints, float step, Color color)
+: controlPoints(controlPoints), step(step), color(color)
 {
-	createBeziers(curvePoints, controlPoints, step, choosedColor);
+	createBeziers(curvePoints, controlPoints, step, color);
 	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
 	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
 }
 
 void Curve::createBeziers(std::vector<Vertex>& tabBezierPoints, std::vector<Vertex> tabControlPoints, float step, Color choosedColor)
 {
-	std::vector<Vertex> barycentre;
+	Vertex temp = tabControlPoints[0];
+	temp.setColor(choosedColor);
+	tabBezierPoints.push_back(temp);
+
 	//teste si il y a plus d'un point de controle
 	if (tabControlPoints.size() > 2)
 	{
+		std::vector<Vertex> barycentre;
+
 		for (float t = 0; t < 1; t += step)
 		{
 			//reset des barycentres
@@ -50,20 +55,16 @@ void Curve::createBeziers(std::vector<Vertex>& tabBezierPoints, std::vector<Vert
 			barycentre[0].setColor(choosedColor);
 			tabBezierPoints.push_back(barycentre[0]);
 		}
-
 	}
 
-	//sinon, on calcule pas de barycentre et on retourne les deux point
-	else
-	{
-		tabBezierPoints.push_back(tabControlPoints[0]);
-		tabBezierPoints.push_back(tabControlPoints[1]);
-	}
+	temp = tabControlPoints.back();
+	temp.setColor(choosedColor);
+	tabBezierPoints.push_back(temp);
 }
 
 void Curve::updateCurve()
 {
-	Curve newCurve(this->controlPoints, this->step, Color(1.0f, 0.0f, 0.0f));
+	Curve newCurve(this->controlPoints, this->step, this->color);
 	*this = newCurve;
 }
 
