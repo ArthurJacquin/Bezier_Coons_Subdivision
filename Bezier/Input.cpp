@@ -92,4 +92,10 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 		curves.push_back(c);
 		vertices.clear();
 	}
+
+	if (key == GLFW_KEY_L && action == GLFW_PRESS)
+	{
+		curves[0].link(curves[1]);
+		curves.erase(curves.begin() + 1);
+	}
 }

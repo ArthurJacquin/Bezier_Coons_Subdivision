@@ -11,6 +11,13 @@ Vertex::Vertex()
 	b = 0;
 }
 
+Vertex::Vertex(Color col)
+{
+	r = col.x;
+	g = col.y;
+	b = col.z;
+}
+
 Vertex::Vertex(double x, double y, float r, float g, float b)
 	:x(x), y(y), r(r), g(g), b(b)
 {

@@ -1,3 +1,4 @@
+#include<algorithm>
 #include "Curve.h"
 #include "OpenGLcore.h"
 #include "Color.h"
@@ -68,6 +69,28 @@ void Curve::updateCurve()
 	*this = newCurve;
 }
 
+void Curve::link(Curve& c2)
+{
+	std::vector<Vertex>* cp1 = &this->controlPoints;
+
+	std::vector<Vertex> newControlPoints;
+
+	std::copy_n(cp1->begin(), cp1->size() - 1, std::back_inserter(newControlPoints));
+
+	Vertex meanPoint(Color(1.0f, 1.0f, 1.0f));
+	meanPoint.x = (cp1->back().x + c2.controlPoints[0].x) / 2;
+	meanPoint.y = (cp1->back().y + c2.controlPoints[0].y) / 2;
+	newControlPoints.push_back(meanPoint);
+
+	std::copy_n(c2.controlPoints.begin() + 1, c2.controlPoints.size() - 1, std::back_inserter(newControlPoints));
+
+	c2.clearControlPoints();
+	c2.clearCurvePoints();
+
+	this->controlPoints = newControlPoints;
+	updateCurve();
+}
+
 void Curve::setControlPoints(vector<Vertex> v)
 {
 	controlPoints.resize(v.size());
@@ -76,3 +99,5 @@ void Curve::setControlPoints(vector<Vertex> v)
 		controlPoints[i] = v[i];
 	}
 }
+
+
