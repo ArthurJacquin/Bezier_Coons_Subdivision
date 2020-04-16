@@ -1,5 +1,6 @@
 #pragma once
 #include "Input.h"
+#include "Matrix.h"
 #include <iostream>
 #include <vector>
 
@@ -154,5 +155,12 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 			curves[selectedCurveId].setCurveColor(choosedColor);
 		
 		selectedCurves.clear();
+	}
+
+	if (key == GLFW_KEY_T && action == GLFW_PRESS)
+	{
+		Matrix t = Matrix::Translate(0.1f, 0.1f);
+		for(int i = 0; i < selectedCurves.size(); i++)
+			curves[selectedCurves[i]].Transform(t);
 	}
 }

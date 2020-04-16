@@ -252,7 +252,7 @@ void displayGUI()
 	ImGui::Text("");
 	ImGui::Text("  Pour selectionner une courbe :");
 	ImGui::Text("  ctlr et clique droit");
-	//TODO : link courbe
+
 	if (ImGui::Button("raccordement"))
 	{
 		if (selectedCurves.size() > 1)

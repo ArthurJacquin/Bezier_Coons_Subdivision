@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Vertex.h"
+#include "Matrix.h"
 
 using namespace std;
 
@@ -22,6 +23,9 @@ public:
 	void updateCurve();
 	void updateBuffers();
 	void link(Curve& c2);
+
+	//Matrix
+	void Transform(Matrix& mat);
 
 	//Curve point functions
 	void clearCurvePoints() { curvePoints.clear(); }

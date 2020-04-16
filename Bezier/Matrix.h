@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include "Vertex.h"
 
 using namespace std;
 
@@ -27,6 +28,10 @@ struct Matrix
 		return m.data;
 	};
 
+	static Matrix Translate(float x, float y);
+	Matrix Rotate(float angle);
+	Matrix getScale(float scale);
+
 	vector<double> identity(Matrix& const m);
 	void swap(Matrix& m);
 
@@ -39,6 +44,8 @@ struct Matrix
 	Matrix operator-=(Matrix& const m);
 	friend Matrix operator-(Matrix& const m, Matrix& const m2);
 	Matrix& operator=(Matrix& const m);
+	
+	Vertex operator*(Vertex v);
 };
 
 ostream& operator<<(ostream& os, Matrix& r);

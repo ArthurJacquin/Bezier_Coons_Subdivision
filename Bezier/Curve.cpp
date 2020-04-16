@@ -97,6 +97,16 @@ void Curve::link(Curve& c2)
 	updateCurve();
 }
 
+void Curve::Transform(Matrix& mat)
+{
+	for (int i = 0; i < controlPoints.size(); i++)
+	{
+		controlPoints[i] = mat * controlPoints[i];
+	}
+
+	updateCurve();
+}
+
 void Curve::setCurveColor(Color col)
 {
 	for (int i = 0; i < curvePoints.size(); ++i)

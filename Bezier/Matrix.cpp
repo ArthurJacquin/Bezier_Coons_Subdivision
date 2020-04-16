@@ -67,6 +67,14 @@ void Matrix::setCol(size_t const cols)
 	data = identity(*this);
 }
 
+Matrix Matrix::Translate(float x, float y)
+{
+	Matrix t(2, 3);
+	t(0, 2) = x;
+	t(1, 2) = y;
+	return t;
+}
+
 vector<double> Matrix::identity(Matrix& const m)
 {
 	for (int i = 0; i < m.getRow(); ++i)
@@ -159,6 +167,14 @@ Matrix& Matrix::operator=(Matrix& const m)
 	Matrix tmp = m;
 	swap(tmp);
 	return *this;
+}
+
+Vertex Matrix::operator*(Vertex v)
+{
+	Vertex newVertex(Color(v.r, v.g, v.b));
+	newVertex.x = this->data[0] * v.x + this->data[1] * v.y + this->data[2] * 1;
+	newVertex.y = this->data[3] * v.x + this->data[4] * v.y + this->data[5] * 1;
+	return newVertex;
 }
 
 Matrix operator*(Matrix& const m, Matrix& const m2)
