@@ -29,8 +29,8 @@ struct Matrix
 	};
 
 	static Matrix Translate(float x, float y);
-	Matrix Rotate(float angle);
-	Matrix getScale(float scale);
+	static Matrix Rotate(float angle);
+	static Matrix Scale(float scale);
 
 	vector<double> identity(Matrix& const m);
 	void swap(Matrix& m);

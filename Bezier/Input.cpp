@@ -18,6 +18,7 @@ bool selectingCurve;
 bool wantToMovePoint;
 extern std::vector<int> selectedCurves;
 
+
 void Input::deleteCurves()
 {
 	curves.clear();
@@ -64,7 +65,7 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
 
-		if (xpos > 220)
+		if (xpos > 230)
 		{
 			Color col(1.0f, 1.0f, 1.0f);
 			Vertex newPoint = Vertex(-1.0f + 2 * xpos / width, 1.0f - 2 * ypos / height, col.x, col.y, col.z);
@@ -152,7 +153,7 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 		selectedPointId = NULL;
 		
 		for(int i = 0; i < selectedCurves.size(); i++)
-			curves[selectedCurveId].setCurveColor(choosedColor);
+			curves[selectedCurves[i]].setCurveColor(choosedColor);
 		
 		selectedCurves.clear();
 	}

@@ -75,6 +75,26 @@ Matrix Matrix::Translate(float x, float y)
 	return t;
 }
 
+Matrix Matrix::Rotate(float angle)
+{
+	float DegToRad = 0.01745328888889;
+
+	Matrix r(2, 3);
+	r(0, 0) = cos(angle * DegToRad);
+	r(0, 1) = -sin(angle * DegToRad);
+	r(1, 0) = sin(angle * DegToRad);
+	r(1, 1) = cos(angle * DegToRad);
+	return r;
+}
+
+Matrix Matrix::Scale(float scale)
+{
+	Matrix s(2, 3);
+	s(0, 0) = scale;
+	s(1, 1) = scale;
+	return s;
+}
+
 vector<double> Matrix::identity(Matrix& const m)
 {
 	for (int i = 0; i < m.getRow(); ++i)

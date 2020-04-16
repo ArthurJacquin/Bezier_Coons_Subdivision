@@ -186,7 +186,7 @@ void displayGUI()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(230, 570));
+	ImGui::SetNextWindowSize(ImVec2(230, 720));
 	// render your GUI
 	ImGui::Begin("Bezier", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Bienvenue dans Bezier ");
@@ -236,10 +236,12 @@ void displayGUI()
 		if (ImGui::Button("suppr"))
 		{
 			curves.erase(curves.begin() + i);
+			selectedCurves.clear();
 		}
 		if (ImGui::Button("supprimer toutes les courbes"))
 		{
 			curves.clear();
+			selectedCurves.clear();
 		}
 	}
 
@@ -273,6 +275,73 @@ void displayGUI()
 		}
 
 		selectedCurves.clear();
+	}
+
+	ImGui::Separator();
+	ImGui::Text("");
+	static float translateUI[2] = { 0.0f, 0.0f };
+	ImGui::InputFloat2("Translate", translateUI);
+	if (ImGui::Button("Translate curve now !"))
+	{
+		Matrix t = Matrix::Translate(translateUI[0], translateUI[1]);
+		for (int i = 0; i < selectedCurves.size(); i++)
+			curves[selectedCurves[i]].Transform(t);
+	}
+
+	ImGui::Text("");
+	static float rotateUI = 0.0f;
+	ImGui::InputFloat("Rotate", &rotateUI);
+	if (ImGui::Button("Rotate curve now !"))
+	{
+		Matrix t = Matrix::Rotate(rotateUI);
+		
+		for (int i = 0; i < selectedCurves.size(); i++)
+		{
+			float factor[2] = { 0.0f, 0.0f };
+			for (int j = 0; j < curves[selectedCurves[i]].getControlPoints().size(); j++)
+			{
+				factor[0] = factor[0] + curves[selectedCurves[i]].getControlPoints()[j].x;
+				factor[1] = factor[1] + curves[selectedCurves[i]].getControlPoints()[j].y;
+			}
+
+			factor[0] = factor[0] / curves[selectedCurves[i]].getControlPoints().size();
+			factor[1] = factor[1] / curves[selectedCurves[i]].getControlPoints().size();
+
+			Matrix z = Matrix::Translate(-factor[0], -factor[1]);
+			Matrix zBis = Matrix::Translate(factor[0], factor[1]);
+			curves[selectedCurves[i]].Transform(z);
+			curves[selectedCurves[i]].Transform(t);
+			curves[selectedCurves[i]].Transform(zBis);
+		}
+	}
+
+	ImGui::Text("");
+	static float scaleUI = 0.0f;
+	ImGui::InputFloat("Scale", &scaleUI);
+	if (ImGui::Button("Scale curve now !"))
+	{
+		Matrix t = Matrix::Scale(scaleUI);
+		for (int i = 0; i < selectedCurves.size(); i++)
+			curves[selectedCurves[i]].Transform(t);
+	}
+
+	ImGui::Text("");
+	ImGui::Separator();
+	ImGui::Text("");
+	//deselectionner
+	if (ImGui::Button("deselectionner"))
+	{
+		if (curves.size() > 0)
+		{
+			curves[selectedCurveId].setControlPointColor(selectedPointId, Color(1.0f, 1.0f, 1.0f));
+			selectedCurveId = NULL;
+			selectedPointId = NULL;
+
+			for (int i = 0; i < selectedCurves.size(); i++)
+				curves[selectedCurves[i]].setCurveColor(choosedColor);
+
+			selectedCurves.clear();
+		}
 	}
 
 	ImGui::End();
