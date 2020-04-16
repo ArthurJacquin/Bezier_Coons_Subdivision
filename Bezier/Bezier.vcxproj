@@ -153,6 +153,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Curve.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="OpenGLcore.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="Curve.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Bezier.cpp" />
+    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="OpenGLcore.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
