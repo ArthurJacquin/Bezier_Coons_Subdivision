@@ -27,11 +27,12 @@ public:
 	void clearCurvePoints() { curvePoints.clear(); }
 	void setCurveColor(Color col);
 
-	//Control pojnts functions
+	//Control points functions
 	void clearControlPoints() { controlPoints.clear(); }
 	void setControlPoints(vector<Vertex> v);
 	void setControlPoints(int id, Vertex v);
 	void setControlPointColor(int id, Color col);
+	void addControlPointAtIndex(int id, Vertex v);
 
 	vector<Vertex> getControlPoints()const { return controlPoints; }
 	vector<Vertex> getCurvePoints()const { return curvePoints; }

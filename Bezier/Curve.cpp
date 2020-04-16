@@ -130,4 +130,10 @@ void Curve::setControlPointColor(int id, Color col)
 	updateBuffers();
 }
 
+void Curve::addControlPointAtIndex(int id, Vertex v)
+{
+	controlPoints.insert(controlPoints.begin() + id, v);
+	updateCurve();
+}
+
 

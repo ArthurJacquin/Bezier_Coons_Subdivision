@@ -14,13 +14,8 @@ extern bool movingPoint;
 extern int selectedPointId;
 extern int selectedCurveId;
 bool selectingCurve;
+bool wantToMovePoint;
 extern std::vector<int> selectedCurves;
-
-
-void Input::waitForBool()
-{
-
-}
 
 void Input::deleteCurves()
 {
@@ -80,6 +75,8 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 	{
 		if (curves.size() != 0)
 		{
+			curves[selectedCurveId].setControlPointColor(selectedPointId, Color(1.0f, 1.0f, 1.0f));
+
 			select(-1.0f + 2 * xpos / width, 1.0f - 2 * ypos / height);
 
 			if (selectingCurve)
@@ -90,10 +87,14 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 					curves[selectedCurveId].setCurveColor(Color(0.0f, 1.0f, 0.0f));
 				}
 			}
-			else 
+			else if(wantToMovePoint)
 			{
 				curves[selectedCurveId].setControlPointColor(selectedPointId, Color(0.0f, 1.0f, 0.0f));
 				movingPoint = true;
+			}
+			else 
+			{
+				curves[selectedCurveId].setControlPointColor(selectedPointId, Color(0.0f, 1.0f, 0.0f));
 			}
 		}
 	}
@@ -106,8 +107,6 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 			curves[selectedCurveId].setControlPointColor(selectedPointId, Color(1.0f, 1.0f, 1.0f));
 		}
 	}
-
-
 }
 
 void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -127,5 +126,33 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 	if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_RELEASE)
 	{
 		selectingCurve = false;
+	}
+
+	if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS)
+	{
+		wantToMovePoint = true;
+	}
+
+	if (key == GLFW_KEY_LEFT_ALT && action == GLFW_RELEASE)
+	{
+		wantToMovePoint = false;
+	}
+
+	if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+	{
+		curves[selectedCurveId].addControlPointAtIndex(selectedPointId + 1, curves[selectedCurveId].getControlPoints()[selectedPointId]);
+	}
+
+	//Clear
+	if (key == GLFW_KEY_BACKSPACE && action == GLFW_PRESS)
+	{
+		curves[selectedCurveId].setControlPointColor(selectedPointId, Color(1.0f, 1.0f, 1.0f));
+		selectedCurveId = NULL;
+		selectedPointId = NULL;
+		
+		for(int i = 0; i < selectedCurves.size(); i++)
+			curves[selectedCurveId].setCurveColor(choosedColor);
+		
+		selectedCurves.clear();
 	}
 }

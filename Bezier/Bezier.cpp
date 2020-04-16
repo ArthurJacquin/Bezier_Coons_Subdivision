@@ -318,7 +318,6 @@ int main(void)
 		Display(window);
 
 		displayGUI();
-		input.waitForBool();
 
 		glfwSwapBuffers(window);
 		/* Poll for and process events */

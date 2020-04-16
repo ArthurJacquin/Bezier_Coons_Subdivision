@@ -10,7 +10,6 @@
 class Input
 {
 public:
-	static void waitForBool();
 	static void deleteVertex();
 	static void deleteCurves();
 
