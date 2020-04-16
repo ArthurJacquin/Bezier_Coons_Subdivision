@@ -252,8 +252,13 @@ void displayGUI()
 	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("");
+	ImGui::Text("  Pour Déplacer un point :");
+	ImGui::Text("  Alt + clic droit");
+	ImGui::Text("");
+	ImGui::Separator();
+	ImGui::Text("");
 	ImGui::Text("  Pour selectionner une courbe :");
-	ImGui::Text("  ctlr et clique droit");
+	ImGui::Text("  ctlr + clique droit");
 
 	if (ImGui::Button("raccordement"))
 	{
@@ -274,6 +279,8 @@ void displayGUI()
 			firstCurve->setCurveColor(choosedColor);
 		}
 
+		selectedCurveId = NULL;
+		selectedPointId = NULL;
 		selectedCurves.clear();
 	}
 
