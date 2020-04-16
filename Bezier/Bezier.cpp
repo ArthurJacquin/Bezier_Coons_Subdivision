@@ -222,7 +222,7 @@ void displayGUI()
 			step = 1;
 	}
 	ImGui::Separator();
-	ImGui::Text("   Liste des courbes ");
+	ImGui::Text("   Liste des courbes :");
 	for (int i = 0; i < curves.size(); i++)
 	{
 		ImGui::Text("Courbe %d", i);
@@ -248,17 +248,19 @@ void displayGUI()
 	ImGui::Separator();
 	ImGui::Text("");
 	ImGui::Text("  Pour selectionner un point :");
-	ImGui::Text("  clique droit");
+	ImGui::Text("  clic droit");
 	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("");
-	ImGui::Text("  Pour Déplacer un point :");
+	ImGui::Text("  Pour deplacer un point :");
 	ImGui::Text("  Alt + clic droit");
 	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("");
 	ImGui::Text("  Pour selectionner une courbe :");
-	ImGui::Text("  ctlr + clique droit");
+	ImGui::Text("  ctlr + clic droit");
+	ImGui::Text("");
+	ImGui::Separator();
 
 	if (ImGui::Button("raccordement"))
 	{
