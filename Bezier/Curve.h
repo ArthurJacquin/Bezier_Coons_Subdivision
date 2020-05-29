@@ -2,6 +2,7 @@
 #include <vector>
 #include "Vertex.h"
 #include "Matrix.h"
+#include "Mesh.h"
 
 using namespace std;
 
@@ -43,5 +44,8 @@ public:
 	uint32_t getVBOControl()const { return VBOControl; }
 	uint32_t getVBOCurve()const { return VBOCurve; }
 	Color getColor() const { return color; }
+
+	//Extrusion
+	Mesh SimpleExtrude(int h, float scale, float step);
 };
 

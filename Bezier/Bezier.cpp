@@ -37,11 +37,13 @@ const char* glsl_version = "#version 150";
 GLShader BasicShader;
 GLuint VAO;
 uint32_t VBOCurrent;
+uint32_t IBOCurrent;
 Input input;
 
 //tableau de positions du tableau en cours
 std::vector<Vertex> vertices;
 std::vector<Curve> curves;
+std::vector<Mesh> meshes;
 int totalSize = 0;
 
 bool movingPoint;
@@ -86,6 +88,8 @@ bool Initialise() {
 void updateVBO()
 {
 	//Création VBO
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBOCurrent);
+	
 	glBindBuffer(GL_ARRAY_BUFFER, VBOCurrent);
 	
 	//Position
@@ -142,6 +146,7 @@ void Display(GLFWwindow* window)
 
 	//Draw vertices
 	VBOCurrent = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
+	IBOCurrent = 0;
 	updateVBO();
 	
 	if(vertices.size() < 2)
@@ -163,6 +168,22 @@ void Display(GLFWwindow* window)
 
 		/* Render here */
 		glDrawArrays(GL_LINE_STRIP, 0, curves[i].getCurvePoints().size());
+	}
+
+	//Draw Meshes
+	for (int i = 0; i < meshes.size(); ++i)
+	{
+		VBOCurrent = meshes[i].getVBO();
+		IBOCurrent = meshes[i].getIBO();
+		updateVBO();
+
+		/* Render here */
+		glCullFace(GL_FRONT_AND_BACK);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		//TODO : FAIRE DES FACES
+		//glDrawElements(GL_TRIANGLES, meshes[i].getIndices().size(), GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes[i].getVertices().size());
 	}
 
 	//Désactivation des buffers
@@ -325,6 +346,8 @@ void displayGUI()
 	}
 
 	ImGui::Text("");
+
+	//Scale
 	static float scaleUI = 0.0f;
 	ImGui::InputFloat("Scale", &scaleUI);
 	if (ImGui::Button("Scale curve now !"))
@@ -335,8 +358,24 @@ void displayGUI()
 	}
 
 	ImGui::Text("");
+
+	//Extrusion
+	if (ImGui::Button("Extrude !"))
+	{
+		if (selectedCurves.size() != 0)
+		{
+			for (int i = 0; i < selectedCurves.size(); i++)
+			{
+				meshes.push_back(curves[selectedCurves[i]].SimpleExtrude(2, 0.5f, 0.2f));
+				curves.erase(curves.begin() + selectedCurves[i]);
+			}
+		}
+	}
+
+	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("");
+
 	//deselectionner
 	if (ImGui::Button("deselectionner"))
 	{

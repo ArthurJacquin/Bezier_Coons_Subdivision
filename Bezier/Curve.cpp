@@ -146,4 +146,30 @@ void Curve::addControlPointAtIndex(int id, Vertex v)
 	updateCurve();
 }
 
+Mesh Curve::SimpleExtrude(int h, float scale, float step)
+{
+	Mesh m;
+
+	for (float t = 0; t < 1; t += step)
+	{
+		for (int s = 0; s < this->curvePoints.size(); s++)
+		{
+			float x = this->curvePoints[s].x * (1 + t * (scale - 1));
+			float y = this->curvePoints[s].y * (1 + t * (scale - 1));
+			float z = h * t;
+
+			m.getVertices().push_back(Vertex(x, y, z));
+		}
+	}
+	
+	//Indices
+	m.getIndices().resize(m.getVertices().size());
+	for (int i = 0; i< m.getVertices().size(); i++)
+		m.getIndices()[i] = i;
+
+	m.updateBuffers();
+
+	return m;
+}
+
 

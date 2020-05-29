@@ -24,6 +24,14 @@ Vertex::Vertex(double x, double y, double z, float r, float g, float b)
 {
 }
 
+Vertex::Vertex(double x, double y, double z)
+	: x(x), y(y), z(z)
+{
+	r = 1;
+	g = 1;
+	b = 1;
+}
+
 void Vertex::setColor(Color color)
 {
 	this->r = color.x;
