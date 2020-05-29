@@ -4,16 +4,16 @@
 
 struct Vertex
 {
-	double x, y;
+	double x, y, z;
 	float r, g, b;
 	Vertex();
 	Vertex(Color col);
-	Vertex(double x, double y, float r, float g, float b);
+	Vertex(double x, double y, double z, float r, float g, float b);
 
 	friend std::ostream& operator <<(std::ostream&, const Vertex& obj);
-	bool operator!=(const Vertex v) { return x != v.x || y != v.y || r != v.r || g != v.g || b != v.b; }
+	bool operator!=(const Vertex v) { return x != v.x || y != v.y || z != v.z || r != v.r || g != v.g || b != v.b; }
 	bool operator==(const Vertex v) { return !(*this != v); }
-	Vertex& operator=(Vertex v) { x = v.x; y = v.y; r = v.r; g = v.g; b = v.b; return *this; }
+	Vertex& operator=(Vertex v) { x = v.x; y = v.y; z = v.z; r = v.r; g = v.g; b = v.b; return *this; }
 
 	void setColor(Color color);
 	void setPositionUsingMouse(double x, double y);

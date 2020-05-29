@@ -64,11 +64,10 @@ void Input::mouse_button_callback(GLFWwindow* window, int button, int action, in
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-
 		if (xpos > 230)
 		{
 			Color col(1.0f, 1.0f, 1.0f);
-			Vertex newPoint = Vertex(-1.0f + 2 * xpos / width, 1.0f - 2 * ypos / height, col.x, col.y, col.z);
+			Vertex newPoint = Vertex(-1.0f + 2 * xpos / width, 1.0f - 2 * ypos / height, 0.0, col.x, col.y, col.z);
 			vertices.push_back(newPoint);
 		}
 	}

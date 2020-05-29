@@ -6,6 +6,7 @@ Vertex::Vertex()
 {
 	x = 0;
 	y = 0;
+	z = 0;
 	r = 0;
 	g = 0;
 	b = 0;
@@ -18,8 +19,8 @@ Vertex::Vertex(Color col)
 	b = col.z;
 }
 
-Vertex::Vertex(double x, double y, float r, float g, float b)
-	:x(x), y(y), r(r), g(g), b(b)
+Vertex::Vertex(double x, double y, double z, float r, float g, float b)
+	:x(x), y(y), z(z), r(r), g(g), b(b)
 {
 }
 
@@ -34,10 +35,11 @@ void Vertex::setPositionUsingMouse(double x, double y)
 {
 	this->x = -1.0f + 2 * x / width;
 	this->y = 1.0f - 2 * y / height;
+	this->z = 0.0;
 }
 
 std::ostream& operator<<(std::ostream& os, const Vertex& obj)
 {
-	os << "(" << obj.x << "," << obj.y << "," << obj.r << "," << obj.g << "," << obj.b << ")" << std::endl;
+	os << "(" << obj.x << "," << obj.y << "," << obj.z << "," << obj.r << "," << obj.g << "," << obj.b << ")" << std::endl;
 	return os;
 }
