@@ -150,12 +150,15 @@ Mesh Curve::SimpleExtrude(int h, float scale, float step)
 {
 	Mesh m;
 
+	vector<Vertex> curvePoints = this->getCurvePoints();
+	curvePoints.push_back(curvePoints[0]);
+
 	for (float t = 0; t < 1; t += step)
 	{
-		for (int s = 0; s < this->curvePoints.size(); s++)
+		for (int s = 0; s < curvePoints.size(); s++)
 		{
-			float x = this->curvePoints[s].x * (1 + t * (scale - 1));
-			float y = this->curvePoints[s].y * (1 + t * (scale - 1));
+			float x = curvePoints[s].x * (1 + t * (scale - 1));
+			float y = curvePoints[s].y * (1 + t * (scale - 1));
 			float z = h * t;
 
 			m.getVertices().push_back(Vertex(x, y, z));
@@ -163,10 +166,40 @@ Mesh Curve::SimpleExtrude(int h, float scale, float step)
 	}
 	
 	//Indices
-	m.getIndices().resize(m.getVertices().size());
-	for (int i = 0; i< m.getVertices().size(); i++)
-		m.getIndices()[i] = i;
+	int rows = curvePoints.size();
+	int columns = 1 / step - 1;
 
+	int nbIndices;
+	if (columns > 1)
+		nbIndices = rows * 2 * (columns - 1) + (columns - 2) * 2;
+	else
+		nbIndices = rows * 2;
+	
+	m.getIndices().resize(nbIndices + 2);
+	
+	int a = 0;
+	int b = rows;
+	int nb = 0;
+
+	for (int i = 0; i < nbIndices; i += 2)
+	{
+		m.getIndices()[i] = a;
+		m.getIndices()[i + 1] = b;
+		nb++;
+
+		if (nb == rows)
+		{
+			m.getIndices()[i + 2] = b;
+			m.getIndices()[i + 3] = a + 1;
+			i += 2;
+			nb = 0;
+		}
+
+		a++;
+		b++;
+	}
+
+	m.getIndices().pop_back();
 	m.updateBuffers();
 
 	return m;

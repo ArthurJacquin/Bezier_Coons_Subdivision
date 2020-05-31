@@ -37,7 +37,6 @@ const char* glsl_version = "#version 150";
 GLShader BasicShader;
 GLuint VAO;
 uint32_t VBOCurrent;
-uint32_t IBOCurrent;
 Input input;
 
 //tableau de positions du tableau en cours
@@ -88,7 +87,7 @@ bool Initialise() {
 void updateVBO()
 {
 	//Création VBO
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBOCurrent);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBOCurrent);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, VBOCurrent);
 	
@@ -125,7 +124,7 @@ void Display(GLFWwindow* window)
 	// Defini le viewport en pleine fenetre
 	glViewport(0, 0, width, height);
 
-	glLineWidth(5.f);
+	glLineWidth(1.f);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
 	double xpos, ypos;
@@ -146,7 +145,6 @@ void Display(GLFWwindow* window)
 
 	//Draw vertices
 	VBOCurrent = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
-	IBOCurrent = 0;
 	updateVBO();
 	
 	if(vertices.size() < 2)
@@ -174,7 +172,6 @@ void Display(GLFWwindow* window)
 	for (int i = 0; i < meshes.size(); ++i)
 	{
 		VBOCurrent = meshes[i].getVBO();
-		IBOCurrent = meshes[i].getIBO();
 		updateVBO();
 
 		/* Render here */
@@ -182,8 +179,7 @@ void Display(GLFWwindow* window)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		//TODO : FAIRE DES FACES
-		//glDrawElements(GL_TRIANGLES, meshes[i].getIndices().size(), GL_UNSIGNED_INT, 0);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes[i].getVertices().size());
+		glDrawElements(GL_TRIANGLE_STRIP, meshes[i].getIndices().size(), GL_UNSIGNED_INT, meshes[i].getIndices().data());
 	}
 
 	//Désactivation des buffers
@@ -366,7 +362,7 @@ void displayGUI()
 		{
 			for (int i = 0; i < selectedCurves.size(); i++)
 			{
-				meshes.push_back(curves[selectedCurves[i]].SimpleExtrude(2, 0.5f, 0.2f));
+				meshes.push_back(curves[selectedCurves[i]].SimpleExtrude(2, 0.5f, 0.2));
 				curves.erase(curves.begin() + selectedCurves[i]);
 			}
 		}
