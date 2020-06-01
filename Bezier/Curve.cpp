@@ -3,6 +3,8 @@
 #include "OpenGLcore.h"
 #include "Color.h"
 
+#define M_PI 3.14159265
+
 Curve::Curve()
 {
 	controlPoints = {};
@@ -165,41 +167,33 @@ Mesh Curve::SimpleExtrude(int h, float scale, float step)
 		}
 	}
 	
-	//Indices
-	int rows = curvePoints.size();
-	int columns = 1 / step - 1;
+	m.CalculateIndices(curvePoints.size(), 1 / step - 1);
+	m.updateBuffers();
 
-	int nbIndices;
-	if (columns > 1)
-		nbIndices = rows * 2 * (columns - 1) + (columns - 2) * 2;
-	else
-		nbIndices = rows * 2;
-	
-	m.getIndices().resize(nbIndices + 2);
-	
-	int a = 0;
-	int b = rows;
-	int nb = 0;
+	return m;
+}
 
-	for (int i = 0; i < nbIndices; i += 2)
+Mesh Curve::Revolution(float step)
+{
+	Mesh m;
+
+	vector<Vertex> curvePoints = this->getCurvePoints();
+
+	for (float t = 0; t < 1; t += step)
 	{
-		m.getIndices()[i] = a;
-		m.getIndices()[i + 1] = b;
-		nb++;
-
-		if (nb == rows)
+		for (int s = 0; s < curvePoints.size(); s++)
 		{
-			m.getIndices()[i + 2] = b;
-			m.getIndices()[i + 3] = a + 1;
-			i += 2;
-			nb = 0;
-		}
+			float rad = 360 * t * M_PI / 180.0f;
 
-		a++;
-		b++;
+			float x = curvePoints[s].x * cos(rad);
+			float y = curvePoints[s].y;
+			float z = curvePoints[s].x * cos(rad);
+
+			m.getVertices().push_back(Vertex(x, y, z));
+		}
 	}
 
-	m.getIndices().pop_back();
+	m.CalculateIndices(curvePoints.size(), 1 / step - 1);
 	m.updateBuffers();
 
 	return m;

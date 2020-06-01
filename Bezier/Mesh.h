@@ -18,6 +18,7 @@ class Mesh
 public: 
 	Mesh();
 
+	void CalculateIndices(int rows, int cols);
 	void CalculateNormals();
 	void CalculateUvs();
 

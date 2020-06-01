@@ -368,6 +368,19 @@ void displayGUI()
 		}
 	}
 
+	//Extrusion
+	if (ImGui::Button("Revolution !"))
+	{
+		if (selectedCurves.size() != 0)
+		{
+			for (int i = 0; i < selectedCurves.size(); i++)
+			{
+				meshes.push_back(curves[selectedCurves[i]].Revolution(0.01f));
+				curves.erase(curves.begin() + selectedCurves[i]);
+			}
+		}
+	}
+
 	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("");
