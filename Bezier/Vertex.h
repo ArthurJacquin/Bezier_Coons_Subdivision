@@ -1,11 +1,14 @@
 #pragma once
 #include <iostream>
 #include "Color.h"
+#include "Vec3.h"
 
 struct Vertex
 {
 	double x, y, z;
 	float r, g, b;
+	Vec3 normal;
+
 	Vertex();
 	Vertex(Color col);
 	Vertex(double x, double y, double z, float r, float g, float b);
@@ -18,4 +21,5 @@ struct Vertex
 
 	void setColor(Color color);
 	void setPositionUsingMouse(double x, double y);
+	void setNormal(Vec3 n);
 };

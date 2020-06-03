@@ -87,8 +87,6 @@ bool Initialise() {
 void updateVBO()
 {
 	//Création VBO
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBOCurrent);
-	
 	glBindBuffer(GL_ARRAY_BUFFER, VBOCurrent);
 	
 	//Position
@@ -100,6 +98,11 @@ void updateVBO()
 	int loc_color = glGetAttribLocation(BasicShader.GetProgram(), "a_color");
 	glVertexAttribPointer(loc_color, 3, GL_FLOAT, false, sizeof(Vertex), (void*)offsetof(Vertex, r));
 	glEnableVertexAttribArray(loc_color);
+
+	//Normals
+	int loc_normal = glGetAttribLocation(BasicShader.GetProgram(), "a_normal");
+	glVertexAttribPointer(loc_normal, 3, GL_FLOAT, false, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+	glEnableVertexAttribArray(loc_normal);
 }
 
 void Terminate() 
@@ -179,7 +182,7 @@ void Display(GLFWwindow* window)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		//TODO : FAIRE DES FACES
-		glDrawElements(GL_TRIANGLE_STRIP, meshes[i].getIndices().size(), GL_UNSIGNED_INT, meshes[i].getIndices().data());
+		glDrawElements(GL_TRIANGLES, meshes[i].getIndices().size(), GL_UNSIGNED_INT, meshes[i].getIndices().data());
 	}
 
 	//Désactivation des buffers

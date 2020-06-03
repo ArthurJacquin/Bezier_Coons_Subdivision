@@ -47,7 +47,7 @@ public:
 
 	//Extrusion
 	Mesh SimpleExtrude(int h, float scale, float step);
-
 	Mesh Revolution(float step);
+
 };
 

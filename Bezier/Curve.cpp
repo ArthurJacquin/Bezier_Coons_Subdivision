@@ -34,7 +34,6 @@ void Curve::createBeziers(std::vector<Vertex>& tabBezierPoints, std::vector<Vert
 {
 	Vertex temp = tabControlPoints[0];
 	temp.setColor(choosedColor);
-	tabBezierPoints.push_back(temp);
 
 	//teste si il y a plus d'un point de controle
 	if (tabControlPoints.size() > 2)
@@ -151,9 +150,11 @@ void Curve::addControlPointAtIndex(int id, Vertex v)
 Mesh Curve::SimpleExtrude(int h, float scale, float step)
 {
 	Mesh m;
-
 	vector<Vertex> curvePoints = this->getCurvePoints();
-	curvePoints.push_back(curvePoints[0]);
+
+	bool close = false;
+	if(close)
+		curvePoints.push_back(curvePoints[0]);
 
 	for (float t = 0; t < 1; t += step)
 	{
@@ -168,6 +169,7 @@ Mesh Curve::SimpleExtrude(int h, float scale, float step)
 	}
 	
 	m.CalculateIndices(curvePoints.size(), 1 / step - 1);
+	m.CalculateNormals();
 	m.updateBuffers();
 
 	return m;
@@ -176,7 +178,6 @@ Mesh Curve::SimpleExtrude(int h, float scale, float step)
 Mesh Curve::Revolution(float step)
 {
 	Mesh m;
-
 	vector<Vertex> curvePoints = this->getCurvePoints();
 
 	for (float t = 0; t < 1; t += step)
@@ -194,6 +195,7 @@ Mesh Curve::Revolution(float step)
 	}
 
 	m.CalculateIndices(curvePoints.size(), 1 / step - 1);
+	m.CalculateNormals();
 	m.updateBuffers();
 
 	return m;
