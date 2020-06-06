@@ -2,6 +2,7 @@
 #include <vector>
 #include "Vertex.h"
 #include "Vec3.h"
+#include "Matrix.h"
 
 using namespace std;
 
@@ -18,6 +19,8 @@ struct Mesh
 	void CalculateNormals();
 
 	void updateBuffers();
+
+	void Transform(Matrix m);
 
 	vector<Vertex>& getVertices() { return vertices; }
 	vector<uint32_t>& getIndices() { return indices; }

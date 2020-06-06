@@ -87,3 +87,11 @@ void Mesh::updateBuffers()
 {
 	VBO = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
 }
+
+void Mesh::Transform(Matrix m)
+{
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		vertices[i] = m * vertices[i];
+	}
+}

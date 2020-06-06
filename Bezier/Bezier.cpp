@@ -51,9 +51,11 @@ int selectedCurveId;
 std::vector<int> selectedCurves;
 
 Color choosedColor(1.f, 0.f, 0.f);
-int width = 800;
+int width = 1200;
 int height = 800;
 float step = 0.05f;
+
+bool enableWireframe;
 
 bool Initialise() {
 
@@ -120,6 +122,8 @@ void Display(GLFWwindow* window)
 {
 	glfwGetWindowSize(window, &width, &height);
 	glClearColor(0.f, 0.f, 0.f, 0.f);
+	
+	//glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	// Desactive le "scissoring"
@@ -177,11 +181,13 @@ void Display(GLFWwindow* window)
 		VBOCurrent = meshes[i].getVBO();
 		updateVBO();
 
-		/* Render here */
 		glCullFace(GL_FRONT_AND_BACK);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		//TODO : FAIRE DES FACES
+		if(enableWireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		else
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 		glDrawElements(GL_TRIANGLES, meshes[i].getIndices().size(), GL_UNSIGNED_INT, meshes[i].getIndices().data());
 	}
 
@@ -386,6 +392,13 @@ void displayGUI()
 
 	ImGui::Text("");
 	ImGui::Separator();
+	ImGui::Text("");
+
+	if (ImGui::Button("Wireframe"))
+	{
+		enableWireframe = !enableWireframe;
+	}
+
 	ImGui::Text("");
 
 	//deselectionner

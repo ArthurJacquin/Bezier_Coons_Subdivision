@@ -178,24 +178,44 @@ Mesh Curve::SimpleExtrude(int h, float scale, float step)
 Mesh Curve::Revolution(float step)
 {
 	Mesh m;
-	vector<Vertex> curvePoints = this->getCurvePoints();
+
+	double xMin = abs(this->getCurvePoints()[0].x);
+	int negative = 1;
+
+	for (int i = 1; i < this->getCurvePoints().size(); ++i)
+	{
+		if (abs(this->getCurvePoints()[i].x) < xMin)
+		{
+			xMin = abs(this->getCurvePoints()[i].x);
+			
+			if (this->getCurvePoints()[i].x < 0)
+				negative = -1;
+			else
+				negative = 1;
+		}
+	}
+
+	this->Transform(Matrix::Translate(-xMin * negative, 0.f));
 
 	for (float t = 0; t < 1; t += step)
 	{
-		for (int s = 0; s < curvePoints.size(); s++)
+		for (int s = 0; s < this->getCurvePoints().size(); s++)
 		{
 			float rad = 360 * t * M_PI / 180.0f;
 
-			float x = curvePoints[s].x * cos(rad);
-			float y = curvePoints[s].y;
-			float z = curvePoints[s].x * cos(rad);
+			float x = this->getCurvePoints()[s].x * cos(rad) ;
+			float y = this->getCurvePoints()[s].y;
+			float z = this->getCurvePoints()[s].x * sin(rad);
 
 			m.getVertices().push_back(Vertex(x, y, z));
 		}
 	}
 
-	m.CalculateIndices(curvePoints.size(), 1 / step - 1);
+
+	m.CalculateIndices(this->getCurvePoints().size(), 1 / step - 1);
 	m.CalculateNormals();
+
+	m.Transform(Matrix::Translate(xMin * negative, 0.f));
 	m.updateBuffers();
 
 	return m;
