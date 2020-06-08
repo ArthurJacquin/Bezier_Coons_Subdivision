@@ -55,7 +55,17 @@ int width = 1200;
 int height = 800;
 float step = 0.05f;
 
+float extrudeHeight = 2;
+float extrudeScale = 0.5f;
+float extrudeStep = 0.2f;
+float revolutionStep = 0.02f;
+float genericStep = 0.1f;
+
 bool enableWireframe;
+
+int viewMatrixLocation;
+int projectionMatrixLocation;
+int cameraPos_location;
 
 bool Initialise() {
 
@@ -78,10 +88,10 @@ bool Initialise() {
 	//Init Program
 	GLuint64 BasicProgram = BasicShader.GetProgram();
 	glUseProgram(BasicProgram);
-	/*
-#ifdef WIN32 
-	wglSwapIntervalEXT(1);*/
-//#endif 
+
+	viewMatrixLocation = glGetUniformLocation(BasicProgram, "u_viewMatrix");
+	projectionMatrixLocation = glGetUniformLocation(BasicProgram, "u_projectionMatrix");
+	cameraPos_location = glGetUniformLocation(BasicShader.GetProgram(), "u_camPos");
 
 	return true;
 }
@@ -150,7 +160,25 @@ void Display(GLFWwindow* window)
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
+	Matrix projectionMatrix;
+	Matrix viewMatrix;
+	Vec3 camPos(0.f, 0.f, -1.f);
+
+	//Matrix update
+	projectionMatrix = projectionMatrix.Ortho(-width / 2, width / 2, -height / 2, height / 2, -1, 1);
+	//projectionMatrix = projectionMatrix.Perspective(60, width / (float)height, 0.0001f, 100.f);
+	viewMatrix = viewMatrix.LookAt(camPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, -1.0f, 0.0f));
+
+	Matrix x;
+	//Matrix uniforms
+	glUniformMatrix4dv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix.data.data());
+	glUniformMatrix4dv(viewMatrixLocation, 1, GL_FALSE, viewMatrix.data.data());
+	glUniform3f(cameraPos_location, camPos.x, camPos.y, camPos.z);
+
 	//Draw vertices
+	//for (int i = 0; i < vertices.size(); i++)
+		//vertices[i] = projectionMatrix * vertices[i];
+
 	VBOCurrent = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
 	updateVBO();
 	
@@ -212,7 +240,7 @@ void displayGUI()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(230, 720));
+	ImGui::SetNextWindowSize(ImVec2(300, 780));
 	// render your GUI
 	ImGui::Begin("Bezier", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Bienvenue dans Bezier ");
@@ -287,7 +315,9 @@ void displayGUI()
 	ImGui::Text("  ctlr + clic droit");
 	ImGui::Text("");
 	ImGui::Separator();
+	ImGui::Text("");
 
+	//Racordement
 	if (ImGui::Button("raccordement"))
 	{
 		if (selectedCurves.size() > 1)
@@ -312,80 +342,117 @@ void displayGUI()
 		selectedCurves.clear();
 	}
 
+	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("");
-	static float translateUI[2] = { 0.0f, 0.0f };
-	ImGui::InputFloat2("Translate", translateUI);
-	if (ImGui::Button("Translate curve now !"))
-	{
-		Matrix t = Matrix::Translate(translateUI[0], translateUI[1]);
-		for (int i = 0; i < selectedCurves.size(); i++)
-			curves[selectedCurves[i]].Transform(t);
-	}
 
-	ImGui::Text("");
-	static float rotateUI = 0.0f;
-	ImGui::InputFloat("Rotate", &rotateUI);
-	if (ImGui::Button("Rotate curve now !"))
+	//Transform
+	if (ImGui::CollapsingHeader("Transform"))
 	{
-		Matrix t = Matrix::Rotate(rotateUI);
+		static float translateUI[2] = { 0.0f, 0.0f };
+		ImGui::InputFloat2("Translate", translateUI);
+		if (ImGui::Button("Translate curve now !"))
+		{
+			Matrix t = Matrix::Translate(translateUI[0], translateUI[1]);
+			for (int i = 0; i < selectedCurves.size(); i++)
+				curves[selectedCurves[i]].Transform(t);
+		}
+
+		ImGui::Text("");
+		static float rotateUI = 0.0f;
+		ImGui::InputFloat("Rotate", &rotateUI);
+		if (ImGui::Button("Rotate curve now !"))
+		{
+			Matrix t = Matrix::RotateZ(rotateUI);
 		
-		for (int i = 0; i < selectedCurves.size(); i++)
-		{
-			float factor[2] = { 0.0f, 0.0f };
-			for (int j = 0; j < curves[selectedCurves[i]].getControlPoints().size(); j++)
-			{
-				factor[0] = factor[0] + curves[selectedCurves[i]].getControlPoints()[j].x;
-				factor[1] = factor[1] + curves[selectedCurves[i]].getControlPoints()[j].y;
-			}
-
-			factor[0] = factor[0] / curves[selectedCurves[i]].getControlPoints().size();
-			factor[1] = factor[1] / curves[selectedCurves[i]].getControlPoints().size();
-
-			Matrix z = Matrix::Translate(-factor[0], -factor[1]);
-			Matrix zBis = Matrix::Translate(factor[0], factor[1]);
-			curves[selectedCurves[i]].Transform(z);
-			curves[selectedCurves[i]].Transform(t);
-			curves[selectedCurves[i]].Transform(zBis);
-		}
-	}
-
-	ImGui::Text("");
-
-	//Scale
-	static float scaleUI = 0.0f;
-	ImGui::InputFloat("Scale", &scaleUI);
-	if (ImGui::Button("Scale curve now !"))
-	{
-		Matrix t = Matrix::Scale(scaleUI);
-		for (int i = 0; i < selectedCurves.size(); i++)
-			curves[selectedCurves[i]].Transform(t);
-	}
-
-	ImGui::Text("");
-
-	//Extrusion
-	if (ImGui::Button("Extrude !"))
-	{
-		if (selectedCurves.size() != 0)
-		{
 			for (int i = 0; i < selectedCurves.size(); i++)
 			{
-				meshes.push_back(curves[selectedCurves[i]].SimpleExtrude(2, 0.5f, 0.2));
-				curves.erase(curves.begin() + selectedCurves[i]);
+				float factor[2] = { 0.0f, 0.0f };
+				for (int j = 0; j < curves[selectedCurves[i]].getControlPoints().size(); j++)
+				{
+					factor[0] = factor[0] + curves[selectedCurves[i]].getControlPoints()[j].x;
+					factor[1] = factor[1] + curves[selectedCurves[i]].getControlPoints()[j].y;
+				}
+
+				factor[0] = factor[0] / curves[selectedCurves[i]].getControlPoints().size();
+				factor[1] = factor[1] / curves[selectedCurves[i]].getControlPoints().size();
+
+				Matrix z = Matrix::Translate(-factor[0], -factor[1]);
+				Matrix zBis = Matrix::Translate(factor[0], factor[1]);
+				curves[selectedCurves[i]].Transform(z);
+				curves[selectedCurves[i]].Transform(t);
+				curves[selectedCurves[i]].Transform(zBis);
 			}
+		}
+
+		ImGui::Text("");
+
+		//Scale
+		static float scaleUI = 0.0f;
+		ImGui::InputFloat("Scale", &scaleUI);
+		if (ImGui::Button("Scale curve now !"))
+		{
+			Matrix t = Matrix::Scale(scaleUI);
+			for (int i = 0; i < selectedCurves.size(); i++)
+				curves[selectedCurves[i]].Transform(t);
 		}
 	}
 
 	//Extrusion
-	if (ImGui::Button("Revolution !"))
+	if (ImGui::CollapsingHeader("Extrusion"))
 	{
-		if (selectedCurves.size() != 0)
+		ImGui::InputFloat("Height", &extrudeHeight);
+		ImGui::InputFloat("Scale ", &extrudeScale);
+		ImGui::InputFloat("Step ", &extrudeStep);
+		if (ImGui::Button("Extrude !"))
 		{
-			for (int i = 0; i < selectedCurves.size(); i++)
+			if (selectedCurves.size() != 0)
 			{
-				meshes.push_back(curves[selectedCurves[i]].Revolution(0.01f));
-				curves.erase(curves.begin() + selectedCurves[i]);
+				sort(selectedCurves.begin(), selectedCurves.end());
+
+				for (int i = selectedCurves.size() - 1; i >= 0; i--)
+				{
+					meshes.push_back(curves[selectedCurves[i]].SimpleExtrude(extrudeHeight, extrudeScale, extrudeStep));
+					curves.erase(curves.begin() + selectedCurves[i]);
+					
+				}
+			}
+		}
+	}
+
+	//Revolution
+	if (ImGui::CollapsingHeader("Revolution"))
+	{
+		ImGui::InputFloat("Step", &revolutionStep);
+		if (ImGui::Button("Revolution !"))
+		{
+			if (selectedCurves.size() != 0)
+			{
+				sort(selectedCurves.begin(), selectedCurves.end());
+
+				for (int i = selectedCurves.size() - 1; i >= 0; i--)
+				{
+					meshes.push_back(curves[selectedCurves[i]].Revolution(revolutionStep));
+					curves.erase(curves.begin() + selectedCurves[i]);
+				}
+			}
+		}
+	}
+
+	//Generic extrusion 
+	if (ImGui::CollapsingHeader("Generic extrusion"))
+	{
+		ImGui::InputFloat("Step  ", &genericStep);
+		if (ImGui::Button("Extrude !"))
+		{
+			if (selectedCurves.size() == 2)
+			{
+				meshes.push_back(curves[selectedCurves[0]].GenericExtrusion(curves[selectedCurves[1]], genericStep));
+				
+				sort(selectedCurves.begin(), selectedCurves.end());
+
+				//for (int i = selectedCurves.size() - 1; i >= 0; i--)
+					//curves.erase(curves.begin() + selectedCurves[i]);
 			}
 		}
 	}
@@ -447,12 +514,14 @@ int main(void)
 
 	// toutes nos initialisations vont ici
 	Initialise();
+	
 
 	//Input
 	glfwSetMouseButtonCallback(window, &input.mouse_button_callback);
 	glfwSetKeyCallback(window, &input.keyboard_button_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwGetFramebufferSize(window, &width, &height);
+
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))

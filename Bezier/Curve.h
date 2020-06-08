@@ -48,6 +48,7 @@ public:
 	//Extrusion
 	Mesh SimpleExtrude(int h, float scale, float step);
 	Mesh Revolution(float step);
+	Mesh GenericExtrusion(Curve& path, float step);
 
 };
 

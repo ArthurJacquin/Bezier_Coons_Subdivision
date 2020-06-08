@@ -28,9 +28,14 @@ struct Matrix
 		return m.data;
 	};
 
-	static Matrix Translate(float x, float y);
-	static Matrix Rotate(float angle);
+	static Matrix Translate(float x, float y, float z = 0);
+	static Matrix RotateZ(float angle);
+	static Matrix RotateX(float angle);
+	static Matrix RotateY(float angle);
 	static Matrix Scale(float scale);
+	static Matrix Ortho(float left, float right, float bottom, float top, float znear, float zfar);
+	static Matrix Perspective(float FoV, float aspectRatio, float n, float f);
+	static Matrix LookAt(Vec3 position, Vec3 target, Vec3 up);
 
 	vector<double> identity(Matrix& const m);
 	void swap(Matrix& m);

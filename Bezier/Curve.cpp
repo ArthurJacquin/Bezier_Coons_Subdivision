@@ -51,6 +51,7 @@ void Curve::createBeziers(std::vector<Vertex>& tabBezierPoints, std::vector<Vert
 				{
 					barycentre[i].x = (1 - t) * barycentre[i].x + t * barycentre[i + 1].x;
 					barycentre[i].y = (1 - t) * barycentre[i].y + t * barycentre[i + 1].y;
+					barycentre[i].z = 0.f;
 				}
 			}
 
@@ -179,6 +180,7 @@ Mesh Curve::Revolution(float step)
 {
 	Mesh m;
 
+	//Recherche du point le plus pres de l'origine
 	double xMin = abs(this->getCurvePoints()[0].x);
 	int negative = 1;
 
@@ -195,8 +197,10 @@ Mesh Curve::Revolution(float step)
 		}
 	}
 
+	//Décalage à l'origine
 	this->Transform(Matrix::Translate(-xMin * negative, 0.f));
 
+	//Révolution
 	for (float t = 0; t < 1; t += step)
 	{
 		for (int s = 0; s < this->getCurvePoints().size(); s++)
@@ -211,12 +215,60 @@ Mesh Curve::Revolution(float step)
 		}
 	}
 
-
+	//Création du mesh
 	m.CalculateIndices(this->getCurvePoints().size(), 1 / step - 1);
 	m.CalculateNormals();
 
+	//Retour à la position
 	m.Transform(Matrix::Translate(xMin * negative, 0.f));
+	
 	m.updateBuffers();
+
+	return m;
+}
+
+Mesh Curve::GenericExtrusion(Curve& path, float step)
+{
+	Mesh m;
+
+	//Path positionner à l'origine
+	path.Transform(Matrix::Translate(-path.getCurvePoints()[0].x, -path.getCurvePoints()[0].y, 0.f));
+
+	//rotate la courbe à 90
+	float factor[2] = { 0.0f, 0.0f };
+	for (int j = 0; j < this->getControlPoints().size(); j++)
+	{
+		factor[0] = factor[0] + this->getControlPoints()[j].x;
+		factor[1] = factor[1] + this->getControlPoints()[j].y;
+	}
+
+	factor[0] = factor[0] / this->getControlPoints().size();
+	factor[1] = factor[1] / this->getControlPoints().size();
+
+	Matrix z = Matrix::Translate(-factor[0], -factor[1]);
+
+	this->Transform(z);
+	this->Transform(Matrix::RotateY(90));
+	
+	//Tangeant au point 0
+	Vec3 T(curvePoints[1].x - curvePoints[0].x, curvePoints[1].y - curvePoints[0].y, curvePoints[1].z - curvePoints[0].z);
+	
+	//Normale de la courbe
+	Vertex p1 = curvePoints[0];
+	Vertex p2 = curvePoints[1];
+	Vertex p3 = curvePoints.back();
+	Vec3 v1(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
+	Vec3 v2(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z);
+	Vec3 K = (v1 ^ v2).normalise();
+
+	float angle = acos(K.dot(T)) * 180 / M_PI;
+	//this->Transform(Matrix::RotateZ(angle));
+
+	//Création du mesh
+	//m.CalculateIndices(this->getCurvePoints().size(), 1 / step - 1);
+	//m.CalculateNormals();
+
+	//m.updateBuffers();
 
 	return m;
 }
