@@ -51,8 +51,8 @@ int selectedCurveId;
 std::vector<int> selectedCurves;
 
 Color choosedColor(1.f, 0.f, 0.f);
-int width = 1200;
-int height = 800;
+int width = 800;
+int height = 600;
 float step = 0.05f;
 
 float extrudeHeight = 2;
@@ -65,7 +65,6 @@ bool enableWireframe;
 
 int viewMatrixLocation;
 int projectionMatrixLocation;
-int cameraPos_location;
 
 bool Initialise() {
 
@@ -91,7 +90,6 @@ bool Initialise() {
 
 	viewMatrixLocation = glGetUniformLocation(BasicProgram, "u_viewMatrix");
 	projectionMatrixLocation = glGetUniformLocation(BasicProgram, "u_projectionMatrix");
-	cameraPos_location = glGetUniformLocation(BasicShader.GetProgram(), "u_camPos");
 
 	return true;
 }
@@ -162,30 +160,31 @@ void Display(GLFWwindow* window)
 
 	Matrix projectionMatrix;
 	Matrix viewMatrix;
-	Vec3 camPos(0.f, 0.f, -1.f);
+	Vec3 camPos(0.f, 0.f, 0.1f);
 
 	//Matrix update
 	projectionMatrix = projectionMatrix.Ortho(-width / 2, width / 2, -height / 2, height / 2, -1, 1);
 	//projectionMatrix = projectionMatrix.Perspective(60, width / (float)height, 0.0001f, 100.f);
-	viewMatrix = viewMatrix.LookAt(camPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, -1.0f, 0.0f));
+	viewMatrix = viewMatrix.LookAt(camPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
+	Matrix vp = projectionMatrix * viewMatrix;
 
-	Matrix x;
 	//Matrix uniforms
-	glUniformMatrix4dv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix.data.data());
-	glUniformMatrix4dv(viewMatrixLocation, 1, GL_FALSE, viewMatrix.data.data());
-	glUniform3f(cameraPos_location, camPos.x, camPos.y, camPos.z);
+	/*glUniformMatrix4dv(projectionMatrixLocation, 1, GL_FALSE, vp.identity(vp).data());
+	glUniformMatrix4dv(viewMatrixLocation, 1, GL_FALSE, viewMatrix.data.data());*/
+
 
 	//Draw vertices
-	//for (int i = 0; i < vertices.size(); i++)
-		//vertices[i] = projectionMatrix * vertices[i];
+	vector<Vertex> v = vertices;
+	for (int i = 0; i < vertices.size(); i++)
+		v[i] = vp * v[i];
 
-	VBOCurrent = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
+	VBOCurrent = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * v.size(), v.data());
 	updateVBO();
 	
-	if(vertices.size() < 2)
+	//if(vertices.size() < 2)
 		glDrawArrays(GL_POINTS, 0, vertices.size());
-	else
-		glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
+	/*else
+		glDrawArrays(GL_LINE_STRIP, 0, vertices.size());*/
 
 	//Draw curves
 	for (int i = 0; i < curves.size(); ++i)

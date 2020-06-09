@@ -123,10 +123,11 @@ Matrix Matrix::Scale(float scale)
 
 Matrix Matrix::Ortho(float left, float right, float bottom, float top, float znear, float zfar)
 {
-	vector<double> data = { 2 / (right - left), 0, 0, -(right + left) / (right - left),
-							0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom),
-							0, 0, -2 / (zfar - znear), -(zfar + znear) / (zfar - znear),
-							0, 0, 0, 1 };
+	vector<double> data = { 2 / (right - left), 0, 0, 0,
+							0, 2 / (top - bottom), 0, 0,
+							0, 0, -2 / (zfar - znear), 0,
+							-(right + left) / (right - left), -(top + bottom) / (top - bottom), -(zfar + znear) / (zfar - znear), 1 };
+
 	Matrix orthoMat(data, 4, 4);
 
 	return orthoMat;
@@ -138,8 +139,8 @@ Matrix Matrix::Perspective(float FoV, float aspectRatio, float n, float f)
 
 	vector<double> data = { 1 / (fovRad * aspectRatio), 0, 0, 0,
 							0, 1 / fovRad, 0, 0,
-							0, 0, -(f + n) / (f - n), -(2 * f * n) / (f - n),
-							0, 0, -1, 0 };
+							0, 0, -(f + n) / (f - n), -1,
+							0, 0, -(2 * f * n) / (f - n), 0};
 
 	Matrix mat(data, 4, 4);
 
@@ -152,10 +153,10 @@ Matrix Matrix::LookAt(Vec3 position, Vec3 target, Vec3 up)
 	Vec3 right = (up ^ forward).normalise();
 	up = right ^ forward;
 
-	vector<double> data = { right.x, right.y, right.z, -right.dot(position),
-							up.x, up.y, up.z, -up.dot(position),
-							forward.x, forward.y, forward.z, -forward.dot(position),
-							0, 0, 0, 1 };
+	vector<double> data = { right.x, up.x, forward.x, 0,
+							right.y, up.y, forward.y, 0,
+							right.z, up.z, forward.z, 0,
+							-right.dot(position), -up.dot(position), -forward.dot(position), 1};
 	Matrix mat(data, 4, 4);
 
 	return mat;
