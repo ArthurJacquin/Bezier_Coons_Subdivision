@@ -14,6 +14,8 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <glm/glm.hpp>
+#include <glm\gtx\transform.hpp>
 #include "Vertex.h"
 #include "Input.h"
 #include "OpenGLcore.h"
@@ -51,8 +53,8 @@ int selectedCurveId;
 std::vector<int> selectedCurves;
 
 Color choosedColor(1.f, 0.f, 0.f);
-int width = 800;
-int height = 600;
+int width = 1600;
+int height = 800;
 float step = 0.05f;
 
 float extrudeHeight = 2;
@@ -63,11 +65,11 @@ float genericStep = 0.1f;
 
 bool enableWireframe;
 
+int modelMatrixLocation;
 int viewMatrixLocation;
 int projectionMatrixLocation;
-int enable3DViewportlocation;
 
-bool enable3DViewport;
+extern bool enable3DViewport;
 
 bool Initialise() {
 
@@ -91,9 +93,9 @@ bool Initialise() {
 	GLuint64 BasicProgram = BasicShader.GetProgram();
 	glUseProgram(BasicProgram);
 
+	modelMatrixLocation = glGetUniformLocation(BasicProgram, "u_modelMatrix");
 	viewMatrixLocation = glGetUniformLocation(BasicProgram, "u_viewMatrix");
 	projectionMatrixLocation = glGetUniformLocation(BasicProgram, "u_projectionMatrix");
-	enable3DViewportlocation = glGetUniformLocation(BasicProgram, "u_enable3DViewport");
 
 	return true;
 }
@@ -105,7 +107,7 @@ void updateVBO()
 	
 	//Position
 	int loc_position = glGetAttribLocation(BasicShader.GetProgram(), "a_position");
-	glVertexAttribPointer(loc_position, 2, GL_DOUBLE, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(loc_position, 3, GL_DOUBLE, GL_FALSE, sizeof(Vertex), 0);
 	glEnableVertexAttribArray(loc_position);
 	
 	//Color
@@ -136,7 +138,8 @@ void Display(GLFWwindow* window)
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	
 	//glEnable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Desactive le "scissoring"
 	glDisable(GL_SCISSOR_TEST);
@@ -162,34 +165,26 @@ void Display(GLFWwindow* window)
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	Matrix transformMatrix;
-	Matrix projectionMatrix;
-	Matrix viewMatrix;
-	Vec3 camPos(0.f, 0.f, -0.1f);
+	input.computeMatricesFromInputs(window, width, height);
 
-	//Matrix update
-	//projectionMatrix = projectionMatrix.Ortho(-width/2, width/2, -height/2, height/2, -1, 1) * transformMatrix.Scale(100);
-	projectionMatrix = projectionMatrix.Perspective(60, width / (float)height, 0.0001f, 100.f);
-	viewMatrix = viewMatrix.LookAt(camPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
-	Matrix vp = projectionMatrix * viewMatrix;
+	glm::mat4 view = input.getViewMatrix();
+	glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &view[0][0]);
 
-	//Matrix uniforms
-	glUniformMatrix4dv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix.data.data());
-	glUniformMatrix4dv(viewMatrixLocation, 1, GL_FALSE, viewMatrix.data.data());
-	glUniform1f(enable3DViewportlocation, enable3DViewportlocation);
+	glm::mat4 projection = input.getProjectionMatrix();
+	glm::mat4 ortho = glm::ortho(-1, 1, -1, 1, -1, 1);
 
-	//Draw vertices
-	//vector<Vertex> v = vertices;
-	//for (int i = 0; i < vertices.size(); i++)
-		//v[i] = vp * (v[i] * -1);
+	if(enable3DViewport)
+		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projection[0][0]);
+	else
+		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &ortho[0][0]);
 
 	VBOCurrent = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
 	updateVBO();
 	
-	//if(vertices.size() < 2)
+	if(vertices.size() < 2)
 		glDrawArrays(GL_POINTS, 0, vertices.size());
-	/*else
-		glDrawArrays(GL_LINE_STRIP, 0, vertices.size());*/
+	else
+		glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
 
 	//Draw curves
 	for (int i = 0; i < curves.size(); ++i)

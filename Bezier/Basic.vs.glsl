@@ -15,10 +15,6 @@ void main(void)
 	v_normal = a_normal;
 	v_color = vec4(a_color, 1.0); 
 	
-	if(u_enable3DViewport)
-		gl_Position = u_projectionMatrix * u_viewMatrix * vec4(a_position , 1.0);
-	else 
-		gl_Position = vec4(a_position, 1.0);
-
+	gl_Position = u_projectionMatrix * u_viewMatrix * vec4(a_position , 1.0);
 	gl_PointSize = 5.0;
 }

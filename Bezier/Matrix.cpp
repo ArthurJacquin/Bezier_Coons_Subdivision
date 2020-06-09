@@ -106,8 +106,8 @@ Matrix Matrix::RotateY(float angle)
 
 	Matrix r(4, 4);
 	r(0, 0) = cos(angle * DegToRad);
-	r(0, 2) = sin(angle * DegToRad);
-	r(2, 0) = -sin(angle * DegToRad);
+	r(0, 2) = -sin(angle * DegToRad);
+	r(2, 0) = sin(angle * DegToRad);
 	r(2, 2) = cos(angle * DegToRad);
 	return r;
 }

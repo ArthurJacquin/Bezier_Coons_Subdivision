@@ -148,6 +148,15 @@ void Curve::addControlPointAtIndex(int id, Vertex v)
 	updateCurve();
 }
 
+void Curve::setCurvePoints(std::vector<Vertex> v)
+{
+	curvePoints.resize(v.size());
+	for (int i = 0; i < curvePoints.size(); i++)
+	{
+		curvePoints[i] = v[i];
+	}
+}
+
 Mesh Curve::SimpleExtrude(int h, float scale, float step)
 {
 	Mesh m;
@@ -234,7 +243,7 @@ Mesh Curve::GenericExtrusion(Curve& path, float step)
 	//Path positionner à l'origine
 	path.Transform(Matrix::Translate(-path.getCurvePoints()[0].x, -path.getCurvePoints()[0].y, 0.f));
 
-	//rotate la courbe à 90
+	//place le barycentre de la courbe sous le chemin
 	float factor[2] = { 0.0f, 0.0f };
 	for (int j = 0; j < this->getControlPoints().size(); j++)
 	{
@@ -246,23 +255,41 @@ Mesh Curve::GenericExtrusion(Curve& path, float step)
 	factor[1] = factor[1] / this->getControlPoints().size();
 
 	Matrix z = Matrix::Translate(-factor[0], -factor[1]);
-
 	this->Transform(z);
-	this->Transform(Matrix::RotateY(90));
 	
-	//Tangeant au point 0
-	Vec3 T(curvePoints[1].x - curvePoints[0].x, curvePoints[1].y - curvePoints[0].y, curvePoints[1].z - curvePoints[0].z);
-	
-	//Normale de la courbe
-	Vertex p1 = curvePoints[0];
-	Vertex p2 = curvePoints[1];
-	Vertex p3 = curvePoints.back();
-	Vec3 v1(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
-	Vec3 v2(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z);
-	Vec3 K = (v1 ^ v2).normalise();
+	//Tangeante au point 0
+	Vec3 T(path.curvePoints[1].x - path.curvePoints[0].x, path.curvePoints[1].y - path.curvePoints[0].y, 0);
+	T = T.normalise();
 
-	float angle = acos(K.dot(T)) * 180 / M_PI;
-	//this->Transform(Matrix::RotateZ(angle));
+	//Normale de la courbe
+	Vec3 v = Vec3(curvePoints.back().x - curvePoints[0].x, curvePoints.back().y - curvePoints[0].y, 0);
+	v = v.normalise();
+
+	//angle entre la courbe et la tangente du chemin
+	float angle = acos(v.dot(T) / (v.magnitude() * T.magnitude()))  * 180 / M_PI;
+
+	//rotate en fonction de la tangente
+	std::vector<Vertex> tempToRotate;
+	tempToRotate.clear();
+	for (int i = 0; i < curvePoints.size(); i++)
+		tempToRotate.push_back(Matrix::RotateZ(angle - 90) * curvePoints[i]); 
+	this->setCurvePoints(tempToRotate);
+	updateBuffers();
+
+	//rotate à 90 perpendiculaire au chemin
+	tempToRotate.clear();
+	for (int i = 0; i < curvePoints.size(); i++)
+		tempToRotate.push_back(Matrix::RotateX(90) * curvePoints[i]);
+	this->setCurvePoints(tempToRotate);
+	updateBuffers();
+
+	//Extrusion
+	/*for (float t = 0; t < 1; t += step)
+	{
+		m.getVertices().push_back(Vertex(x, y, z));
+	}
+	*/
+
 
 	//Création du mesh
 	//m.CalculateIndices(this->getCurvePoints().size(), 1 / step - 1);

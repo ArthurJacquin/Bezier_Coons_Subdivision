@@ -39,6 +39,8 @@ public:
 	void setControlPointColor(int id, Color col);
 	void addControlPointAtIndex(int id, Vertex v);
 
+	void setCurvePoints(std::vector<Vertex> v);
+
 	vector<Vertex> getControlPoints()const { return controlPoints; }
 	vector<Vertex> getCurvePoints()const { return curvePoints; }
 	uint32_t getVBOControl()const { return VBOControl; }
