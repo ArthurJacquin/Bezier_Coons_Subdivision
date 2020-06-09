@@ -82,10 +82,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Basic.fs">
+    <None Include="Basic.fs.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="Basic.vs">
+    <None Include="Basic.vs.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

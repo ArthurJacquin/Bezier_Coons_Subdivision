@@ -179,8 +179,8 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Basic.fs" />
-    <None Include="Basic.vs" />
+    <None Include="Basic.fs.glsl" />
+    <None Include="Basic.vs.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

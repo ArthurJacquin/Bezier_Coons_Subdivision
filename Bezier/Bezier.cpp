@@ -65,6 +65,9 @@ bool enableWireframe;
 
 int viewMatrixLocation;
 int projectionMatrixLocation;
+int enable3DViewportlocation;
+
+bool enable3DViewport;
 
 bool Initialise() {
 
@@ -80,8 +83,8 @@ bool Initialise() {
 	std::cout << "Renderer : " << glGetString(GL_RENDERER) << std::endl;
 
 	//Init shaders
-	BasicShader.LoadVertexShader("Basic.vs");
-	BasicShader.LoadFragmentShader("Basic.fs");
+	BasicShader.LoadVertexShader("Basic.vs.glsl");
+	BasicShader.LoadFragmentShader("Basic.fs.glsl");
 	BasicShader.Create();
 
 	//Init Program
@@ -90,6 +93,7 @@ bool Initialise() {
 
 	viewMatrixLocation = glGetUniformLocation(BasicProgram, "u_viewMatrix");
 	projectionMatrixLocation = glGetUniformLocation(BasicProgram, "u_projectionMatrix");
+	enable3DViewportlocation = glGetUniformLocation(BasicProgram, "u_enable3DViewport");
 
 	return true;
 }
@@ -158,27 +162,28 @@ void Display(GLFWwindow* window)
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
+	Matrix transformMatrix;
 	Matrix projectionMatrix;
 	Matrix viewMatrix;
-	Vec3 camPos(0.f, 0.f, 0.1f);
+	Vec3 camPos(0.f, 0.f, -0.1f);
 
 	//Matrix update
-	projectionMatrix = projectionMatrix.Ortho(-width / 2, width / 2, -height / 2, height / 2, -1, 1);
-	//projectionMatrix = projectionMatrix.Perspective(60, width / (float)height, 0.0001f, 100.f);
+	//projectionMatrix = projectionMatrix.Ortho(-width/2, width/2, -height/2, height/2, -1, 1) * transformMatrix.Scale(100);
+	projectionMatrix = projectionMatrix.Perspective(60, width / (float)height, 0.0001f, 100.f);
 	viewMatrix = viewMatrix.LookAt(camPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
 	Matrix vp = projectionMatrix * viewMatrix;
 
 	//Matrix uniforms
-	/*glUniformMatrix4dv(projectionMatrixLocation, 1, GL_FALSE, vp.identity(vp).data());
-	glUniformMatrix4dv(viewMatrixLocation, 1, GL_FALSE, viewMatrix.data.data());*/
-
+	glUniformMatrix4dv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix.data.data());
+	glUniformMatrix4dv(viewMatrixLocation, 1, GL_FALSE, viewMatrix.data.data());
+	glUniform1f(enable3DViewportlocation, enable3DViewportlocation);
 
 	//Draw vertices
-	vector<Vertex> v = vertices;
-	for (int i = 0; i < vertices.size(); i++)
-		v[i] = vp * v[i];
+	//vector<Vertex> v = vertices;
+	//for (int i = 0; i < vertices.size(); i++)
+		//v[i] = vp * (v[i] * -1);
 
-	VBOCurrent = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * v.size(), v.data());
+	VBOCurrent = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
 	updateVBO();
 	
 	//if(vertices.size() < 2)
@@ -465,7 +470,12 @@ void displayGUI()
 		enableWireframe = !enableWireframe;
 	}
 
-	ImGui::Text("");
+	//3D viewport 
+	if (ImGui::Button("3D Viewport"))
+	{
+		enable3DViewport = !enable3DViewport;
+		updateVBO();
+	}
 
 	//deselectionner
 	if (ImGui::Button("deselectionner"))
