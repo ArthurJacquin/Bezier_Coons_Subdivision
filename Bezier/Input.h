@@ -30,6 +30,7 @@ public:
 
 	glm::mat4 getProjectionMatrix() { return ProjectionMatrix; }
 	glm::mat4 getViewMatrix() { return ViewMatrix; }
+	glm::vec3 getPosition() { return position; }
 
 	static void deleteVertex();
 	static void deleteCurves();

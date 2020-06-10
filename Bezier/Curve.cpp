@@ -109,6 +109,16 @@ void Curve::Transform(Matrix& mat)
 	updateCurve();
 }
 
+void Curve::TransformCurvePoint(Matrix& mat)
+{
+	for (int i = 0; i < curvePoints.size(); i++)
+	{
+		curvePoints[i] = mat * curvePoints[i];
+	}
+
+	//updateCurve();
+}
+
 void Curve::setCurveColor(Color col)
 {
 	for (int i = 0; i < curvePoints.size(); ++i)
@@ -210,7 +220,7 @@ Mesh Curve::Revolution(float step)
 	this->Transform(Matrix::Translate(-xMin * negative, 0.f));
 
 	//Révolution
-	for (float t = 0; t < 1; t += step)
+	for (float t = 0; t < 1 + step; t += step)
 	{
 		for (int s = 0; s < this->getCurvePoints().size(); s++)
 		{
@@ -223,9 +233,11 @@ Mesh Curve::Revolution(float step)
 			m.getVertices().push_back(Vertex(x, y, z));
 		}
 	}
+	for(int i = 0; i < this->getCurvePoints().size(); ++i)
+		m.getVertices().push_back(this->getCurvePoints()[i]);
 
 	//Création du mesh
-	m.CalculateIndices(this->getCurvePoints().size(), 1 / step - 1);
+	m.CalculateIndices(this->getCurvePoints().size(), 1 / step);
 	m.CalculateNormals();
 
 	//Retour à la position
@@ -236,7 +248,7 @@ Mesh Curve::Revolution(float step)
 	return m;
 }
 
-Mesh Curve::GenericExtrusion(Curve& path, float step)
+Mesh Curve::GenericExtrusion(Curve& path)
 {
 	Mesh m;
 
@@ -257,8 +269,7 @@ Mesh Curve::GenericExtrusion(Curve& path, float step)
 	Matrix z = Matrix::Translate(-factor[0], -factor[1]);
 	this->Transform(z);
 	
-	//Tangeante au point 0
-	Vec3 T(path.curvePoints[1].x - path.curvePoints[0].x, path.curvePoints[1].y - path.curvePoints[0].y, 0);
+	Vec3 T = Vec3(path.curvePoints[1].x - path.curvePoints[0].x, path.curvePoints[1].y - path.curvePoints[0].y, 0);
 	T = T.normalise();
 
 	//Normale de la courbe
@@ -272,30 +283,39 @@ Mesh Curve::GenericExtrusion(Curve& path, float step)
 	std::vector<Vertex> tempToRotate;
 	tempToRotate.clear();
 	for (int i = 0; i < curvePoints.size(); i++)
-		tempToRotate.push_back(Matrix::RotateZ(angle - 90) * curvePoints[i]); 
-	this->setCurvePoints(tempToRotate);
-	updateBuffers();
+		tempToRotate.push_back(Matrix::RotateZ(angle - 90) * Matrix::RotateY(90) * Matrix::RotateX(90) * curvePoints[i]);
+	this->setCurvePoints(tempToRotate);	
 
-	//rotate à 90 perpendiculaire au chemin
-	tempToRotate.clear();
-	for (int i = 0; i < curvePoints.size(); i++)
-		tempToRotate.push_back(Matrix::RotateX(90) * curvePoints[i]);
-	this->setCurvePoints(tempToRotate);
-	updateBuffers();
-
-	//Extrusion
-	/*for (float t = 0; t < 1; t += step)
+	for (int t = 0; t < path.curvePoints.size(); t++)
 	{
-		m.getVertices().push_back(Vertex(x, y, z));
-	}
-	*/
+		for (int i = 0; i < curvePoints.size(); i++)
+		{
+			//calcul du barycentre
+			float factor[3] = { 0.0f, 0.0f, 0.0f };
+			for (int j = 0; j < this->getCurvePoints().size(); j++)
+			{
+				factor[0] = factor[0] + this->getCurvePoints()[j].x;
+				factor[1] = factor[1] + this->getCurvePoints()[j].y;
+				factor[2] = factor[2] + this->getCurvePoints()[j].z;
+			}
 
+			factor[0] = factor[0] / this->getCurvePoints().size();
+			factor[1] = factor[1] / this->getCurvePoints().size();
+			factor[2] = factor[2] / this->getCurvePoints().size();
+
+			Matrix z = Matrix::Translate(-factor[0] + path.curvePoints[t].x, -factor[1] + path.curvePoints[t].y, -factor[2] + path.curvePoints[t].z);
+			this->TransformCurvePoint(z);
+
+			//Rotation en fonction de T
+			m.getVertices().push_back(curvePoints[i]);
+		}
+	}
 
 	//Création du mesh
-	//m.CalculateIndices(this->getCurvePoints().size(), 1 / step - 1);
-	//m.CalculateNormals();
+	m.CalculateIndices(this->getCurvePoints().size(), path.curvePoints.size() - 1);
+	m.CalculateNormals();
 
-	//m.updateBuffers();
+	m.updateBuffers();
 
 	return m;
 }

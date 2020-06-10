@@ -27,6 +27,7 @@ public:
 
 	//Matrix
 	void Transform(Matrix& mat);
+	void TransformCurvePoint(Matrix& mat);
 
 	//Curve point functions
 	void clearCurvePoints() { curvePoints.clear(); }
@@ -50,7 +51,7 @@ public:
 	//Extrusion
 	Mesh SimpleExtrude(int h, float scale, float step);
 	Mesh Revolution(float step);
-	Mesh GenericExtrusion(Curve& path, float step);
+	Mesh GenericExtrusion(Curve& path);
 
 };
 

@@ -19,6 +19,7 @@ struct Vertex
 	bool operator==(const Vertex v) { return !(*this != v); }
 	Vertex& operator=(Vertex v) { x = v.x; y = v.y; z = v.z; r = v.r; g = v.g; b = v.b; return *this; }
 	Vertex& operator*(int i) { x = x * i; y = y * i; z = z * i; return *this; }
+	Vertex& operator+(Vec3 v) { x = x + v.x; y = y + v.y; z = z + v.z; return *this; }
 
 	void setColor(Color color);
 	void setPositionUsingMouse(double x, double y);

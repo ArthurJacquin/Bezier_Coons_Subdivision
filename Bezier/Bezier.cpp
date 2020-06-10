@@ -61,15 +61,17 @@ float extrudeHeight = 2;
 float extrudeScale = 0.5f;
 float extrudeStep = 0.2f;
 float revolutionStep = 0.02f;
-float genericStep = 0.1f;
 
 bool enableWireframe;
+extern bool enable3DViewport;
+bool enableNormal;
 
+int enableNormalLocation;
+int enable3DViewportLocation;
 int modelMatrixLocation;
 int viewMatrixLocation;
 int projectionMatrixLocation;
-
-extern bool enable3DViewport;
+int cameraPos_location;
 
 bool Initialise() {
 
@@ -96,6 +98,10 @@ bool Initialise() {
 	modelMatrixLocation = glGetUniformLocation(BasicProgram, "u_modelMatrix");
 	viewMatrixLocation = glGetUniformLocation(BasicProgram, "u_viewMatrix");
 	projectionMatrixLocation = glGetUniformLocation(BasicProgram, "u_projectionMatrix");
+	
+	enable3DViewportLocation = glGetUniformLocation(BasicProgram, "u_enable3DViewport");
+	enableNormalLocation = glGetUniformLocation(BasicProgram, "u_enabledNormal");
+	cameraPos_location = glGetUniformLocation(BasicProgram, "u_camPos");
 
 	return true;
 }
@@ -177,6 +183,11 @@ void Display(GLFWwindow* window)
 		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projection[0][0]);
 	else
 		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &ortho[0][0]);
+
+	//Shading
+	glUniform1f(enableNormalLocation, enableNormal);
+	glUniform1f(enable3DViewportLocation, enable3DViewport);
+	glUniform3fv(cameraPos_location, 1, &input.getPosition()[0]);
 
 	VBOCurrent = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
 	updateVBO();
@@ -316,34 +327,63 @@ void displayGUI()
 	ImGui::Separator();
 	ImGui::Text("");
 
-	//Racordement
-	if (ImGui::Button("raccordement"))
+	//deselectionner
+	if (ImGui::Button("Deselectionner"))
 	{
-		if (selectedCurves.size() > 1)
+		if (curves.size() > 0)
 		{
-			Curve* firstCurve = &curves[selectedCurves[0]];
+			curves[selectedCurveId].setControlPointColor(selectedPointId, Color(1.0f, 1.0f, 1.0f));
+			selectedCurveId = NULL;
+			selectedPointId = NULL;
 
-			for (int i = 1; i < selectedCurves.size(); ++i)
-			{
-				firstCurve->link(curves[selectedCurves[i]]);
-			}
+			for (int i = 0; i < selectedCurves.size(); i++)
+				curves[selectedCurves[i]].setCurveColor(choosedColor);
 
-			for (int i = 1; i < selectedCurves.size(); ++i)
-			{
-				curves.erase(curves.begin() + selectedCurves[i]);
-			}
-
-			firstCurve->setCurveColor(choosedColor);
+			selectedCurves.clear();
 		}
-
-		selectedCurveId = NULL;
-		selectedPointId = NULL;
-		selectedCurves.clear();
 	}
+	//fermer la forme
+	if (ImGui::Button("Fermer forme"))
+	{
+		if (curves.size() > 0)
+		{
+			for (int i = 0; i < selectedCurves.size(); i++)
+			{
+				std::vector<Vertex> tempCurve = curves[selectedCurves[i]].getCurvePoints();
+				tempCurve.push_back(tempCurve[0]);
+				curves[selectedCurves[i]].setCurvePoints(tempCurve);
+				curves[selectedCurves[i]].updateBuffers();
+			}
+		}
+	}
+	ImGui::Text("");
+	//Racordement
+	if (ImGui::CollapsingHeader("Raccordement"))
+	{
+		if (ImGui::Button("Raccorder !"))
+		{
+			if (selectedCurves.size() > 1)
+			{
+				Curve* firstCurve = &curves[selectedCurves[0]];
 
-	ImGui::Text("");
-	ImGui::Separator();
-	ImGui::Text("");
+				for (int i = 1; i < selectedCurves.size(); ++i)
+				{
+					firstCurve->link(curves[selectedCurves[i]]);
+				}
+
+				for (int i = 1; i < selectedCurves.size(); ++i)
+				{
+					curves.erase(curves.begin() + selectedCurves[i]);
+				}
+
+				firstCurve->setCurveColor(choosedColor);
+			}
+
+			selectedCurveId = NULL;
+			selectedPointId = NULL;
+			selectedCurves.clear();
+		}
+	}
 
 	//Transform
 	if (ImGui::CollapsingHeader("Transform"))
@@ -441,30 +481,32 @@ void displayGUI()
 	//Generic extrusion 
 	if (ImGui::CollapsingHeader("Generic extrusion"))
 	{
-		ImGui::InputFloat("Step  ", &genericStep);
 		if (ImGui::Button("Extrude !"))
 		{
 			if (selectedCurves.size() == 2)
 			{
-				meshes.push_back(curves[selectedCurves[0]].GenericExtrusion(curves[selectedCurves[1]], genericStep));
-				
-				sort(selectedCurves.begin(), selectedCurves.end());
-
-				//for (int i = selectedCurves.size() - 1; i >= 0; i--)
-					//curves.erase(curves.begin() + selectedCurves[i]);
+				meshes.push_back(curves[selectedCurves[0]].GenericExtrusion(curves[selectedCurves[1]]));
 			}
 		}
 	}
 
 	ImGui::Text("");
 	ImGui::Separator();
+	ImGui::Text("            Visualizer    ");
 	ImGui::Text("");
 
 	if (ImGui::Button("Wireframe"))
 	{
 		enableWireframe = !enableWireframe;
 	}
-
+	ImGui::SameLine();
+	if (ImGui::Button("Normales"))
+	{
+		enableNormal = !enableNormal;
+	}
+	ImGui::Text("");
+	ImGui::Separator();
+	ImGui::Text("");
 	//3D viewport 
 	if (ImGui::Button("3D Viewport"))
 	{
@@ -472,21 +514,6 @@ void displayGUI()
 		updateVBO();
 	}
 
-	//deselectionner
-	if (ImGui::Button("deselectionner"))
-	{
-		if (curves.size() > 0)
-		{
-			curves[selectedCurveId].setControlPointColor(selectedPointId, Color(1.0f, 1.0f, 1.0f));
-			selectedCurveId = NULL;
-			selectedPointId = NULL;
-
-			for (int i = 0; i < selectedCurves.size(); i++)
-				curves[selectedCurves[i]].setCurveColor(choosedColor);
-
-			selectedCurves.clear();
-		}
-	}
 
 	ImGui::End();
 

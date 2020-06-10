@@ -94,8 +94,8 @@ Matrix Matrix::RotateX(float angle)
 
 	Matrix r(4, 4);
 	r(1, 1) = cos(angle * DegToRad);
-	r(1, 2) = -sin(angle * DegToRad);
-	r(2, 1) = sin(angle * DegToRad);
+	r(1, 2) = sin(angle * DegToRad);
+	r(2, 1) = -sin(angle * DegToRad);
 	r(2, 2) = cos(angle * DegToRad);
 	return r;
 }
