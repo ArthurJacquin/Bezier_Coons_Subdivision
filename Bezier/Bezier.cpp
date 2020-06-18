@@ -453,8 +453,9 @@ void displayGUI()
 				{
 					meshes.push_back(curves[selectedCurves[i]].SimpleExtrude(extrudeHeight, extrudeScale, extrudeStep));
 					curves.erase(curves.begin() + selectedCurves[i]);
-					
 				}
+
+				selectedCurves.clear();
 			}
 		}
 	}
@@ -474,6 +475,8 @@ void displayGUI()
 					meshes.push_back(curves[selectedCurves[i]].Revolution(revolutionStep));
 					curves.erase(curves.begin() + selectedCurves[i]);
 				}
+
+				selectedCurves.clear();
 			}
 		}
 	}
@@ -487,6 +490,8 @@ void displayGUI()
 			{
 				meshes.push_back(curves[selectedCurves[0]].GenericExtrusion(curves[selectedCurves[1]]));
 			}
+
+			selectedCurves.clear();
 		}
 	}
 

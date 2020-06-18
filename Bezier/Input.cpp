@@ -9,15 +9,20 @@
 extern int width, height;
 extern std::vector<Vertex> vertices;
 extern std::vector<Curve> curves;
+extern std::vector<int> selectedCurves;
+
 extern Color choosedColor;
 extern float step;
 extern bool movingPoint;
+
 extern int selectedPointId;
 extern int selectedCurveId;
 bool selectingCurve;
+
 bool wantToMovePoint;
-extern std::vector<int> selectedCurves;
 bool enable3DViewport;
+extern bool enableWireframe;
+extern bool enableNormal;
 
 void Input::deleteCurves()
 {
@@ -184,6 +189,16 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 	if (key == GLFW_KEY_V && action == GLFW_PRESS)
 	{
 		enable3DViewport = !enable3DViewport;
+	}
+
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+	{
+		enableWireframe = !enableWireframe;
+	}
+
+	if (key == GLFW_KEY_N && action == GLFW_PRESS)
+	{
+		enableNormal = !enableNormal;
 	}
 }
 
