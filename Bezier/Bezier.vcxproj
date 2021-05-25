@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="..\common\GLShader.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="Coons.h" />
     <ClInclude Include="Curve.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Matrix.h" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="..\common\GLShader.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="Coons.cpp" />
     <ClCompile Include="Curve.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Bezier.cpp" />

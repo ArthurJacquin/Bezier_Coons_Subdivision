@@ -32,6 +32,7 @@
 #include "imgui_demo.cpp"
 
 #include "Color.h"
+#include "Coons.h"
 
 const char* glsl_version = "#version 150";
 
@@ -268,7 +269,7 @@ void displayGUI()
 	}
 
 	ImGui::Text(" ");
-	ImGui::Text("   Choississez le pas ");
+	ImGui::Text("   TODO ");
 	ImGui::Columns(1);
 	ImGui::Text("Pas :");
 	ImGui::SameLine();
@@ -364,6 +365,7 @@ void displayGUI()
 		}
 	}
 	ImGui::Text("");
+	/*
 	//Racordement
 	if (ImGui::CollapsingHeader("Raccordement"))
 	{
@@ -501,7 +503,7 @@ void displayGUI()
 			selectedCurves.clear();
 		}
 	}
-
+	*/
 	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("            Visualizer    ");
@@ -526,13 +528,43 @@ void displayGUI()
 		updateVBO();
 	}
 
-	//TEST
-	if (ImGui::Button("TEST"))
+	if (ImGui::Button("Coons"))
 	{
-		
-		updateVBO();
-	}
+		std::vector<Vertex> pointsTop = {
+			Vertex(-0.5, 0., 0.),
+			Vertex(0., 0.5, 0.),
+			Vertex(0.5, 0., 0.)
+		};
 
+		std::vector<Vertex> pointsDown = {
+			Vertex(-0.5, 0., 0.5),
+			Vertex(0., -0.5, 0.5),
+			Vertex(0.5, 0., 0.5)
+		};
+
+		std::vector<Vertex> pointsLeft = {
+			Vertex(-0.5, 0., 0.5),
+			Vertex(-0.5, 0.5, 0.2),
+			Vertex(-0.5, 0., 0.)
+		};
+
+		std::vector<Vertex> pointsRight = {
+			Vertex(0.5, 0., 0.5),
+			Vertex(0., -0.5, 0.2),
+			Vertex(0.5, 0., 0.)
+		};
+
+
+		curves.push_back(Curve(pointsTop, 0.5, Color(0, 0, 0)));
+		curves.push_back(Curve(pointsDown, 0.5, Color(0, 0, 0)));
+		curves.push_back(Curve(pointsLeft, 0.5, Color(0, 0, 0)));
+		curves.push_back(Curve(pointsRight, 0.5, Color(0, 0, 0)));
+
+		meshes.push_back(generateCoon(curves));
+	}
+	ImGui::Text("");
+	ImGui::Separator();
+	ImGui::Text("");
 
 	ImGui::End();
 

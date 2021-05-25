@@ -15,6 +15,7 @@ struct Vertex
 	Vertex(Color col);
 	Vertex(double x, double y, double z, float r, float g, float b);
 	Vertex(double x, double y, double z);
+	Vertex(Vec3 pos);
 
 	friend std::ostream& operator <<(std::ostream&, const Vertex& obj);
 	bool operator!=(const Vertex v) { return x != v.x || y != v.y || z != v.z || r != v.r || g != v.g || b != v.b; }

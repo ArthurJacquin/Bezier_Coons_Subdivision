@@ -14,6 +14,7 @@ struct Mesh
 	uint32_t VBO;
 
 	Mesh();
+	Mesh(std::vector<Vertex> v, int r, int c);
 
 	void CalculateIndices(int rows, int cols);
 	void CalculateNormals();

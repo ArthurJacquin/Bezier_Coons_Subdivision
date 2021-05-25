@@ -10,6 +10,14 @@ Mesh::Mesh()
 	VBO = 0;
 }
 
+Mesh::Mesh(std::vector<Vertex> v, int r, int c)
+{
+	vertices = v;
+	CalculateIndices(r, c);
+	//CalculateNormals();
+	updateBuffers();
+}
+
 void Mesh::CalculateIndices(int rows, int columns)
 {	
 	int nbIndices = (rows * 2 - 2) * columns * 3;

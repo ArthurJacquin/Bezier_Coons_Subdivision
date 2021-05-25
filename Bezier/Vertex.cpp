@@ -43,6 +43,13 @@ Vertex::Vertex(double x, double y, double z)
 	neighborVertices.reserve(0);
 }
 
+Vertex::Vertex(Vec3 pos)
+{
+	x = pos.x;
+	y = pos.y;
+	z = pos.z;
+}
+
 void Vertex::setColor(Color color)
 {
 	this->r = color.x;
