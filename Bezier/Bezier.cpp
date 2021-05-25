@@ -192,6 +192,7 @@ void Display(GLFWwindow* window)
 	VBOCurrent = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
 	updateVBO();
 	
+	glLineWidth(1.f);
 	if(vertices.size() < 2)
 		glDrawArrays(GL_POINTS, 0, vertices.size());
 	else
@@ -210,6 +211,7 @@ void Display(GLFWwindow* window)
 		updateVBO();
 
 		/* Render here */
+		glLineWidth(3.f);
 		glDrawArrays(GL_LINE_STRIP, 0, curves[i].getCurvePoints().size());
 	}
 
@@ -516,6 +518,13 @@ void displayGUI()
 	if (ImGui::Button("3D Viewport"))
 	{
 		enable3DViewport = !enable3DViewport;
+		updateVBO();
+	}
+
+	//TEST
+	if (ImGui::Button("TEST"))
+	{
+		
 		updateVBO();
 	}
 

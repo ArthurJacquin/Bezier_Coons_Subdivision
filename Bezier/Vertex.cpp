@@ -12,6 +12,7 @@ Vertex::Vertex()
 	b = 0;
 
 	normal = Vec3(0.0f, 0.0f, 1.0f);
+	neighborVertices.reserve(0);
 }
 
 Vertex::Vertex(Color col)
@@ -21,12 +22,14 @@ Vertex::Vertex(Color col)
 	b = col.z;
 
 	normal = Vec3(0.0f, 0.0f, 1.0f);
+	neighborVertices.reserve(0);
 }
 
 Vertex::Vertex(double x, double y, double z, float r, float g, float b)
 	:x(x), y(y), z(z), r(r), g(g), b(b)
 {
 	normal = Vec3(0.0f, 0.0f, 1.0f);
+	neighborVertices.reserve(0);
 }
 
 Vertex::Vertex(double x, double y, double z)
@@ -37,6 +40,7 @@ Vertex::Vertex(double x, double y, double z)
 	b = 1;
 
 	normal = Vec3(0.0f, 0.0f, 1.0f);
+	neighborVertices.reserve(0);
 }
 
 void Vertex::setColor(Color color)

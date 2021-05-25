@@ -25,7 +25,8 @@ Curve::Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color col
 Curve::Curve(vector<Vertex> controlPoints, float step, Color color)
 : controlPoints(controlPoints), step(step), color(color)
 {
-	createBeziers(curvePoints, controlPoints, step, color);
+	//createBeziers(curvePoints, controlPoints, step, color);
+	curvePoints = cornerCuttings(controlPoints, 0.33, 0.24, 2);
 	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
 	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
 }
@@ -321,3 +322,29 @@ Mesh Curve::GenericExtrusion(Curve& path)
 }
 
 
+std::vector<Vertex> Curve::cornerCuttings(std::vector<Vertex> tabPoints, float u, float v, int nbreIteration)
+{
+	std::vector<Vertex> tabFinal;
+
+	for (size_t i = 0; i < tabPoints.size() - 1; i++)
+	{
+		Vec3 P1P2 = tabPoints[i + 1].GetPos() - tabPoints[i].GetPos();
+
+		Vertex first = tabPoints[i] + P1P2 * u;
+		first.setColor(Color(1, 0, 0));
+		Vertex second = tabPoints[i + 1] - P1P2 * v;
+		second.setColor(Color(1, 0, 0));
+
+		tabFinal.push_back(first);
+		tabFinal.push_back(second);
+	}
+
+	if (nbreIteration != 0)
+		tabFinal = cornerCuttings(tabFinal, u, v, nbreIteration - 1);
+
+	tabFinal.push_back(tabPoints[tabPoints.size() - 1]);
+	tabFinal.insert(tabFinal.begin(), tabPoints[0]);
+
+
+	return tabFinal;
+}

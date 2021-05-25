@@ -52,6 +52,8 @@ public:
 	Mesh SimpleExtrude(int h, float scale, float step);
 	Mesh Revolution(float step);
 	Mesh GenericExtrusion(Curve& path);
-
+	
+	//CUTTINGS
+	std::vector<Vertex> cornerCuttings(std::vector<Vertex> tabPoints, float u, float v, int nbreIteration);
 };
 
