@@ -21,13 +21,16 @@ Mesh generateCoon(std::vector<Curve> curves)
 	
 	//1ere étape
 	std::vector<Vertex> TopDown;
-	//generateRuledSurface(TopDown, down, top, top.getCurvePoints().size());
+	generateRuledSurface(TopDown, down, top, top.getCurvePoints().size());
 	//Mesh m(TopDown, top.getCurvePoints().size(), top.getCurvePoints().size() - 1);
 
 	//2eme étape 
 	std::vector<Vertex> LeftRight;
 	generateRuledSurface(LeftRight, left, right, top.getCurvePoints().size());
 	Mesh m(LeftRight, left.getCurvePoints().size(), left.getCurvePoints().size() - 1);
+
+	std::vector<Vertex> quad;
+
 
 	return m;
 
@@ -56,3 +59,6 @@ void generateRuledSurface(std::vector<Vertex>& ruledSurface, Curve c1, Curve c2,
 	}
 	
 }
+/*
+void generateQuad(std::vector<Vertex> point )
+*/
