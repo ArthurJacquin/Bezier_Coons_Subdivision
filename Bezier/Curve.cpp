@@ -321,10 +321,13 @@ Mesh Curve::GenericExtrusion(Curve& path)
 	return m;
 }
 
-
+//TODO : changer u, v et nbreIteration
 std::vector<Vertex> Curve::cornerCuttings(std::vector<Vertex> tabPoints, float u, float v, int nbreIteration)
 {
 	std::vector<Vertex> tabFinal;
+	bool close = false;
+	if (tabPoints[0] == tabPoints[tabPoints.size() - 1])
+		close = true;
 
 	for (size_t i = 0; i < tabPoints.size() - 1; i++)
 	{
@@ -332,18 +335,24 @@ std::vector<Vertex> Curve::cornerCuttings(std::vector<Vertex> tabPoints, float u
 
 		Vertex first = tabPoints[i] + P1P2 * u;
 		first.setColor(Color(1, 0, 0));
-		Vertex second = tabPoints[i + 1] - P1P2 * v;
+		Vertex second = tabPoints[(i + 1)] - P1P2 * v;
 		second.setColor(Color(1, 0, 0));
 
 		tabFinal.push_back(first);
 		tabFinal.push_back(second);
 	}
 
+	if (close)
+		tabFinal.push_back(tabFinal[0]);
+
 	if (nbreIteration != 0)
 		tabFinal = cornerCuttings(tabFinal, u, v, nbreIteration - 1);
 
-	tabFinal.push_back(tabPoints[tabPoints.size() - 1]);
-	tabFinal.insert(tabFinal.begin(), tabPoints[0]);
+	if (!close)
+	{
+		tabFinal.push_back(tabPoints[tabPoints.size() - 1]);
+		tabFinal.insert(tabFinal.begin(), tabPoints[0]);
+	}
 
 
 	return tabFinal;

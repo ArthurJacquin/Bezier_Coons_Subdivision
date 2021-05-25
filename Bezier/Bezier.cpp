@@ -357,6 +357,11 @@ void displayGUI()
 				curves[selectedCurves[i]].updateBuffers();
 			}
 		}
+
+		if (vertices.size() > 2)
+		{
+			vertices.push_back(vertices[0]);
+		}
 	}
 	ImGui::Text("");
 	//Racordement
