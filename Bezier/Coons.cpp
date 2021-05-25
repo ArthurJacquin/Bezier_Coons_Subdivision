@@ -1,6 +1,6 @@
 #include "Coons.h"
 
-Mesh generateCoon(std::vector<Curve> curves)
+Mesh generateCoon(std::vector<Curve> curves, float u, float v)
 {
 	Curve top = curves[0];
 	Curve down;
@@ -29,8 +29,49 @@ Mesh generateCoon(std::vector<Curve> curves)
 	generateRuledSurface(LeftRight, left, right, top.getCurvePoints().size());
 	Mesh m(LeftRight, left.getCurvePoints().size(), left.getCurvePoints().size() - 1);
 
+	std::vector<Vertex> ptsTop;
+	std::vector<Vertex> ptsDown;
+
+	float sizeTop = 0;
+	float sizeDown = 0;
+	for (size_t i = 0; i < top.getCurvePoints().size() - 1; i++)
+	{
+		sizeTop += (top.getCurvePoints()[i + 1].GetPos() - top.getCurvePoints()[i].GetPos()).magnitude();
+		sizeDown += (down.getCurvePoints()[i + 1].GetPos() - down.getCurvePoints()[i].GetPos()).magnitude();
+	}
+
+	//top
+	Vec3 T0T1 = top.getCurvePoints()[top.getCurvePoints().size() - 1].GetPos() - top.getCurvePoints()[0].GetPos();
+	float ratioTop = sizeTop / T0T1.magnitude();
+	Vertex p = top.getCurvePoints()[0];
+	ptsTop.push_back(p);
+	for (size_t i = 0; i < top.getCurvePoints().size() - 1; i++)
+	{
+		float distToNext = (top.getCurvePoints()[i].GetPos() - top.getCurvePoints()[i + 1].GetPos()).magnitude() * ratioTop;
+		Vertex nextP = p + T0T1 * distToNext / T0T1.magnitude();
+		ptsTop.push_back(nextP);
+		p = nextP;
+	}
+
+	//Down
+	Vec3 D0D1 = down.getCurvePoints()[down.getCurvePoints().size() - 1].GetPos() - down.getCurvePoints()[0].GetPos();
+	float ratioDown = sizeDown / D0D1.magnitude();
+	p = down.getCurvePoints()[0];
+	ptsDown.push_back(p);
+	for (size_t i = 0; i < down.getCurvePoints().size() - 1; i++)
+	{
+		float distToNext = (down.getCurvePoints()[i].GetPos() - down.getCurvePoints()[i + 1].GetPos()).magnitude() * ratioDown;
+		Vertex nextP = p + D0D1 * distToNext / D0D1.magnitude();
+		ptsDown.push_back(nextP);
+		p = nextP;
+	}
+
 	std::vector<Vertex> quad;
 
+	//TODO : Creer les courbes avec les points
+	//Faire la fonction pour créer le plan en fonction des écartement
+	//Créer le mesh
+	//Faire la somme de tout
 
 	return m;
 
@@ -59,6 +100,3 @@ void generateRuledSurface(std::vector<Vertex>& ruledSurface, Curve c1, Curve c2,
 	}
 	
 }
-/*
-void generateQuad(std::vector<Vertex> point )
-*/

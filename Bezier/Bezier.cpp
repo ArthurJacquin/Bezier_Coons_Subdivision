@@ -57,6 +57,8 @@ Color choosedColor(1.f, 0.f, 0.f);
 int width = 1600;
 int height = 800;
 float step = 0.05f;
+float u = 1.0f / 3.0f;
+float v = 1.0f / 4.0f;
 
 float extrudeHeight = 2;
 float extrudeScale = 0.5f;
@@ -560,7 +562,7 @@ void displayGUI()
 		curves.push_back(Curve(pointsLeft, 0.5, Color(0, 0, 0)));
 		curves.push_back(Curve(pointsRight, 0.5, Color(0, 0, 0)));
 
-		meshes.push_back(generateCoon(curves));
+		meshes.push_back(generateCoon(curves, u, v));
 	}
 	ImGui::Text("");
 	ImGui::Separator();
