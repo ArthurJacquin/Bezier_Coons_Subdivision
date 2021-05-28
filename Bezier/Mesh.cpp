@@ -14,7 +14,7 @@ Mesh::Mesh(std::vector<Vertex> v, int r, int c)
 {
 	vertices = v;
 	CalculateIndices(r, c);
-	//CalculateNormals();
+	CalculateNormals();
 	updateBuffers();
 }
 

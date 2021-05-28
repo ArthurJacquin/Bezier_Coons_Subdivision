@@ -12,7 +12,9 @@ extern std::vector<Curve> curves;
 extern std::vector<int> selectedCurves;
 
 extern Color choosedColor;
-extern float step;
+extern float u;
+extern float v;
+extern float iteration;
 extern bool movingPoint;
 
 extern int selectedPointId;
@@ -135,7 +137,7 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 	{
 		if (vertices.size() > 2)
 		{
-			Curve c(vertices, step, choosedColor);
+			Curve c(vertices, u, v, iteration, choosedColor);
 			curves.push_back(c);
 			vertices.clear();
 		}

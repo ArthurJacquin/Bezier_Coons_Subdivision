@@ -42,12 +42,17 @@ Mesh generateCoon(std::vector<Curve>& curves, float u, float v)
 		GeneratePointsBetweenExtremities(gridPts, ptsLeft, ptsLeft[i], ptsRight[i]);
 	}
 
-	Mesh m(gridPts, ptsLeft.size(), top.getCurvePoints().size() - 1);
+	//Mesh m(gridPts, ptsLeft.size(), top.getCurvePoints().size() - 1);
 
-	//TODO : Creer les courbes avec les points
-	//Faire la fonction pour créer le plan en fonction des écartement
-	//Créer le mesh
 	//Faire la somme de tout
+	std::vector<Vertex>coonsSurface;
+
+	for (size_t i = 0; i < gridPts.size(); i++)
+	{
+		coonsSurface.push_back(Vertex(TopDown[i].GetPos() + LeftRight[i].GetPos() - gridPts[i].GetPos()));
+	}
+
+	Mesh m(coonsSurface, ptsLeft.size(), top.getCurvePoints().size() - 1);
 
 	return m;
 

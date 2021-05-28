@@ -56,9 +56,9 @@ std::vector<int> selectedCurves;
 Color choosedColor(1.f, 0.f, 0.f);
 int width = 1600;
 int height = 800;
-float step = 0.05f;
 float u = 1.0f / 3.0f;
 float v = 1.0f / 4.0f;
+float iteration = 1.0;
 
 float extrudeHeight = 2;
 float extrudeScale = 0.5f;
@@ -215,7 +215,7 @@ void Display(GLFWwindow* window)
 
 		/* Render here */
 		glLineWidth(3.f);
-		glDrawArrays(GL_POINTS, 0, curves[i].getCurvePoints().size());
+		glDrawArrays(GL_LINE_STRIP, 0, curves[i].getCurvePoints().size());
 	}
 
 	//Draw Meshes
@@ -269,27 +269,69 @@ void displayGUI()
 	{
 		choosedColor = color;
 	}
-
+	// facteur u
 	ImGui::Text(" ");
-	ImGui::Text("   TODO ");
 	ImGui::Columns(1);
-	ImGui::Text("Pas :");
+	ImGui::Text("U factor :");
 	ImGui::SameLine();
-	ImGui::Text("%.2f", step);
+	ImGui::Text("%.2f", u);
 	ImGui::SameLine();
-	if (ImGui::Button("-"))
+	if (ImGui::Button("-##1"))
 	{
-		step = step - 0.01f;
-		if (step < 0.01)
-			step = 0.01;
+		u = u - 0.01f;
+		if (u < 0.01)
+			u = 0.01;
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("+"))
+	if (ImGui::Button("+##1"))
 	{
-		step = step + 0.01f;
-		if (step > 1)
-			step = 1;
+		u = u + 0.01f;
+		if (u > 1)
+			u = 1;
 	}
+	//facteur v
+	ImGui::Text(" ");
+	ImGui::Columns(1);
+	ImGui::Text("V factor :");
+	ImGui::SameLine();
+	ImGui::Text("%.2f", v);
+	ImGui::SameLine();
+	if (ImGui::Button("-##2"))
+	{
+		v = v - 0.01f;
+		if (v < 0.01)
+			v = 0.01;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("+##2"))
+	{
+		v = v + 0.01f;
+		if (v > 1)
+			v = 1;
+	}
+	//iteration
+	ImGui::Text(" ");
+	ImGui::Columns(1);
+	ImGui::Text("Iteration :");
+	ImGui::SameLine();
+	ImGui::Text("%.2f", iteration);
+	ImGui::SameLine();
+	if (ImGui::Button("-##3"))
+	{
+		iteration = iteration - 1.f;
+		if (iteration < 0.f)
+			iteration = 0.;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("+##3"))
+	{
+		iteration = iteration + 1.f;
+		if (iteration > 10.f)
+			iteration = 10.f;
+	}
+
+
+
 	ImGui::Separator();
 	ImGui::Text("   Liste des courbes :");
 	for (int i = 0; i < curves.size(); i++)
@@ -325,12 +367,12 @@ void displayGUI()
 	ImGui::Text("  Alt + clic droit");
 	ImGui::Text("");
 	ImGui::Separator();
-	ImGui::Text("");
+	/*ImGui::Text("");
 	ImGui::Text("  Pour selectionner une courbe :");
 	ImGui::Text("  ctlr + clic droit");
 	ImGui::Text("");
 	ImGui::Separator();
-	ImGui::Text("");
+	ImGui::Text("");*/
 
 	//deselectionner
 	if (ImGui::Button("Deselectionner"))
@@ -532,7 +574,7 @@ void displayGUI()
 
 	if (ImGui::Button("Coons"))
 	{
-#if 1
+#if 0
 		std::vector<Vertex> pointsTop = {
 			Vertex(-0.5, 0.5, -0.5),
 			Vertex(0., 0.5, 0.),
@@ -557,37 +599,36 @@ void displayGUI()
 			Vertex(0.5, 0., 0.)
 		};
 #endif
-
-#if 0
+#if 1
 		std::vector<Vertex> pointsTop = {
 			Vertex(-0.5, 0.5, 0.),
-			Vertex(0., 0.5, 0.1),
+			Vertex(0., 0.5, 0.3),
 			Vertex(0.5, 0.5, 0.)
 		};
 
 		std::vector<Vertex> pointsDown = {
 			Vertex(-0.5, -0.5, 0.),
-			Vertex(0., -0.5, 0.1),
+			Vertex(0., -0.5, 0.3),
 			Vertex(0.5, -0.5, 0.)
 		};
 
 		std::vector<Vertex> pointsLeft = {
-			Vertex(-0.5, 0.5, 0.),
-			Vertex(-0.5, 0., -0.1),
-			Vertex(-0.5, -0.5, 0.)
+			Vertex(-0.5, -0.5, 0.),
+			Vertex(-0.5, 0., 0.3),
+			Vertex(-0.5, 0.5, 0.)
 		};
 
 		std::vector<Vertex> pointsRight = {
-			Vertex(0.5, 0.5, 0.),
-			Vertex(0.5, 0., -0.1),
-			Vertex(0.5, -0.5, 0.)
+			Vertex(0.5, -0.5, 0.),
+			Vertex(0.5, 0., 0.3),
+			Vertex(0.5, 0.5, 0.)
 		};
 #endif
 
-		curves.push_back(Curve(pointsTop, 0.5, Color(0, 0, 0)));
-		curves.push_back(Curve(pointsDown, 0.5, Color(0, 0, 0)));
-		curves.push_back(Curve(pointsLeft, 0.5, Color(0, 0, 0)));
-		curves.push_back(Curve(pointsRight, 0.5, Color(0, 0, 0)));
+		curves.push_back(Curve(pointsTop, u, v, iteration, Color(0, 0, 0)));
+		curves.push_back(Curve(pointsDown, u, v, iteration, Color(0, 0, 0)));
+		curves.push_back(Curve(pointsLeft, u, v, iteration, Color(0, 0, 0)));
+		curves.push_back(Curve(pointsRight,u, v, iteration, Color(0, 0, 0)));
 
 		meshes.push_back(generateCoon(curves, u, v));
 	}

@@ -13,6 +13,10 @@ Curve::Curve()
 	VBOControl = 0;
 	VBOCurve = 0;
 	color = Color(1.0f, 0.0f, 0.0f);
+
+	u = 0.25f;
+	v = 0.25f;
+	iteration = 2.f;
 }
 
 Curve::Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color color)
@@ -22,11 +26,15 @@ Curve::Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color col
 	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
 }
 
-Curve::Curve(vector<Vertex> controlPoints, float step, Color color)
+Curve::Curve(vector<Vertex> controlPoints, float u, float v, float iteration, Color color)
 : controlPoints(controlPoints), step(step), color(color)
 {
+	this->u = u;
+	this->v = v;
+	this->iteration = iteration;
+
 	//createBeziers(curvePoints, controlPoints, step, color);
-	curvePoints = cornerCuttings(controlPoints, 0.25, 0.33, 1);
+	curvePoints = cornerCuttings(controlPoints, u, v, iteration);
 	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
 	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
 }
@@ -68,7 +76,7 @@ void Curve::createBeziers(std::vector<Vertex>& tabBezierPoints, std::vector<Vert
 
 void Curve::updateCurve()
 {
-	Curve newCurve(this->controlPoints, this->step, this->color);
+	Curve newCurve(this->controlPoints, this->u, this->v, this->iteration, this->color);
 	*this = newCurve;
 }
 
@@ -321,7 +329,7 @@ Mesh Curve::GenericExtrusion(Curve& path)
 	return m;
 }
 
-//TODO : changer u, v et nbreIteration
+//changer u, v et nbreIteration
 std::vector<Vertex> Curve::cornerCuttings(std::vector<Vertex> tabPoints, float u, float v, int nbreIteration)
 {
 	std::vector<Vertex> tabFinal;
