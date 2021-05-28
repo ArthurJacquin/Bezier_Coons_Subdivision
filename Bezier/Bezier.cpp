@@ -215,7 +215,7 @@ void Display(GLFWwindow* window)
 
 		/* Render here */
 		glLineWidth(3.f);
-		glDrawArrays(GL_LINE_STRIP, 0, curves[i].getCurvePoints().size());
+		glDrawArrays(GL_POINTS, 0, curves[i].getCurvePoints().size());
 	}
 
 	//Draw Meshes
@@ -532,8 +532,9 @@ void displayGUI()
 
 	if (ImGui::Button("Coons"))
 	{
+#if 1
 		std::vector<Vertex> pointsTop = {
-			Vertex(-0.5, 0., 0.),
+			Vertex(-0.5, 0.5, -0.5),
 			Vertex(0., 0.5, 0.),
 			Vertex(0.5, 0., 0.)
 		};
@@ -547,7 +548,7 @@ void displayGUI()
 		std::vector<Vertex> pointsLeft = {
 			Vertex(-0.5, 0., 0.5),
 			Vertex(-0.5, 0.5, 0.2),
-			Vertex(-0.5, 0., 0.)
+			Vertex(-0.5, 0.5, -0.5)
 		};
 
 		std::vector<Vertex> pointsRight = {
@@ -555,7 +556,33 @@ void displayGUI()
 			Vertex(0., -0.5, 0.2),
 			Vertex(0.5, 0., 0.)
 		};
+#endif
 
+#if 0
+		std::vector<Vertex> pointsTop = {
+			Vertex(-0.5, 0.5, 0.),
+			Vertex(0., 0.5, 0.1),
+			Vertex(0.5, 0.5, 0.)
+		};
+
+		std::vector<Vertex> pointsDown = {
+			Vertex(-0.5, -0.5, 0.),
+			Vertex(0., -0.5, 0.1),
+			Vertex(0.5, -0.5, 0.)
+		};
+
+		std::vector<Vertex> pointsLeft = {
+			Vertex(-0.5, 0.5, 0.),
+			Vertex(-0.5, 0., -0.1),
+			Vertex(-0.5, -0.5, 0.)
+		};
+
+		std::vector<Vertex> pointsRight = {
+			Vertex(0.5, 0.5, 0.),
+			Vertex(0.5, 0., -0.1),
+			Vertex(0.5, -0.5, 0.)
+		};
+#endif
 
 		curves.push_back(Curve(pointsTop, 0.5, Color(0, 0, 0)));
 		curves.push_back(Curve(pointsDown, 0.5, Color(0, 0, 0)));

@@ -1,6 +1,6 @@
 #include "Coons.h"
 
-Mesh generateCoon(std::vector<Curve> curves, float u, float v)
+Mesh generateCoon(std::vector<Curve>& curves, float u, float v)
 {
 	Curve top = curves[0];
 	Curve down;
@@ -27,46 +27,22 @@ Mesh generateCoon(std::vector<Curve> curves, float u, float v)
 	//2eme étape 
 	std::vector<Vertex> LeftRight;
 	generateRuledSurface(LeftRight, left, right, top.getCurvePoints().size());
-	Mesh m(LeftRight, left.getCurvePoints().size(), left.getCurvePoints().size() - 1);
+	//Mesh m(LeftRight, left.getCurvePoints().size(), left.getCurvePoints().size() - 1);
 
-	std::vector<Vertex> ptsTop;
-	std::vector<Vertex> ptsDown;
+	//3eme étape
+	std::vector<Vertex> ptsLeft;
+	std::vector<Vertex> ptsRight;
+	std::vector<Vertex> gridPts;
 
-	float sizeTop = 0;
-	float sizeDown = 0;
-	for (size_t i = 0; i < top.getCurvePoints().size() - 1; i++)
+	GeneratePointsBetweenExtremities(ptsLeft, left.getCurvePoints(), left.getCurvePoints()[0], left.getCurvePoints()[left.getCurvePoints().size() - 1]);
+	GeneratePointsBetweenExtremities(ptsRight, right.getCurvePoints(), right.getCurvePoints()[0], right.getCurvePoints()[right.getCurvePoints().size() - 1]);
+
+	for (size_t i = 0; i < ptsLeft.size(); i++)
 	{
-		sizeTop += (top.getCurvePoints()[i + 1].GetPos() - top.getCurvePoints()[i].GetPos()).magnitude();
-		sizeDown += (down.getCurvePoints()[i + 1].GetPos() - down.getCurvePoints()[i].GetPos()).magnitude();
+		GeneratePointsBetweenExtremities(gridPts, ptsLeft, ptsLeft[i], ptsRight[i]);
 	}
 
-	//top
-	Vec3 T0T1 = top.getCurvePoints()[top.getCurvePoints().size() - 1].GetPos() - top.getCurvePoints()[0].GetPos();
-	float ratioTop = sizeTop / T0T1.magnitude();
-	Vertex p = top.getCurvePoints()[0];
-	ptsTop.push_back(p);
-	for (size_t i = 0; i < top.getCurvePoints().size() - 1; i++)
-	{
-		float distToNext = (top.getCurvePoints()[i].GetPos() - top.getCurvePoints()[i + 1].GetPos()).magnitude() * ratioTop;
-		Vertex nextP = p + T0T1 * distToNext / T0T1.magnitude();
-		ptsTop.push_back(nextP);
-		p = nextP;
-	}
-
-	//Down
-	Vec3 D0D1 = down.getCurvePoints()[down.getCurvePoints().size() - 1].GetPos() - down.getCurvePoints()[0].GetPos();
-	float ratioDown = sizeDown / D0D1.magnitude();
-	p = down.getCurvePoints()[0];
-	ptsDown.push_back(p);
-	for (size_t i = 0; i < down.getCurvePoints().size() - 1; i++)
-	{
-		float distToNext = (down.getCurvePoints()[i].GetPos() - down.getCurvePoints()[i + 1].GetPos()).magnitude() * ratioDown;
-		Vertex nextP = p + D0D1 * distToNext / D0D1.magnitude();
-		ptsDown.push_back(nextP);
-		p = nextP;
-	}
-
-	std::vector<Vertex> quad;
+	Mesh m(gridPts, ptsLeft.size(), top.getCurvePoints().size() - 1);
 
 	//TODO : Creer les courbes avec les points
 	//Faire la fonction pour créer le plan en fonction des écartement
@@ -99,4 +75,29 @@ void generateRuledSurface(std::vector<Vertex>& ruledSurface, Curve c1, Curve c2,
 		ruledSurface.push_back(c2.getCurvePoints()[x]);
 	}
 	
+}
+
+void GeneratePointsBetweenExtremities(std::vector<Vertex>& resultPoints, std::vector<Vertex> points, Vertex start, Vertex end)
+{
+	//Calcul de la distance totale entre les points
+	float curveSize = 0;
+	for (size_t i = 0; i < points.size() - 1; i++)
+	{
+		curveSize += (points[i + 1].GetPos() - points[i].GetPos()).magnitude();
+	}
+
+	Vec3 P0P1 = end.GetPos() - start.GetPos(); // Vecteur entre les 2 extrémité
+	float sizeRatioDown = P0P1.magnitude() / curveSize; // ratio entre la taille de la courbe et celle entre les 2 extrémités
+
+	Vertex currentPoint = start;
+	resultPoints.push_back(start);
+
+	for (size_t i = 0; i < points.size() - 1; i++)
+	{
+		float distToNext = (points[i].GetPos() - points[i + 1].GetPos()).magnitude() * sizeRatioDown; //Distance jusqu'a prochain point
+		Vertex nextP = currentPoint + P0P1 * distToNext / P0P1.magnitude(); //Calcul de la position du prochain point
+
+		resultPoints.push_back(nextP);
+		currentPoint = nextP;
+	}
 }
