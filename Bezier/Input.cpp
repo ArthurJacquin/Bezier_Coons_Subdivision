@@ -1,6 +1,7 @@
 #pragma once
 #include "Input.h"
 #include "Matrix.h"
+#include "Coons.h"
 #include <iostream>
 #include <vector>
 
@@ -10,12 +11,14 @@ extern int width, height;
 extern std::vector<Vertex> vertices;
 extern std::vector<Curve> curves;
 extern std::vector<int> selectedCurves;
+extern std::vector<Mesh> meshes;
 
 extern Color choosedColor;
 extern float u;
 extern float v;
 extern float iteration;
 extern bool movingPoint;
+extern int etape;
 
 extern int selectedPointId;
 extern int selectedCurveId;
@@ -201,6 +204,32 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 	if (key == GLFW_KEY_N && action == GLFW_PRESS)
 	{
 		enableNormal = !enableNormal;
+	}
+
+	//Etape
+	if (key == GLFW_KEY_0 && action == GLFW_PRESS)
+	{
+		etape = 0;
+		meshes.clear();
+		meshes.push_back(generateCoon(curves, u, v));
+	}
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+	{
+		etape = 1;
+		meshes.clear();
+		meshes.push_back(generateCoon(curves, u, v));
+	}
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+	{
+		etape = 2;
+		meshes.clear();
+		meshes.push_back(generateCoon(curves, u, v));
+	}
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+	{
+		etape = 3;
+		meshes.clear();
+		meshes.push_back(generateCoon(curves, u, v));
 	}
 }
 

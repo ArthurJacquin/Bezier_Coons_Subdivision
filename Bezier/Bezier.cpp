@@ -76,6 +76,8 @@ int viewMatrixLocation;
 int projectionMatrixLocation;
 int cameraPos_location;
 
+extern int etape;
+
 bool Initialise() {
 
 	//Init GLEW
@@ -632,6 +634,30 @@ void displayGUI()
 
 		meshes.push_back(generateCoon(curves, u, v));
 	}
+	ImGui::Text(" ");
+	ImGui::Columns(1);
+	ImGui::Text("Etape coons :");
+	ImGui::SameLine();
+	ImGui::Text("%d", etape);
+	ImGui::SameLine();
+	if (ImGui::Button("-##4"))
+	{
+		etape = etape - 1;
+		if (iteration < 0)
+			iteration = 0;
+		meshes.clear();
+		meshes.push_back(generateCoon(curves, u, v));
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("+##4"))
+	{
+		etape = etape + 1;
+		if (etape > 3)
+			etape = 3;
+		meshes.clear();
+		meshes.push_back(generateCoon(curves, u, v));
+	}
+
 	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("");

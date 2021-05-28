@@ -1,5 +1,7 @@
 #include "Coons.h"
 
+int etape = 3;
+
 Mesh generateCoon(std::vector<Curve>& curves, float u, float v)
 {
 	Curve top = curves[0];
@@ -22,12 +24,9 @@ Mesh generateCoon(std::vector<Curve>& curves, float u, float v)
 	//1ere étape
 	std::vector<Vertex> TopDown;
 	generateRuledSurface(TopDown, down, top, top.getCurvePoints().size());
-	//Mesh m(TopDown, top.getCurvePoints().size(), top.getCurvePoints().size() - 1);
-
 	//2eme étape 
 	std::vector<Vertex> LeftRight;
 	generateRuledSurface(LeftRight, left, right, top.getCurvePoints().size());
-	//Mesh m(LeftRight, left.getCurvePoints().size(), left.getCurvePoints().size() - 1);
 
 	//3eme étape
 	std::vector<Vertex> ptsLeft;
@@ -42,7 +41,6 @@ Mesh generateCoon(std::vector<Curve>& curves, float u, float v)
 		GeneratePointsBetweenExtremities(gridPts, ptsLeft, ptsLeft[i], ptsRight[i]);
 	}
 
-	//Mesh m(gridPts, ptsLeft.size(), top.getCurvePoints().size() - 1);
 
 	//Faire la somme de tout
 	std::vector<Vertex>coonsSurface;
@@ -52,7 +50,20 @@ Mesh generateCoon(std::vector<Curve>& curves, float u, float v)
 		coonsSurface.push_back(Vertex(TopDown[i].GetPos() + LeftRight[i].GetPos() - gridPts[i].GetPos()));
 	}
 
-	Mesh m(coonsSurface, ptsLeft.size(), top.getCurvePoints().size() - 1);
+	Mesh m;
+
+	//Etape 1
+	if(etape == 0)
+		m = Mesh(TopDown, top.getCurvePoints().size(), top.getCurvePoints().size() - 1);
+	else if (etape == 1)
+		m = Mesh(LeftRight, left.getCurvePoints().size(), left.getCurvePoints().size() - 1);
+	else if(etape == 2)
+		m = Mesh(gridPts, ptsLeft.size(), top.getCurvePoints().size() - 1);
+	//Etape le boss final
+	else if(etape == 3)
+		m = Mesh(coonsSurface, ptsLeft.size(), top.getCurvePoints().size() - 1);
+	else
+		m = Mesh(coonsSurface, ptsLeft.size(), top.getCurvePoints().size() - 1);
 
 	return m;
 
