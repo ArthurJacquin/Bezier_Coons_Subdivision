@@ -23,6 +23,7 @@ public:
 	Curve();
 	Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color col);
 	Curve(vector<Vertex> controlPoints, float u, float v, float iteration, Color color);
+	Curve::Curve(vector<Vertex> controlPoints, float s, Color color);
 
 	void createBeziers(std::vector<Vertex>& curvePoints, std::vector<Vertex> controlPoints, float step, Color choosedColor);
 	void updateCurve();

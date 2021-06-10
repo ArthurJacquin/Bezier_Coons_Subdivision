@@ -27,14 +27,23 @@ Curve::Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color col
 }
 
 Curve::Curve(vector<Vertex> controlPoints, float u, float v, float iteration, Color color)
-: controlPoints(controlPoints), step(step), color(color)
+: controlPoints(controlPoints), color(color)
 {
 	this->u = u;
 	this->v = v;
 	this->iteration = iteration;
 
-	//createBeziers(curvePoints, controlPoints, step, color);
 	curvePoints = cornerCuttings(controlPoints, u, v, iteration);
+	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
+	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
+}
+
+Curve::Curve(vector<Vertex> controlPoints, float s, Color color)
+: controlPoints(controlPoints), color(color)
+{
+	step = s;
+
+	createBeziers(curvePoints, controlPoints, s, color);
 	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
 	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
 }

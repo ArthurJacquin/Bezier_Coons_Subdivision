@@ -59,6 +59,7 @@ int height = 800;
 float u = 1.0f / 3.0f;
 float v = 1.0f / 4.0f;
 float iteration = 1.0;
+float step;
 
 float extrudeHeight = 2;
 float extrudeScale = 0.5f;
@@ -257,85 +258,23 @@ void displayGUI()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(300, 780));
+	ImGui::SetNextWindowSize(ImVec2(300, 600));
 	// render your GUI
-	ImGui::Begin("Bezier", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
-	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Bienvenue dans Bezier ");
+	ImGui::Begin("Curves", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Welcome in the curves world ! ");
 	ImGui::Separator();
 
+	//Parameters
 	static float color[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
 	ImGui::Text("");
-	ImGui::Text("   Choississez la couleur ");
-	ImGui::Text("       de la courbe: ");
+	ImGui::Text("   Choose color ");
 	if (ImGui::ColorEdit3("Color", color))
 	{
 		choosedColor = color;
 	}
-	// facteur u
-	ImGui::Text(" ");
-	ImGui::Columns(1);
-	ImGui::Text("U factor :");
-	ImGui::SameLine();
-	ImGui::Text("%.2f", u);
-	ImGui::SameLine();
-	if (ImGui::Button("-##1"))
-	{
-		u = u - 0.01f;
-		if (u < 0.01)
-			u = 0.01;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("+##1"))
-	{
-		u = u + 0.01f;
-		if (u > 1)
-			u = 1;
-	}
-	//facteur v
-	ImGui::Text(" ");
-	ImGui::Columns(1);
-	ImGui::Text("V factor :");
-	ImGui::SameLine();
-	ImGui::Text("%.2f", v);
-	ImGui::SameLine();
-	if (ImGui::Button("-##2"))
-	{
-		v = v - 0.01f;
-		if (v < 0.01)
-			v = 0.01;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("+##2"))
-	{
-		v = v + 0.01f;
-		if (v > 1)
-			v = 1;
-	}
-	//iteration
-	ImGui::Text(" ");
-	ImGui::Columns(1);
-	ImGui::Text("Iteration :");
-	ImGui::SameLine();
-	ImGui::Text("%.2f", iteration);
-	ImGui::SameLine();
-	if (ImGui::Button("-##3"))
-	{
-		iteration = iteration - 1.f;
-		if (iteration < 0.f)
-			iteration = 0.;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("+##3"))
-	{
-		iteration = iteration + 1.f;
-		if (iteration > 10.f)
-			iteration = 10.f;
-	}
-
-
 
 	ImGui::Separator();
-	ImGui::Text("   Liste des courbes :");
+	ImGui::Text("   Curves list :");
 	for (int i = 0; i < curves.size(); i++)
 	{
 		ImGui::Text("Courbe %d", i);
@@ -360,24 +299,24 @@ void displayGUI()
 
 	ImGui::Separator();
 	ImGui::Text("");
-	ImGui::Text("  Pour selectionner un point :");
-	ImGui::Text("  clic droit");
+	ImGui::Text(" Select a point :");
+	ImGui::Text("  right click");
 	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("");
-	ImGui::Text("  Pour deplacer un point :");
-	ImGui::Text("  Alt + clic droit");
+	ImGui::Text("  Move a point");
+	ImGui::Text("  Alt + right click");
 	ImGui::Text("");
 	ImGui::Separator();
-	/*ImGui::Text("");
-	ImGui::Text("  Pour selectionner une courbe :");
-	ImGui::Text("  ctlr + clic droit");
+	ImGui::Text("");
+	ImGui::Text("  Select a curve");
+	ImGui::Text("  ctlr + right click");
 	ImGui::Text("");
 	ImGui::Separator();
-	ImGui::Text("");*/
+	ImGui::Text("");
 
 	//deselectionner
-	if (ImGui::Button("Deselectionner"))
+	if (ImGui::Button("Deselect"))
 	{
 		if (curves.size() > 0)
 		{
@@ -391,123 +330,194 @@ void displayGUI()
 			selectedCurves.clear();
 		}
 	}
-	//fermer la forme
-	if (ImGui::Button("Fermer forme"))
+
+	if (ImGui::CollapsingHeader("Bezier curves"))
 	{
-		if (curves.size() > 0)
+		// step
+		ImGui::Text(" ");
+		ImGui::Columns(1);
+		ImGui::Text("step :");
+		ImGui::SameLine();
+		ImGui::Text("%.2f", step);
+		ImGui::SameLine();
+		if (ImGui::Button("-"))
 		{
-			for (int i = 0; i < selectedCurves.size(); i++)
+			step = step - 0.01f;
+			if (step < 0.01)
+				step = 0.01;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("+"))
+		{
+			step = step + 0.01f;
+			if (step > 1)
+				step = 1;
+		}
+
+	
+		//fermer la forme
+		if (ImGui::Button("Close curve"))
+		{
+			if (curves.size() > 0)
 			{
-				std::vector<Vertex> tempCurve = curves[selectedCurves[i]].getCurvePoints();
-				tempCurve.push_back(tempCurve[0]);
-				curves[selectedCurves[i]].setCurvePoints(tempCurve);
-				curves[selectedCurves[i]].updateBuffers();
+				for (int i = 0; i < selectedCurves.size(); i++)
+				{
+					std::vector<Vertex> tempCurve = curves[selectedCurves[i]].getCurvePoints();
+					tempCurve.push_back(tempCurve[0]);
+					curves[selectedCurves[i]].setCurvePoints(tempCurve);
+					curves[selectedCurves[i]].updateBuffers();
+				}
+			}
+
+			if (vertices.size() > 2)
+			{
+				vertices.push_back(vertices[0]);
 			}
 		}
 
-		if (vertices.size() > 2)
+		if (ImGui::Button("Create Bezier curve"))
 		{
-			vertices.push_back(vertices[0]);
-		}
-	}
-	ImGui::Text("");
-	/*
-	//Racordement
-	if (ImGui::CollapsingHeader("Raccordement"))
-	{
-		if (ImGui::Button("Raccorder !"))
-		{
-			if (selectedCurves.size() > 1)
+			if (vertices.size() > 2)
 			{
-				Curve* firstCurve = &curves[selectedCurves[0]];
-
-				for (int i = 1; i < selectedCurves.size(); ++i)
-				{
-					firstCurve->link(curves[selectedCurves[i]]);
-				}
-
-				for (int i = 1; i < selectedCurves.size(); ++i)
-				{
-					curves.erase(curves.begin() + selectedCurves[i]);
-				}
-
-				firstCurve->setCurveColor(choosedColor);
-			}
-
-			selectedCurveId = NULL;
-			selectedPointId = NULL;
-			selectedCurves.clear();
-		}
-	}
-
-	//Transform
-	if (ImGui::CollapsingHeader("Transform"))
-	{
-		static float translateUI[2] = { 0.0f, 0.0f };
-		ImGui::InputFloat2("Translate", translateUI);
-		if (ImGui::Button("Translate curve now !"))
-		{
-			Matrix t = Matrix::Translate(translateUI[0], translateUI[1]);
-			for (int i = 0; i < selectedCurves.size(); i++)
-				curves[selectedCurves[i]].Transform(t);
-		}
-
-		ImGui::Text("");
-		static float rotateUI = 0.0f;
-		ImGui::InputFloat("Rotate", &rotateUI);
-		if (ImGui::Button("Rotate curve now !"))
-		{
-			Matrix t = Matrix::RotateZ(rotateUI);
-		
-			for (int i = 0; i < selectedCurves.size(); i++)
-			{
-				float factor[2] = { 0.0f, 0.0f };
-				for (int j = 0; j < curves[selectedCurves[i]].getControlPoints().size(); j++)
-				{
-					factor[0] = factor[0] + curves[selectedCurves[i]].getControlPoints()[j].x;
-					factor[1] = factor[1] + curves[selectedCurves[i]].getControlPoints()[j].y;
-				}
-
-				factor[0] = factor[0] / curves[selectedCurves[i]].getControlPoints().size();
-				factor[1] = factor[1] / curves[selectedCurves[i]].getControlPoints().size();
-
-				Matrix z = Matrix::Translate(-factor[0], -factor[1]);
-				Matrix zBis = Matrix::Translate(factor[0], factor[1]);
-				curves[selectedCurves[i]].Transform(z);
-				curves[selectedCurves[i]].Transform(t);
-				curves[selectedCurves[i]].Transform(zBis);
+				Curve c(vertices, u, v, iteration, choosedColor);
+				curves.push_back(c);
+				vertices.clear();
 			}
 		}
 
 		ImGui::Text("");
-
-		//Scale
-		static float scaleUI = 0.0f;
-		ImGui::InputFloat("Scale", &scaleUI);
-		if (ImGui::Button("Scale curve now !"))
+		//Racordement
+		if (ImGui::CollapsingHeader("Link curves"))
 		{
-			Matrix t = Matrix::Scale(scaleUI);
-			for (int i = 0; i < selectedCurves.size(); i++)
-				curves[selectedCurves[i]].Transform(t);
-		}
-	}
-
-	//Extrusion
-	if (ImGui::CollapsingHeader("Extrusion"))
-	{
-		ImGui::InputFloat("Height", &extrudeHeight);
-		ImGui::InputFloat("Scale ", &extrudeScale);
-		ImGui::InputFloat("Step ", &extrudeStep);
-		if (ImGui::Button("Extrude !"))
-		{
-			if (selectedCurves.size() != 0)
+			if (ImGui::Button("Link"))
 			{
-				sort(selectedCurves.begin(), selectedCurves.end());
-
-				for (int i = selectedCurves.size() - 1; i >= 0; i--)
+				if (selectedCurves.size() > 1)
 				{
-					meshes.push_back(curves[selectedCurves[i]].SimpleExtrude(extrudeHeight, extrudeScale, extrudeStep));
-					curves.erase(curves.begin() + selectedCurves[i]);
+					Curve* firstCurve = &curves[selectedCurves[0]];
+
+					for (int i = 1; i < selectedCurves.size(); ++i)
+					{
+						firstCurve->link(curves[selectedCurves[i]]);
+					}
+
+					for (int i = 1; i < selectedCurves.size(); ++i)
+					{
+						curves.erase(curves.begin() + selectedCurves[i]);
+					}
+
+					firstCurve->setCurveColor(choosedColor);
+				}
+
+				selectedCurveId = NULL;
+				selectedPointId = NULL;
+				selectedCurves.clear();
+			}
+		}
+
+		//Transform
+		if (ImGui::CollapsingHeader("Transform"))
+		{
+			static float translateUI[2] = { 0.0f, 0.0f };
+			ImGui::InputFloat2("Translate", translateUI);
+			if (ImGui::Button("Translate curve"))
+			{
+				Matrix t = Matrix::Translate(translateUI[0], translateUI[1]);
+				for (int i = 0; i < selectedCurves.size(); i++)
+					curves[selectedCurves[i]].Transform(t);
+			}
+
+			ImGui::Text("");
+			static float rotateUI = 0.0f;
+			ImGui::InputFloat("Rotate", &rotateUI);
+			if (ImGui::Button("Rotate curve"))
+			{
+				Matrix t = Matrix::RotateZ(rotateUI);
+
+				for (int i = 0; i < selectedCurves.size(); i++)
+				{
+					float factor[2] = { 0.0f, 0.0f };
+					for (int j = 0; j < curves[selectedCurves[i]].getControlPoints().size(); j++)
+					{
+						factor[0] = factor[0] + curves[selectedCurves[i]].getControlPoints()[j].x;
+						factor[1] = factor[1] + curves[selectedCurves[i]].getControlPoints()[j].y;
+					}
+
+					factor[0] = factor[0] / curves[selectedCurves[i]].getControlPoints().size();
+					factor[1] = factor[1] / curves[selectedCurves[i]].getControlPoints().size();
+
+					Matrix z = Matrix::Translate(-factor[0], -factor[1]);
+					Matrix zBis = Matrix::Translate(factor[0], factor[1]);
+					curves[selectedCurves[i]].Transform(z);
+					curves[selectedCurves[i]].Transform(t);
+					curves[selectedCurves[i]].Transform(zBis);
+				}
+			}
+
+			ImGui::Text("");
+
+			//Scale
+			static float scaleUI = 0.0f;
+			ImGui::InputFloat("Scale", &scaleUI);
+			if (ImGui::Button("Scale curve"))
+			{
+				Matrix t = Matrix::Scale(scaleUI);
+				for (int i = 0; i < selectedCurves.size(); i++)
+					curves[selectedCurves[i]].Transform(t);
+			}
+		}
+
+		//Extrusion
+		if (ImGui::CollapsingHeader("Extrusion"))
+		{
+			ImGui::InputFloat("Height", &extrudeHeight);
+			ImGui::InputFloat("Scale ", &extrudeScale);
+			ImGui::InputFloat("Step ", &extrudeStep);
+			if (ImGui::Button("Extrude"))
+			{
+				if (selectedCurves.size() != 0)
+				{
+					sort(selectedCurves.begin(), selectedCurves.end());
+
+					for (int i = selectedCurves.size() - 1; i >= 0; i--)
+					{
+						meshes.push_back(curves[selectedCurves[i]].SimpleExtrude(extrudeHeight, extrudeScale, extrudeStep));
+						curves.erase(curves.begin() + selectedCurves[i]);
+					}
+
+					selectedCurves.clear();
+				}
+			}
+		}
+
+		//Revolution
+		if (ImGui::CollapsingHeader("Revolution"))
+		{
+			ImGui::InputFloat("Step", &revolutionStep);
+			if (ImGui::Button("Revolution"))
+			{
+				if (selectedCurves.size() != 0)
+				{
+					sort(selectedCurves.begin(), selectedCurves.end());
+
+					for (int i = selectedCurves.size() - 1; i >= 0; i--)
+					{
+						meshes.push_back(curves[selectedCurves[i]].Revolution(revolutionStep));
+						curves.erase(curves.begin() + selectedCurves[i]);
+					}
+
+					selectedCurves.clear();
+				}
+			}
+		}
+
+		//Generic extrusion 
+		if (ImGui::CollapsingHeader("Generic extrusion"))
+		{
+			if (ImGui::Button("Extrude"))
+			{
+				if (selectedCurves.size() == 2)
+				{
+					meshes.push_back(curves[selectedCurves[0]].GenericExtrusion(curves[selectedCurves[1]]));
 				}
 
 				selectedCurves.clear();
@@ -515,41 +525,188 @@ void displayGUI()
 		}
 	}
 
-	//Revolution
-	if (ImGui::CollapsingHeader("Revolution"))
-	{
-		ImGui::InputFloat("Step", &revolutionStep);
-		if (ImGui::Button("Revolution !"))
-		{
-			if (selectedCurves.size() != 0)
-			{
-				sort(selectedCurves.begin(), selectedCurves.end());
 
-				for (int i = selectedCurves.size() - 1; i >= 0; i--)
+	if (ImGui::CollapsingHeader("TODO"))
+	{
+		// facteur u
+		ImGui::Text(" ");
+		ImGui::Columns(1);
+		ImGui::Text("U factor :");
+		ImGui::SameLine();
+		ImGui::Text("%.2f", u);
+		ImGui::SameLine();
+		if (ImGui::Button("-##1"))
+		{
+			u = u - 0.01f;
+			if (u < 0.01)
+				u = 0.01;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("+##1"))
+		{
+			u = u + 0.01f;
+			if (u > 1)
+				u = 1;
+		}
+		//facteur v
+		ImGui::Text(" ");
+		ImGui::Columns(1);
+		ImGui::Text("V factor :");
+		ImGui::SameLine();
+		ImGui::Text("%.2f", v);
+		ImGui::SameLine();
+		if (ImGui::Button("-##2"))
+		{
+			v = v - 0.01f;
+			if (v < 0.01)
+				v = 0.01;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("+##2"))
+		{
+			v = v + 0.01f;
+			if (v > 1)
+				v = 1;
+		}
+		//iteration
+		ImGui::Text(" ");
+		ImGui::Columns(1);
+		ImGui::Text("Iteration :");
+		ImGui::SameLine();
+		ImGui::Text("%.2f", iteration);
+		ImGui::SameLine();
+		if (ImGui::Button("-##3"))
+		{
+			iteration = iteration - 1.f;
+			if (iteration < 0.f)
+				iteration = 0.;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("+##3"))
+		{
+			iteration = iteration + 1.f;
+			if (iteration > 10.f)
+				iteration = 10.f;
+		}
+
+		if (ImGui::Button("Close curve"))
+		{
+			if (curves.size() > 0)
+			{
+				for (int i = 0; i < selectedCurves.size(); i++)
 				{
-					meshes.push_back(curves[selectedCurves[i]].Revolution(revolutionStep));
-					curves.erase(curves.begin() + selectedCurves[i]);
+					std::vector<Vertex> tempCurve = curves[selectedCurves[i]].getCurvePoints();
+					tempCurve.push_back(tempCurve[0]);
+					curves[selectedCurves[i]].setCurvePoints(tempCurve);
+					curves[selectedCurves[i]].updateBuffers();
 				}
-
-				selectedCurves.clear();
 			}
-		}
-	}
 
-	//Generic extrusion 
-	if (ImGui::CollapsingHeader("Generic extrusion"))
-	{
-		if (ImGui::Button("Extrude !"))
-		{
-			if (selectedCurves.size() == 2)
+			if (vertices.size() > 2)
 			{
-				meshes.push_back(curves[selectedCurves[0]].GenericExtrusion(curves[selectedCurves[1]]));
+				vertices.push_back(vertices[0]);
+			}
+		}
+		ImGui::Text("");
+
+		if (ImGui::Button("Create TODO curve"))
+		{
+			if (vertices.size() > 2)
+			{
+				Curve c(vertices, u, v, iteration, choosedColor);
+				curves.push_back(c);
+				vertices.clear();
+			}
+		}
+
+		if (ImGui::CollapsingHeader("Coons surface"))
+		{
+			if (ImGui::Button("Create coons"))
+			{
+#if 0
+				std::vector<Vertex> pointsTop = {
+					Vertex(-0.5, 0.5, -0.5),
+					Vertex(0., 0.5, 0.),
+					Vertex(0.5, 0., 0.)
+				};
+
+				std::vector<Vertex> pointsDown = {
+					Vertex(-0.5, 0., 0.5),
+					Vertex(0., -0.5, 0.5),
+					Vertex(0.5, 0., 0.5)
+				};
+
+				std::vector<Vertex> pointsLeft = {
+					Vertex(-0.5, 0., 0.5),
+					Vertex(-0.5, 0.5, 0.2),
+					Vertex(-0.5, 0.5, -0.5)
+				};
+
+				std::vector<Vertex> pointsRight = {
+					Vertex(0.5, 0., 0.5),
+					Vertex(0., -0.5, 0.2),
+					Vertex(0.5, 0., 0.)
+				};
+#endif
+#if 1
+				std::vector<Vertex> pointsTop = {
+					Vertex(-0.5, 0.5, 0.),
+					Vertex(0., 0.5, 0.3),
+					Vertex(0.5, 0.5, 0.)
+				};
+
+				std::vector<Vertex> pointsDown = {
+					Vertex(-0.5, -0.5, 0.),
+					Vertex(0., -0.5, 0.3),
+					Vertex(0.5, -0.5, 0.)
+				};
+
+				std::vector<Vertex> pointsLeft = {
+					Vertex(-0.5, -0.5, 0.),
+					Vertex(-0.5, 0., 0.3),
+					Vertex(-0.5, 0.5, 0.)
+				};
+
+				std::vector<Vertex> pointsRight = {
+					Vertex(0.5, -0.5, 0.),
+					Vertex(0.5, 0., 0.3),
+					Vertex(0.5, 0.5, 0.)
+				};
+#endif
+
+				curves.push_back(Curve(pointsTop, u, v, iteration, Color(0, 0, 0)));
+				curves.push_back(Curve(pointsDown, u, v, iteration, Color(0, 0, 0)));
+				curves.push_back(Curve(pointsLeft, u, v, iteration, Color(0, 0, 0)));
+				curves.push_back(Curve(pointsRight, u, v, iteration, Color(0, 0, 0)));
+
+				meshes.push_back(generateCoon(curves, u, v));
 			}
 
-			selectedCurves.clear();
+			ImGui::Text(" ");
+			ImGui::Columns(1);
+			ImGui::Text("Etape coons :");
+			ImGui::SameLine();
+			ImGui::Text("%d", etape);
+			ImGui::SameLine();
+			if (ImGui::Button("-##4"))
+			{
+				etape = etape - 1;
+				if (iteration < 0)
+					iteration = 0;
+				meshes.clear();
+				meshes.push_back(generateCoon(curves, u, v));
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("+##4"))
+			{
+				etape = etape + 1;
+				if (etape > 3)
+					etape = 3;
+				meshes.clear();
+				meshes.push_back(generateCoon(curves, u, v));
+			}
 		}
 	}
-	*/
 	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("            Visualizer    ");
@@ -573,94 +730,6 @@ void displayGUI()
 		enable3DViewport = !enable3DViewport;
 		updateVBO();
 	}
-
-	if (ImGui::Button("Coons"))
-	{
-#if 0
-		std::vector<Vertex> pointsTop = {
-			Vertex(-0.5, 0.5, -0.5),
-			Vertex(0., 0.5, 0.),
-			Vertex(0.5, 0., 0.)
-		};
-
-		std::vector<Vertex> pointsDown = {
-			Vertex(-0.5, 0., 0.5),
-			Vertex(0., -0.5, 0.5),
-			Vertex(0.5, 0., 0.5)
-		};
-
-		std::vector<Vertex> pointsLeft = {
-			Vertex(-0.5, 0., 0.5),
-			Vertex(-0.5, 0.5, 0.2),
-			Vertex(-0.5, 0.5, -0.5)
-		};
-
-		std::vector<Vertex> pointsRight = {
-			Vertex(0.5, 0., 0.5),
-			Vertex(0., -0.5, 0.2),
-			Vertex(0.5, 0., 0.)
-		};
-#endif
-#if 1
-		std::vector<Vertex> pointsTop = {
-			Vertex(-0.5, 0.5, 0.),
-			Vertex(0., 0.5, 0.3),
-			Vertex(0.5, 0.5, 0.)
-		};
-
-		std::vector<Vertex> pointsDown = {
-			Vertex(-0.5, -0.5, 0.),
-			Vertex(0., -0.5, 0.3),
-			Vertex(0.5, -0.5, 0.)
-		};
-
-		std::vector<Vertex> pointsLeft = {
-			Vertex(-0.5, -0.5, 0.),
-			Vertex(-0.5, 0., 0.3),
-			Vertex(-0.5, 0.5, 0.)
-		};
-
-		std::vector<Vertex> pointsRight = {
-			Vertex(0.5, -0.5, 0.),
-			Vertex(0.5, 0., 0.3),
-			Vertex(0.5, 0.5, 0.)
-		};
-#endif
-
-		curves.push_back(Curve(pointsTop, u, v, iteration, Color(0, 0, 0)));
-		curves.push_back(Curve(pointsDown, u, v, iteration, Color(0, 0, 0)));
-		curves.push_back(Curve(pointsLeft, u, v, iteration, Color(0, 0, 0)));
-		curves.push_back(Curve(pointsRight,u, v, iteration, Color(0, 0, 0)));
-
-		meshes.push_back(generateCoon(curves, u, v));
-	}
-	ImGui::Text(" ");
-	ImGui::Columns(1);
-	ImGui::Text("Etape coons :");
-	ImGui::SameLine();
-	ImGui::Text("%d", etape);
-	ImGui::SameLine();
-	if (ImGui::Button("-##4"))
-	{
-		etape = etape - 1;
-		if (iteration < 0)
-			iteration = 0;
-		meshes.clear();
-		meshes.push_back(generateCoon(curves, u, v));
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("+##4"))
-	{
-		etape = etape + 1;
-		if (etape > 3)
-			etape = 3;
-		meshes.clear();
-		meshes.push_back(generateCoon(curves, u, v));
-	}
-
-	ImGui::Text("");
-	ImGui::Separator();
-	ImGui::Text("");
 
 	ImGui::End();
 
