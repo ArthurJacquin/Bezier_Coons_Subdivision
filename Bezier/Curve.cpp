@@ -43,7 +43,7 @@ Curve::Curve(vector<Vertex> controlPoints, float s, Color color)
 {
 	step = s;
 
-	createBeziers(curvePoints, controlPoints, s, color);
+	createBeziers(curvePoints, controlPoints, step, color);
 	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
 	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
 }

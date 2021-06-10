@@ -22,7 +22,9 @@ class Curve
 public:
 	Curve();
 	Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color col);
+	//Chaikin curves
 	Curve(vector<Vertex> controlPoints, float u, float v, float iteration, Color color);
+	//Beziers curves
 	Curve::Curve(vector<Vertex> controlPoints, float s, Color color);
 
 	void createBeziers(std::vector<Vertex>& curvePoints, std::vector<Vertex> controlPoints, float step, Color choosedColor);

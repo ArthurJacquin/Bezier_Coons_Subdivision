@@ -59,7 +59,7 @@ int height = 800;
 float u = 1.0f / 3.0f;
 float v = 1.0f / 4.0f;
 float iteration = 1.0;
-float step;
+float step = 1.0;
 
 float extrudeHeight = 2;
 float extrudeScale = 0.5f;
@@ -338,20 +338,20 @@ void displayGUI()
 		ImGui::Columns(1);
 		ImGui::Text("step :");
 		ImGui::SameLine();
-		ImGui::Text("%.2f", step);
+		ImGui::Text("%0.1f", step);
 		ImGui::SameLine();
 		if (ImGui::Button("-"))
 		{
-			step = step - 0.01f;
-			if (step < 0.01)
-				step = 0.01;
+			step = step - 0.5f;
+			if (step < 0.00)
+				step = 0.00;
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("+"))
 		{
-			step = step + 0.01f;
-			if (step > 1)
-				step = 1;
+			step = step + 0.5f;
+			if (step > 10)
+				step = 10;
 		}
 
 	
@@ -526,7 +526,7 @@ void displayGUI()
 	}
 
 
-	if (ImGui::CollapsingHeader("TODO"))
+	if (ImGui::CollapsingHeader("Chaikin curves"))
 	{
 		// facteur u
 		ImGui::Text(" ");
@@ -609,7 +609,7 @@ void displayGUI()
 		}
 		ImGui::Text("");
 
-		if (ImGui::Button("Create TODO curve"))
+		if (ImGui::Button("Create chaikin curve"))
 		{
 			if (vertices.size() > 2)
 			{
@@ -621,7 +621,7 @@ void displayGUI()
 
 		if (ImGui::CollapsingHeader("Coons surface"))
 		{
-			if (ImGui::Button("Create coons"))
+			if (ImGui::Button("Create surface"))
 			{
 #if 0
 				std::vector<Vertex> pointsTop = {
