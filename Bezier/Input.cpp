@@ -176,7 +176,8 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 	//Clear
 	if (key == GLFW_KEY_BACKSPACE && action == GLFW_PRESS)
 	{
-		curves[selectedCurveId].setControlPointColor(selectedPointId, Color(1.0f, 1.0f, 1.0f));
+		if(selectedCurveId != NULL)
+			curves[selectedCurveId].setControlPointColor(selectedPointId, Color(1.0f, 1.0f, 1.0f));
 		selectedCurveId = NULL;
 		selectedPointId = NULL;
 		
@@ -184,6 +185,9 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 			curves[selectedCurves[i]].setCurveColor(choosedColor);
 		
 		selectedCurves.clear();
+
+		meshes.clear();
+		faces.clear();
 	}
 
 	if (key == GLFW_KEY_T && action == GLFW_PRESS)

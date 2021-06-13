@@ -50,7 +50,8 @@ Vertex::Vertex(Vec3 pos)
 	z = pos.z;
 }
 
-Vertex::Vertex(Vec3 pos, Color col)
+Vertex::Vertex(Vec3 pos, Color col, Vertex* parent)
+	: parent(parent)
 {
 	x = pos.x;
 	y = pos.y;
@@ -78,6 +79,11 @@ void Vertex::setPositionUsingMouse(double x, double y)
 void Vertex::setNormal(Vec3 n)
 {
 	normal = n;
+}
+
+bool Vertex::HaveTheSameParent(Vertex v)
+{
+	return v.parent == parent;
 }
 
 std::ostream& operator<<(std::ostream& os, const Vertex& obj)

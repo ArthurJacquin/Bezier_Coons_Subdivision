@@ -10,13 +10,14 @@ struct Vertex
 	float r, g, b;
 	Vec3 normal;
 	std::vector<Vertex*> neighborVertices;
+	Vertex* parent;
 
 	Vertex();
 	Vertex(Color col);
 	Vertex(double x, double y, double z, float r, float g, float b);
 	Vertex(double x, double y, double z);
 	Vertex(Vec3 pos);
-	Vertex(Vec3 pos, Color col);
+	Vertex(Vec3 pos, Color col, Vertex* parent = nullptr);
 
 	friend std::ostream& operator <<(std::ostream&, const Vertex& obj);
 	bool operator!=(const Vertex v) { return x != v.x || y != v.y || z != v.z || r != v.r || g != v.g || b != v.b; }
@@ -37,4 +38,5 @@ struct Vertex
 	Color GetColor()const { return Color(r, g, b); }
 	std::vector<Vertex*> getNeighborVertices() const { return neighborVertices; }
 	void addNeighborVertices(Vertex* v) { neighborVertices.push_back(v); }
+	bool HaveTheSameParent(Vertex v);
 };

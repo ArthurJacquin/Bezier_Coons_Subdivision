@@ -10,22 +10,43 @@ Face::Face()
 	VBO = 0;
 }
 
-Face::Face(vector<Vertex> verts)
-	: vertices(verts)
+Face::Face(vector<Vertex> verts, Color col, Face* p)
+	: parent(p)
 {
 	indices = {
 		0, 1, 2,
 		0, 2, 3
 	};
 	
-	edges = {
-		make_pair(verts[0], verts[1]),
-		make_pair(verts[1], verts[2]),
-		make_pair(verts[2], verts[3]),
-		make_pair(verts[3], verts[0]),
-	};
+	if (p == nullptr) 
+	{
+		vertices = verts;
+
+		edges = {
+			Edge(verts[0], verts[1]),
+			Edge(verts[1], verts[2]),
+			Edge(verts[2], verts[3]),
+			Edge(verts[3], verts[0])
+		};
+	}
+	else 
+	{
+		vertices = verts;
+		for (size_t i = 0; i < verts.size(); i++)
+		{
+			vertices[i].parent = &p->vertices[i];
+		}
+
+		edges = {
+			Edge(verts[0], verts[1], &p->edges[0]),
+			Edge(verts[1], verts[2], &p->edges[1]),
+			Edge(verts[2], verts[3], &p->edges[2]),
+			Edge(verts[3], verts[0], &p->edges[3])
+		};
+	}
 
 	CalculateNormals();
+	SetColor(col);
 	updateBuffers();
 }
 

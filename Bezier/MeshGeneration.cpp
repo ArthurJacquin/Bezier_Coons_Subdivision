@@ -19,7 +19,7 @@ std::vector<Face> GenerateCubeFaces()
 		Face({p0, p1, p2, p3}), //Front
 		Face({p5, p4, p7, p6}), //Back
 		Face({p3, p2, p6, p7}),	//Top
-		Face({p5, p4, p0, p1}),	//Bottom
+		Face({p4, p5, p1, p0}),	//Bottom
 		Face({p4, p0, p3, p7}),	//Left
 		Face({p1, p5, p6, p2}),	//Right
 	};
