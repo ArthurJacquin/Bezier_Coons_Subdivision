@@ -17,6 +17,7 @@ public:
 
 	void CalculateNormals();
 	void updateBuffers();
+	void SetColor(Color col);
 
 	vector<Vertex>& getVertices() { return vertices; }
 	vector<uint32_t>& getIndices() { return indices; }

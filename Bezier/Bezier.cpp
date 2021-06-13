@@ -1,3 +1,5 @@
+#pragma region INCLUDES
+
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -34,9 +36,13 @@
 #include "Color.h"
 #include "Coons.h"
 #include "MeshGeneration.h"
-
+#include "Subdivision.h"
 
 const char* glsl_version = "#version 150";
+
+#pragma endregion
+
+#pragma region GLOBAL_VARIABLES
 
 //Variables globales
 GLShader BasicShader;
@@ -82,6 +88,8 @@ int projectionMatrixLocation;
 int cameraPos_location;
 
 extern int etape;
+
+#pragma endregion
 
 bool Initialise() {
 
@@ -734,6 +742,11 @@ void displayGUI()
 		{
 			faces = GenerateCubeFaces();
 		}
+
+		if (ImGui::Button("Doo-Sabin (D)"))
+		{
+			faces = DooSabin(faces);
+		}
 	}
 
 	ImGui::Text("");
@@ -741,12 +754,12 @@ void displayGUI()
 	ImGui::Text("            Visualizer    ");
 	ImGui::Text("");
 
-	if (ImGui::Button("Wireframe"))
+	if (ImGui::Button("Wireframe (W)"))
 	{
 		enableWireframe = !enableWireframe;
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Normales"))
+	if (ImGui::Button("Normales (N)"))
 	{
 		enableNormal = !enableNormal;
 	}
@@ -754,7 +767,7 @@ void displayGUI()
 	ImGui::Separator();
 	ImGui::Text("");
 	//3D viewport 
-	if (ImGui::Button("3D Viewport"))
+	if (ImGui::Button("3D Viewport (V)"))
 	{
 		enable3DViewport = !enable3DViewport;
 		updateVBO();

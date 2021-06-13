@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "Matrix.h"
 #include "Coons.h"
+#include "Subdivision.h"
 #include <iostream>
 #include <vector>
 
@@ -12,6 +13,7 @@ extern std::vector<Vertex> vertices;
 extern std::vector<Curve> curves;
 extern std::vector<int> selectedCurves;
 extern std::vector<Mesh> meshes;
+extern std::vector<Face> faces;
 
 extern Color choosedColor;
 extern float u;
@@ -204,6 +206,12 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 	if (key == GLFW_KEY_N && action == GLFW_PRESS)
 	{
 		enableNormal = !enableNormal;
+	}
+
+	//Subdivision
+	if (key == GLFW_KEY_D && action == GLFW_PRESS)
+	{
+		faces = DooSabin(faces);
 	}
 
 	//Etape

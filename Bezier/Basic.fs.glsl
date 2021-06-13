@@ -14,8 +14,6 @@ void main(void)
 		gl_FragColor = vec4(abs(v_normal), 1.0);
 	else if (u_enable3DViewport)
 	{
-		vec4 fragColor = vec4(0.5, 0.5, 0.5, 1);
-
 		//Light
 		vec3 lightPos = vec3(1, -1, 0);
 		vec3 dirToLight = normalize(lightPos - v_fragPos);
@@ -33,7 +31,7 @@ void main(void)
 		float spec = max(pow(dot(dirToCam, H), 2.0), 0.0);
 		vec4 specularColor = vec4(spec, spec, spec, 1.0);
 
-		gl_FragColor = (ambient + diffuseColor + specularColor) * fragColor;
+		gl_FragColor = (ambient + diffuseColor + specularColor) * v_color;
 	}
 	else
 		gl_FragColor = v_color;

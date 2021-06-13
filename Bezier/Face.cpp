@@ -14,15 +14,15 @@ Face::Face(vector<Vertex> verts)
 	: vertices(verts)
 {
 	indices = {
-		0, 3, 2,
-		0, 1, 3
+		0, 1, 2,
+		0, 2, 3
 	};
 	
 	edges = {
 		make_pair(verts[0], verts[1]),
-		make_pair(verts[1], verts[3]),
-		make_pair(verts[3], verts[2]),
-		make_pair(verts[2], verts[0]),
+		make_pair(verts[1], verts[2]),
+		make_pair(verts[2], verts[3]),
+		make_pair(verts[3], verts[0]),
 	};
 
 	CalculateNormals();
@@ -63,4 +63,12 @@ void Face::CalculateNormals()
 void Face::updateBuffers()
 {
 	VBO = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
+}
+
+void Face::SetColor(Color col)
+{
+	for (size_t i = 0; i < vertices.size(); i++)
+	{
+		vertices[i].setColor(col);
+	}
 }

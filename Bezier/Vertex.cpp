@@ -50,6 +50,17 @@ Vertex::Vertex(Vec3 pos)
 	z = pos.z;
 }
 
+Vertex::Vertex(Vec3 pos, Color col)
+{
+	x = pos.x;
+	y = pos.y;
+	z = pos.z;
+
+	r = col.x;
+	g = col.y;
+	b = col.z;
+}
+
 void Vertex::setColor(Color color)
 {
 	this->r = color.x;

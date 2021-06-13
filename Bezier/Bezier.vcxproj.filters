@@ -13,6 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DataStructure">
+      <UniqueIdentifier>{6267c88f-dcec-4348-ae17-e27d63b6bd03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Algos">
+      <UniqueIdentifier>{d0edb066-a083-416c-babc-62884e2d265e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\OpenGL">
+      <UniqueIdentifier>{cea2137d-5f75-4842-beec-9dc82ce2665a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\DataStructure">
+      <UniqueIdentifier>{e1a2bda7-03a8-48ee-a6b2-738a7d7008b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\OpenGL">
+      <UniqueIdentifier>{b9a65ab2-bdfa-41e3-b83a-51a4e9039a13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Algos">
+      <UniqueIdentifier>{97631576-0e81-4c9c-b389-a0898d9eb40a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -21,82 +39,88 @@
     <ClInclude Include="targetver.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\GLShader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Color.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\DataStructure</Filter>
     </ClInclude>
     <ClInclude Include="Curve.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLcore.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Matrix.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec3.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Coons.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshGeneration.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\DataStructure</Filter>
     </ClInclude>
     <ClInclude Include="Face.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Fichiers d%27en-tête\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3.h">
+      <Filter>Fichiers d%27en-tête\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Fichiers d%27en-tête\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Coons.h">
+      <Filter>Fichiers d%27en-tête\Algos</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Fichiers d%27en-tête\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshGeneration.h">
+      <Filter>Fichiers d%27en-tête\Algos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\GLShader.h">
+      <Filter>Fichiers d%27en-tête\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Fichiers d%27en-tête\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLcore.h">
+      <Filter>Fichiers d%27en-tête\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Subdivision.h">
+      <Filter>Fichiers d%27en-tête\Algos</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\GLShader.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Bezier.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Color.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Curve.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGLcore.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Matrix.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Coons.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshGeneration.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\DataStructure</Filter>
     </ClCompile>
     <ClCompile Include="Face.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.cpp">
+      <Filter>Fichiers sources\DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Fichiers sources\DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>Fichiers sources\DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\GLShader.cpp">
+      <Filter>Fichiers sources\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGLcore.cpp">
+      <Filter>Fichiers sources\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Fichiers sources\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Coons.cpp">
+      <Filter>Fichiers sources\Algos</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshGeneration.cpp">
+      <Filter>Fichiers sources\Algos</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Fichiers sources\DataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Subdivision.cpp">
+      <Filter>Fichiers sources\Algos</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
