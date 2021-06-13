@@ -6,7 +6,7 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 {
 	vector<Face> outputFaces;
 
-	//Generatation des faces correspondantes aux existantes
+	//Generatation des faces correspondantes aux existantes (F-faces)
 	for (size_t f = 0; f < inputFaces.size(); f++)
 	{
 		vector<Vertex> pts = inputFaces[f].getVertices();
@@ -37,7 +37,7 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 		outputFaces.push_back(Face(newPts, Color(1, 0, 0), &inputFaces[f]));
 	}
 
-	//Generation des nouvelles faces
+	//Generation des faces correspondants aux edges(E-faces)
 	vector<Face> newFaces;
 	int Nbface = outputFaces.size();
 	for (size_t i = 0; i < Nbface; i++)
@@ -63,8 +63,9 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 					if (e0 == e1 || e1->parent == nullptr)
 						continue;
 
-					if (e0->HavetheSameParent(*e1))
+					if (e0->HavetheSameParent(*e1)) //Si elles sont issues du meme edge
 					{
+						//On vérifie le sens des edges
 						if((e0->p0.GetPos() - e0->p1.GetPos()).dot(e1->p0.GetPos() - e1->p1.GetPos()) < 0)
 							newFaces.push_back(Face({ e0->p0, e0->p1, e1->p0, e1->p1 }, Color(0, 1, 0)));
 						else
@@ -83,6 +84,50 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 		}
 	}
 
+	//Generation des faces correspondantes aux vertices (V-Faces)
+	for (size_t i = 0; i < Nbface; i++)
+	{
+		Face* f0 = &outputFaces[i];
+		for (size_t j = 0; j < outputFaces[i].getVertices().size(); j++)//Pour chaque edge
+		{
+			Vertex* v0 = &f0->getVertices()[j];
+			if (v0->parent == nullptr)
+				continue;
+
+			vector<Vertex*> ptsFound;
+			ptsFound.push_back(v0);
+			//On cherche le vertex qui à le meme parent (pas besoin de repasser par les faces deja traitées)
+			for (size_t k = i; k < Nbface; k++)
+			{
+				Face* f1 = &outputFaces[k];
+				if (f0 == f1)
+					continue;
+
+				for (size_t l = 0; l < outputFaces[k].getVertices().size(); l++)
+				{
+					Vertex* v1 = &f1->getVertices()[l];
+					if (v0 == v1 || v1->parent == nullptr)
+						continue;
+
+					if (v0->HaveTheSameParent(*v1)) //Si elles sont issues du meme vertex
+					{
+						ptsFound.push_back(v1);
+						break;
+					}
+				}
+			}
+
+			//On enleve le parent des points traités
+			for (size_t k = 0; k < ptsFound.size(); k++)
+			{
+				ptsFound[k]->parent = nullptr;
+			}
+
+			newFaces.push_back(Face({ *(ptsFound[0]), *(ptsFound[1]), *(ptsFound[2]) }, Color(0, 0, 1)));
+		}
+	}
+
+	//Ajout des nouvelles faces
 	for (size_t i = 0; i < newFaces.size(); i++)
 	{
 		outputFaces.push_back(newFaces[i]);

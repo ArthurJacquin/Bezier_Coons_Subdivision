@@ -13,21 +13,27 @@ Face::Face()
 Face::Face(vector<Vertex> verts, Color col, Face* p)
 	: parent(p)
 {
-	indices = {
-		0, 1, 2,
-		0, 2, 3
-	};
-	
+	if (verts.size() == 3)
+	{
+		indices = {
+			0, 1, 2,
+		};
+	}
+	else {
+		indices = {
+			0, 1, 2,
+			0, 2, 3
+		};
+	}
+
 	if (p == nullptr) 
 	{
 		vertices = verts;
 
-		edges = {
-			Edge(verts[0], verts[1]),
-			Edge(verts[1], verts[2]),
-			Edge(verts[2], verts[3]),
-			Edge(verts[3], verts[0])
-		};
+		for (size_t i = 0; i < verts.size(); i++)
+		{
+			edges.push_back(Edge(verts[i], verts[(i + 1) % verts.size()]));
+		}
 	}
 	else 
 	{
@@ -37,12 +43,10 @@ Face::Face(vector<Vertex> verts, Color col, Face* p)
 			vertices[i].parent = &p->vertices[i];
 		}
 
-		edges = {
-			Edge(verts[0], verts[1], &p->edges[0]),
-			Edge(verts[1], verts[2], &p->edges[1]),
-			Edge(verts[2], verts[3], &p->edges[2]),
-			Edge(verts[3], verts[0], &p->edges[3])
-		};
+		for (size_t i = 0; i < verts.size(); i++)
+		{
+			edges.push_back(Edge(verts[i], verts[(i + 1) % verts.size()], &p->edges[i]));
+		}
 	}
 
 	CalculateNormals();

@@ -81,9 +81,9 @@ void Vertex::setNormal(Vec3 n)
 	normal = n;
 }
 
-bool Vertex::HaveTheSameParent(Vertex v)
+bool Vertex::HaveTheSameParent(const Vertex& v)
 {
-	return v.parent == parent;
+	return *v.parent == *parent;
 }
 
 std::ostream& operator<<(std::ostream& os, const Vertex& obj)
