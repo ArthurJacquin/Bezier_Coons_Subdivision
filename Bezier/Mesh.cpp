@@ -18,6 +18,14 @@ Mesh::Mesh(std::vector<Vertex> v, int r, int c)
 	updateBuffers();
 }
 
+Mesh::Mesh(std::vector<Vertex> verts, std::vector<uint32_t> ind)
+{
+	vertices = verts;
+	indices = ind;
+	CalculateNormals();
+	updateBuffers();
+}
+
 void Mesh::CalculateIndices(int rows, int columns)
 {	
 	int nbIndices = (rows * 2 - 2) * columns * 3;

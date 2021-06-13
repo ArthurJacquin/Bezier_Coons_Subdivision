@@ -15,6 +15,7 @@ struct Mesh
 
 	Mesh();
 	Mesh(std::vector<Vertex> v, int r, int c);
+	Mesh(std::vector<Vertex> verts, std::vector<uint32_t> ind);
 
 	void CalculateIndices(int rows, int cols);
 	void CalculateNormals();

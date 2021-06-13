@@ -33,6 +33,7 @@
 
 #include "Color.h"
 #include "Coons.h"
+#include "MeshGeneration.h"
 
 const char* glsl_version = "#version 150";
 
@@ -707,6 +708,15 @@ void displayGUI()
 			}
 		}
 	}
+
+	if (ImGui::CollapsingHeader("Subdivision"))
+	{
+		if (ImGui::Button("Create Cube"))
+		{
+			meshes.push_back(GenerateCube());
+		}
+	}
+
 	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("            Visualizer    ");
