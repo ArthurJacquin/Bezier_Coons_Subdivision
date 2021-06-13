@@ -1,49 +1,27 @@
 #include "MeshGeneration.h"
 
-Mesh GenerateCube()
+std::vector<Face> GenerateCubeFaces()
 {
-	std::vector<Vertex> vertices = {
 
-		//Front
-		Vertex(-0.5f, -0.5f, -0.5f), 
-		Vertex(0.5f, -0.5f, -0.5f),
-		Vertex(-0.5f, 0.5f, -0.5f),
-		Vertex(0.5f, 0.5f, -0.5f),
+	//Front
+	Vertex p0(-0.5f, -0.5f, -0.5f);
+	Vertex p1(0.5f, -0.5f, -0.5f);
+	Vertex p2(-0.5f, 0.5f, -0.5f);
+	Vertex p3(0.5f, 0.5f, -0.5f);
 
-		//Back
-		Vertex(-0.5f, -0.5f, 0.5f),
-		Vertex(0.5f, -0.5f, 0.5f),
-		Vertex(-0.5f, 0.5f, 0.5f),
-		Vertex(0.5f, 0.5f, 0.5f),
+	//Back
+	Vertex p4(-0.5f, -0.5f, 0.5f);
+	Vertex p5(0.5f, -0.5f, 0.5f);
+	Vertex p6(-0.5f, 0.5f, 0.5f);
+	Vertex p7(0.5f, 0.5f, 0.5f);
+
+	return {
+
+		Face({p0, p1, p2, p3}), //Front
+		Face({p4, p5, p6, p7}), //Back
+		Face({p2, p3, p6, p7}),	//Top
+		Face({p4, p5, p0, p1}),	//Bottom
+		Face({p6, p2, p4, p0}),	//Left
+		Face({p3, p7, p1, p5}),	//Right
 	};
-
-	std::vector<uint32_t> indices = {
-
-		//Front
-		0, 1, 3,
-		0, 3, 2,
-
-		//Top
-		2, 3, 7,
-		2, 7, 6,
-
-		//Back
-		6, 7, 5,
-		6, 5, 4,
-
-		//Bottom
-		4, 5, 0,
-		0, 1, 5,
-
-		//Left
-		4, 2, 6,
-		4, 0, 2,
-
-		//Right
-		3, 1, 7,
-		7, 1, 5
-
-	};
-
-	return Mesh(vertices, indices);
 }

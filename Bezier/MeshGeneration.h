@@ -1,4 +1,4 @@
 #pragma once
-#include "Mesh.h"
+#include "Face.h"
 
-Mesh GenerateCube();
+std::vector<Face> GenerateCubeFaces();

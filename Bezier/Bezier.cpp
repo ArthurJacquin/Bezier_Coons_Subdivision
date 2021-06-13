@@ -35,6 +35,7 @@
 #include "Coons.h"
 #include "MeshGeneration.h"
 
+
 const char* glsl_version = "#version 150";
 
 //Variables globales
@@ -47,6 +48,8 @@ Input input;
 std::vector<Vertex> vertices;
 std::vector<Curve> curves;
 std::vector<Mesh> meshes;
+std::vector<Face> faces;
+
 int totalSize = 0;
 
 bool movingPoint;
@@ -236,6 +239,22 @@ void Display(GLFWwindow* window)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		glDrawElements(GL_TRIANGLES, meshes[i].getIndices().size(), GL_UNSIGNED_INT, meshes[i].getIndices().data());
+	}
+
+	//Draw faces
+	for (int i = 0; i < faces.size(); ++i)
+	{
+		VBOCurrent = faces[i].getVBO();
+		updateVBO();
+
+		glCullFace(GL_FRONT_AND_BACK);
+
+		if (enableWireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		else
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		glDrawElements(GL_TRIANGLES, faces[i].getIndices().size(), GL_UNSIGNED_INT, faces[i].getIndices().data());
 	}
 
 	//Désactivation des buffers
@@ -713,7 +732,7 @@ void displayGUI()
 	{
 		if (ImGui::Button("Create Cube"))
 		{
-			meshes.push_back(GenerateCube());
+			faces = GenerateCubeFaces();
 		}
 	}
 
