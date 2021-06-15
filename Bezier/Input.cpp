@@ -217,11 +217,19 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 	{
 		faces = DooSabin(faces);
 	}
-
 	if (key == GLFW_KEY_C && action == GLFW_PRESS)
 	{
 		faces = CatmullClark(faces);
 	}
+	if (key == GLFW_KEY_L && action == GLFW_PRESS)
+	{
+		faces = LoopAlgo(faces);
+	}
+	if (key == GLFW_KEY_K && action == GLFW_PRESS)
+	{
+		faces = Kobelt(faces);
+	}
+
 	//Etape
 	if (key == GLFW_KEY_0 && action == GLFW_PRESS)
 	{

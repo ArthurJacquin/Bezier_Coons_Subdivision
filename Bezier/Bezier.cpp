@@ -757,6 +757,16 @@ void displayGUI()
 		{
 			faces = CatmullClark(faces);
 		}
+
+		if (ImGui::Button("Loop (L)"))
+		{
+			faces = LoopAlgo(faces);
+		}
+
+		if (ImGui::Button("Kobelt (K)"))
+		{
+			faces = Kobelt(faces);
+		}
 	}
 
 	ImGui::Text("");
