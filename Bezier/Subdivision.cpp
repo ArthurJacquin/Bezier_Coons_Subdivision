@@ -157,10 +157,10 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 	//compute edge point
 	for (size_t i = 0; i < inputFaces.size(); i++)
 	{
-		Vertex averageEdgePoint;
 		vector<Face> nFaces;
 		for (size_t j = 0; j < inputFaces[i].getEdges().size(); j++)
 		{
+			Vertex averageEdgePoint;
 			nFaces = getNeighborFaces(inputFaces, inputFaces[i].getEdges()[j]);
 			for (size_t f = 0; f < nFaces.size(); f++)
 			{
@@ -179,7 +179,7 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 		{
 			vector<Face> faces;
 			vector<Edge*> edges;
-			getNeighborVertex(faces, edges, inputFaces[i].getVertices()[v]);
+			getNeighborVertex(faces, edges, inputFaces, inputFaces[i].getVertices()[v]);
 			Vertex Q;
 			Vertex R;
 			int n = edges.size();
@@ -198,7 +198,8 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 
 			R = R / edges.size();
 
-			inputFaces[i].getVertices()[v]->vPrime = new Vertex( (Q * 1 / n) + (R * 2 / n) + (*inputFaces[i].getVertices()[v] * (n - 3) / n) );
+			Vertex* newPt = new Vertex((Q * 1 / n) + (R * 2 / n) + (*inputFaces[i].getVertices()[v] * (n - 3) / n));
+			inputFaces[i].getVertices()[v]->vPrime = newPt;
 		}
 	}
 
@@ -207,8 +208,12 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 	{
 		for (size_t e = 0; e < inputFaces[i].getEdges().size(); e++)
 		{
+			float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+			float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+			float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
 			Face newFace({ inputFaces[i].getFacePoint(), inputFaces[i].getEdges()[(e + 1) % inputFaces[i].getEdges().size()]->edgePoint,
-							inputFaces[i].getEdges()[e]->p1->vPrime, inputFaces[i].getEdges()[e]->edgePoint });
+							inputFaces[i].getEdges()[e]->p1->vPrime, inputFaces[i].getEdges()[e]->edgePoint }, Color(r, g, b));
 			catFaces.push_back(newFace);
 		}
 	}
@@ -235,24 +240,24 @@ vector<Face> getNeighborFaces(vector<Face> face, Edge* edge)
 	return neighborFaces;
 }
 
-void getNeighborVertex(vector<Face>& faces, vector<Edge*>& edges, Vertex* v)
+void getNeighborVertex(vector<Face>& faces, vector<Edge*>& edges, const vector<Face>& inputFaces, Vertex* v)
 {
-	for (size_t f = 0; f < faces.size(); f++)
+	for (size_t f = 0; f < inputFaces.size(); f++)
 	{
 		bool inFaces = false;
 
-		for (size_t e = 0; e < faces[f].getEdges().size(); e++)
+		for (size_t e = 0; e < inputFaces[f].getEdges().size(); e++)
 		{
-			if (v == faces[f].getEdges()[e]->p0 || v == faces[f].getEdges()[e]->p1)
+			if (v == inputFaces[f].getEdges()[e]->p0 || v == inputFaces[f].getEdges()[e]->p1)
 			{
-				edges.push_back(faces[f].getEdges()[e]);
+				edges.push_back(inputFaces[f].getEdges()[e]);
 				inFaces = true;
 			}
 		}
 
 		if (inFaces == true)
 		{
-			faces.push_back(faces[f]);
+			faces.push_back(inputFaces[f]);
 		}
 
 	}
