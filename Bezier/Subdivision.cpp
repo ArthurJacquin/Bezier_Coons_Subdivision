@@ -265,3 +265,31 @@ void getNeighborVertex(vector<Face>& faces, vector<Edge*>& edges, const vector<F
 		}
 	}
 }
+
+vector<Face> Kobelt(vector<Face> inputFaces)
+{
+	vector<Face> outputFaces;
+
+	//Calcul des centres
+	for (size_t i = 0; i < inputFaces.size(); i++)
+	{
+		Face face = inputFaces[i];
+		int N = face.getVertices().size();
+		Vertex center;
+		for (size_t j = 0; j < N; j++)
+		{
+			center += *face.getVertices()[i];
+		}
+		center /= N;
+
+		//Connection aux vertex du triangle
+		for (size_t j = 0; j < N; j++)
+		{
+			outputFaces.push_back(Face({ face.getVertices()[j], face.getVertices()[(j + 1) % N], &center }, Color(1, 0, 0));
+		}
+
+	}
+
+
+	return outputFaces;
+}
