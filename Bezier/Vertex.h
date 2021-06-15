@@ -30,8 +30,8 @@ struct Vertex
 	Vertex& operator=(Vertex v) { x = v.x; y = v.y; z = v.z; r = v.r; g = v.g; b = v.b; normal = v.normal; parent = v.parent; vPrime = v.vPrime; return *this; }
 	Vertex& operator+=(const Vertex& v) { x += v.x; y += v.y; z += v.z; return *this; }
 	Vertex& operator/=(const float v) { x /= v; y /= v; z /= v; return *this; }
-	Vertex& operator*(int i) { x = x * i; y = y * i; z = z * i; return *this; }
-	Vertex& operator/(float i) { x = x / i; y = y / i; z = z / i; return *this; }
+	Vertex operator*(int i) const { return Vertex(x * i, y * i, z * i); }
+	Vertex operator/(float i) const { return Vertex(x / i, y / i, z / i); }
 	Vertex operator+(const Vec3& v) const { return Vertex(x + v.x, y + v.y, z + v.z); }
 	Vertex operator+(const Vertex& v) const { return Vertex(x + v.x, y + v.y, z + v.z); }
 	Vertex operator-(const Vec3& v) const { return Vertex(x - v.x, y - v.y, z - v.z); }
