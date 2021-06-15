@@ -1,5 +1,5 @@
 #include "Subdivision.h"
-
+#include <cmath> 
 #define PI 3.141592
 
 vector<Face> DooSabin(vector<Face> inputFaces)
@@ -313,8 +313,62 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 
 vector<Face> LoopAlgo(vector<Face> inputFaces)
 {
+	//compute even vertices
+	vector<Vertex> evenVertices;
+	//for each face in cube
+	for (size_t f = 0; f < inputFaces.size(); f++)
+	{
+		//for each vertices in face
+		for (size_t v = 0; v < inputFaces[f].getVertices().size(); v++)
+		{
+			Vertex* vCurrent = inputFaces[f].getVertices()[v];
+			vector<Face> faces;
+			vector<Edge*> edges;
+			vector<Vertex> adjacentVertices;
+			//get adjacent edges at vertex
+			getNeighborVertex(faces, edges, inputFaces, vCurrent);
+
+			//get all other vertices
+			for (size_t i = 0; i < edges.size(); i++)
+			{
+				if (inputFaces[f].getVertices()[v] == edges[i]->p0)
+				{
+					adjacentVertices.push_back(*edges[i]->p1);
+				}
+				else if (inputFaces[f].getVertices()[v] == edges[i]->p1)
+				{
+					adjacentVertices.push_back(*edges[i]->p0);
+				}
+			}
+
+			//compute alpha
+			float alpha = 0;
+			if (adjacentVertices.size() == 3)
+				alpha = 3 / 16;
+			else
+				alpha = 1 / adjacentVertices.size() * (5 / 8 - pow(3 / 8 + 1 / 4 * cos(2 * PI / adjacentVertices.size()), 2.0));
+
+			//get sum of vertices
+			Vertex sum;
+			for (size_t i = 0; i < adjacentVertices.size(); i++)
+			{
+				sum = sum + adjacentVertices[i];
+			}
+
+			//compute vPrime
+			Vertex vPrime = (*vCurrent) * (1 - adjacentVertices.size() * alpha) + sum * alpha;
+			evenVertices.push_back(vPrime);
+		}
+	}
 
 
+	//compute odd vertices 
+	vector<Vertex> oddVertices;
+	for (size_t f = 0; f < inputFaces.size(); f++)
+	{
+		//Waiting for Arthur's function
+
+	}
 
 	return vector<Face>();
 }
