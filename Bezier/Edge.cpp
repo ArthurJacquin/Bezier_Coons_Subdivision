@@ -21,6 +21,11 @@ bool Edge::operator==(const Edge& e)
 	return false;
 }
 
+bool Edge::operator!=(const Edge& e)
+{
+	return !(*this == e);
+}
+
 bool Edge::HavetheSameParent(const Edge& e)
 {
 	return *parent == *e.parent;

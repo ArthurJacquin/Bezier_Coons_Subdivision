@@ -157,14 +157,14 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 	//compute edge point
 	for (size_t i = 0; i < inputFaces.size(); i++)
 	{
-		vector<Face> nFaces;
+		vector<Face*> nFaces;
 		for (size_t j = 0; j < inputFaces[i].getEdges().size(); j++)
 		{
 			Vertex averageEdgePoint;
 			nFaces = getNeighborFaces(inputFaces, inputFaces[i].getEdges()[j]);
 			for (size_t f = 0; f < nFaces.size(); f++)
 			{
-				averageEdgePoint = averageEdgePoint + *nFaces[f].getFacePoint();
+				averageEdgePoint = averageEdgePoint + *nFaces[f]->getFacePoint();
 			}
 
 			Vertex p0 = *inputFaces[i].getEdges()[j]->p0;
@@ -225,9 +225,9 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 	return catFaces;
 }
 
-vector<Face> getNeighborFaces(vector<Face> face, const Edge* const edge)
+vector<Face*> getNeighborFaces(vector<Face> face, const Edge* const edge)
 {
-	vector<Face> neighborFaces;
+	vector<Face*> neighborFaces;
 
 	for (size_t f = 0; f < face.size(); f++)
 	{
@@ -235,7 +235,7 @@ vector<Face> getNeighborFaces(vector<Face> face, const Edge* const edge)
 		{
 			if (*face[f].getEdges()[e] == *edge)
 			{
-				neighborFaces.push_back(face[f]);
+				neighborFaces.push_back(&face[f]);
 				break;
 			}
 		}
@@ -273,23 +273,40 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 	//Calcul des centres
 	for (size_t i = 0; i < inputFaces.size(); i++)
 	{
-		Face face = inputFaces[i];
-		int N = face.getVertices().size();
+		Face* face = &inputFaces[i];
+		int N = face->getVertices().size();
 		Vertex center;
 		for (size_t j = 0; j < N; j++)
 		{
-			center += *face.getVertices()[i];
+			center += *face->getVertices()[j];
 		}
 		center /= N;
+		face->setFacePoint(new Vertex(center));
 
 		//Connection aux vertex du triangle
 		for (size_t j = 0; j < N; j++)
 		{
-			outputFaces.push_back(Face({ face.getVertices()[j], face.getVertices()[(j + 1) % N], &center }, Color(1, 0, 0));
+			outputFaces.push_back(Face({ face->getVertices()[j], face->getVertices()[(j + 1) % N], &center }, Color(1, 0, 0)));
 		}
-
 	}
 
+	//Flipping
+	for (size_t i = 0; i < inputFaces.size(); i++)
+	{
+		Face face = inputFaces[i];
+		int N = face.getEdges().size();
+
+		vector<Face*> neighBorFaces;
+		vector<Vertex*> newEdgePts;
+		for (size_t j = 0; j < N; j++)
+		{
+			neighBorFaces = getNeighborFaces(inputFaces, face.getEdges()[j]);
+			newEdgePts = VertexNotInEdge(neighBorFaces, face.getEdges()[j]);
+
+			neighBorFaces[0] = new Face({ newEdgePts[0], newEdgePts[1], face.getEdges()[j]->p0 }, Color(1, 0, 0));
+			neighBorFaces[1] = new Face({ newEdgePts[0], newEdgePts[1], face.getEdges()[j]->p1 }, Color(0, 1, 0));
+		}
+	}
 
 	return outputFaces;
 }
@@ -300,4 +317,22 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 
 
 	return vector<Face>();
+}
+
+vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e)
+{
+	vector<Vertex*> pts;
+	for (size_t i = 0; i < faces.size(); i++)
+	{
+		for (size_t j = 0; j < faces[i]->getVertices().size(); j++)
+		{
+			if (*faces[i]->getVertices()[j] != *e->p0
+				&& *faces[i]->getVertices()[j] != *e->p1)
+			{
+				pts.push_back(faces[i]->getVertices()[j]);
+			}
+		}
+	}
+
+	return pts;
 }

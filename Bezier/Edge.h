@@ -15,6 +15,7 @@ struct Edge {
 	Edge(Vertex* pt1, Vertex* pt2, Edge* parent = nullptr);
 
 	bool operator==(const Edge& e);
+	bool operator!=(const Edge& e);
 
 	bool HavetheSameParent(const Edge& e);
 };
