@@ -3,16 +3,16 @@
 std::vector<Face> GenerateCubeFaces()
 {
 	//Front
-	Vertex p0(-0.5f, -0.5f, 0.0f);
-	Vertex p1(0.5f, -0.5f, 0.0f);
-	Vertex p2(0.5f, 0.5f, 0.0f);
-	Vertex p3(-0.5f, 0.5f, 0.0f);
+	Vertex* p0 = new Vertex(-0.5f, -0.5f, 0.0f);
+	Vertex* p1 = new Vertex(0.5f, -0.5f, 0.0f);
+	Vertex* p2 = new Vertex(0.5f, 0.5f, 0.0f);
+	Vertex* p3 = new Vertex(-0.5f, 0.5f, 0.0f);
 
-	//Back
-	Vertex p4(-0.5f, -0.5f, 1.0f);
-	Vertex p5(0.5f, -0.5f, 1.0f);
-	Vertex p6(0.5f, 0.5f, 1.0f);
-	Vertex p7(-0.5f, 0.5f, 1.0f);
+	//Back   
+	Vertex* p4 = new Vertex(-0.5f, -0.5f, 1.0f);
+	Vertex* p5 = new Vertex(0.5f, -0.5f, 1.0f);
+	Vertex* p6 = new Vertex(0.5f, 0.5f, 1.0f);
+	Vertex* p7 = new Vertex(-0.5f, 0.5f, 1.0f);
 
 	return {
 

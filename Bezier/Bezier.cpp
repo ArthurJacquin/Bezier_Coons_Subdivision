@@ -747,6 +747,11 @@ void displayGUI()
 		{
 			faces = DooSabin(faces);
 		}
+
+		if (ImGui::Button("CatmulClark (C)"))
+		{
+			faces = CatmullClark(faces);
+		}
 	}
 
 	ImGui::Text("");

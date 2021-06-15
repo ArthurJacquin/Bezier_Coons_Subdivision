@@ -10,7 +10,7 @@ Face::Face()
 	VBO = 0;
 }
 
-Face::Face(vector<Vertex> verts, Color col, Face* p)
+Face::Face(vector<Vertex*> verts, Color col, Face* p)
 	: parent(p)
 {
 	if (verts.size() == 3)
@@ -32,7 +32,7 @@ Face::Face(vector<Vertex> verts, Color col, Face* p)
 
 		for (size_t i = 0; i < verts.size(); i++)
 		{
-			edges.push_back(Edge(verts[i], verts[(i + 1) % verts.size()]));
+			edges.push_back(new Edge(verts[i], verts[(i + 1) % verts.size()]));
 		}
 	}
 	else 
@@ -40,12 +40,12 @@ Face::Face(vector<Vertex> verts, Color col, Face* p)
 		vertices = verts;
 		for (size_t i = 0; i < verts.size(); i++)
 		{
-			vertices[i].parent = &p->vertices[i];
+			vertices[i]->parent = p->vertices[i];
 		}
 
 		for (size_t i = 0; i < verts.size(); i++)
 		{
-			edges.push_back(Edge(verts[i], verts[(i + 1) % verts.size()], &p->edges[i]));
+			edges.push_back(new Edge(verts[i], verts[(i + 1) % verts.size()], p->edges[i]));
 		}
 	}
 
@@ -70,18 +70,18 @@ void Face::CalculateNormals()
 			{
 				shared++;
 
-				Vertex p1 = vertices[indices[j]];
-				Vertex p2 = vertices[indices[j + 1]];
-				Vertex p3 = vertices[indices[j + 2]];
+				//Vertex p1 = *vertices[indices[j]];
+				//Vertex p2 = *vertices[indices[j + 1]];
+				//Vertex p3 = *vertices[indices[j + 2]];
 
-				Vec3 v1(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
-				Vec3 v2(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z);
+				Vec3 v1(vertices[indices[j + 1]]->x - vertices[indices[j]]->x, vertices[indices[j + 1]]->y - vertices[indices[j]]->y, vertices[indices[j + 1]]->z - vertices[indices[j]]->z);
+				Vec3 v2(vertices[indices[j + 2]]->x - vertices[indices[j]]->x, vertices[indices[j + 2]]->y - vertices[indices[j]]->y, vertices[indices[j + 2]]->z - vertices[indices[j]]->z);
 
 				sum += (v1 ^ v2).normalise();
 			}
 		}
 
-		vertices[i].normal = (sum / shared).normalise();
+		vertices[i]->normal = (sum / shared).normalise();
 	}
 }
 
@@ -94,6 +94,6 @@ void Face::SetColor(Color col)
 {
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
-		vertices[i].setColor(col);
+		vertices[i]->setColor(col);
 	}
 }

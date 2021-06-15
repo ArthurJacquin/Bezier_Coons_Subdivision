@@ -50,6 +50,11 @@ Vertex::Vertex(Vec3 pos)
 	z = pos.z;
 }
 
+Vertex::Vertex(const Vertex& v)
+{
+	*this = v;
+}
+
 Vertex::Vertex(Vec3 pos, Color col, Vertex* parent)
 	: parent(parent)
 {

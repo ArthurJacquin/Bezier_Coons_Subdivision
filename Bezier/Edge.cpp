@@ -2,11 +2,11 @@
 
 Edge::Edge()
 {
-	p0 = Vertex();
-	p1 = Vertex();
+	p0 = nullptr;
+	p1 = nullptr;
 }
 
-Edge::Edge(Vertex pt0, Vertex pt1, Edge* parent)
+Edge::Edge(Vertex* pt0, Vertex* pt1, Edge* parent)
 	:p0(pt0), p1(pt1), parent(parent)
 {
 }

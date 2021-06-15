@@ -218,6 +218,10 @@ void Input::keyboard_button_callback(GLFWwindow* window, int key, int scancode, 
 		faces = DooSabin(faces);
 	}
 
+	if (key == GLFW_KEY_C && action == GLFW_PRESS)
+	{
+		faces = CatmullClark(faces);
+	}
 	//Etape
 	if (key == GLFW_KEY_0 && action == GLFW_PRESS)
 	{
