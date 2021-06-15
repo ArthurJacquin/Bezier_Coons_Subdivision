@@ -293,3 +293,11 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 
 	return outputFaces;
 }
+
+vector<Face> LoopAlgo(vector<Face> inputFaces)
+{
+
+
+
+	return vector<Face>();
+}
