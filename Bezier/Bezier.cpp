@@ -170,7 +170,7 @@ void Display(GLFWwindow* window)
 	// Defini le viewport en pleine fenetre
 	glViewport(0, 0, width, height);
 
-	glLineWidth(1.f);
+	glLineWidth(2.f);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
 	double xpos, ypos;

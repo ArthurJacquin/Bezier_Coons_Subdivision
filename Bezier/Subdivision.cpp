@@ -198,7 +198,8 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 
 			R = R / edges.size();
 
-			Vertex* newPt = new Vertex((Q * 1 / n) + (R * 2 / n) + (*inputFaces[i].getVertices()[v] * (n - 3) / n));
+			Vertex inputPoint = *inputFaces[i].getVertices()[v];
+			Vertex* newPt = new Vertex((Q * 1 / n) + (R * 2 / n) + (inputPoint * (n - 3) / n));
 			inputFaces[i].getVertices()[v]->vPrime = newPt;
 		}
 	}
