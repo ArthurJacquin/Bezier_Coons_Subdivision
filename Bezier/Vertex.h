@@ -4,6 +4,8 @@
 #include "Vec3.h"
 #include <vector>
 
+#define EPSI  0.01F
+
 struct Vertex
 {
 	double x, y, z;
@@ -21,10 +23,10 @@ struct Vertex
 	Vertex(Vec3 pos, Color col, Vertex* parent = nullptr);
 
 	friend std::ostream& operator <<(std::ostream&, const Vertex& obj);
-	bool operator!=(const Vertex v) {
-		return abs(x - v.x) > FLT_EPSILON || abs(y - v.y) > FLT_EPSILON || abs(z - v.z) > FLT_EPSILON || abs(r - v.r) > FLT_EPSILON || abs(g - v.g) > FLT_EPSILON || abs(b - v.b) > FLT_EPSILON;
+	bool operator!=(const Vertex v) const {
+		return abs(x - v.x) > EPSI || abs(y - v.y) > EPSI || abs(z - v.z) > EPSI;
 	}
-	bool operator==(const Vertex v) { return !(*this != v); }
+	bool operator==(const Vertex v) const { return !(*this != v); }
 	Vertex& operator=(Vertex v) { x = v.x; y = v.y; z = v.z; r = v.r; g = v.g; b = v.b; normal = v.normal; parent = v.parent; vPrime = v.vPrime; return *this; }
 	Vertex& operator*(int i) { x = x * i; y = y * i; z = z * i; return *this; }
 	Vertex& operator/(float i) { x = x / i; y = y / i; z = z / i; return *this; }

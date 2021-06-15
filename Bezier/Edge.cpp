@@ -13,9 +13,9 @@ Edge::Edge(Vertex* pt0, Vertex* pt1, Edge* parent)
 
 bool Edge::operator==(const Edge& e)
 {
-	if (p0 == e.p0 && p1 == e.p1)
+	if (*p0 == *(e).p0 && *p1 == *(e).p1)
 		return true;
-	if (p0 == e.p1 && p1 == e.p0)
+	if (*p0 == *(e).p1 && *p1 == *(e).p0)
 		return true;
 
 	return false;
