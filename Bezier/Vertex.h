@@ -9,7 +9,6 @@ struct Vertex
 	double x, y, z;
 	float r, g, b;
 	Vec3 normal;
-	std::vector<Vertex*> neighborVertices;
 	Vertex* parent;
 	//Catmull clark
 	Vertex* vPrime;
@@ -19,7 +18,6 @@ struct Vertex
 	Vertex(double x, double y, double z, float r, float g, float b);
 	Vertex(double x, double y, double z);
 	Vertex(Vec3 pos);
-	Vertex(const Vertex& v);
 	Vertex(Vec3 pos, Color col, Vertex* parent = nullptr);
 
 	friend std::ostream& operator <<(std::ostream&, const Vertex& obj);
@@ -27,7 +25,7 @@ struct Vertex
 		return abs(x - v.x) > FLT_EPSILON || abs(y - v.y) > FLT_EPSILON || abs(z - v.z) > FLT_EPSILON || abs(r - v.r) > FLT_EPSILON || abs(g - v.g) > FLT_EPSILON || abs(b - v.b) > FLT_EPSILON;
 	}
 	bool operator==(const Vertex v) { return !(*this != v); }
-	Vertex& operator=(Vertex v) { x = v.x; y = v.y; z = v.z; r = v.r; g = v.g; b = v.b; return *this; }
+	Vertex& operator=(Vertex v) { x = v.x; y = v.y; z = v.z; r = v.r; g = v.g; b = v.b; normal = v.normal; parent = v.parent; vPrime = v.vPrime; return *this; }
 	Vertex& operator*(int i) { x = x * i; y = y * i; z = z * i; return *this; }
 	Vertex& operator/(float i) { x = x / i; y = y / i; z = z / i; return *this; }
 	Vertex operator+(const Vec3& v) const { return Vertex(x + v.x, y + v.y, z + v.z); }
@@ -43,9 +41,5 @@ struct Vertex
 
 	Vec3 GetPos()const { return Vec3(x, y, z); }
 	Color GetColor()const { return Color(r, g, b); }
-	std::vector<Vertex*> getNeighborVertices() const { return neighborVertices; }
-	void addNeighborVertices(Vertex* v) { neighborVertices.push_back(v); }
 	bool HaveTheSameParent(const Vertex& v);
-
-	~Vertex(){}
 };

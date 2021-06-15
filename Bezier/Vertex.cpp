@@ -12,7 +12,8 @@ Vertex::Vertex()
 	b = 0;
 
 	normal = Vec3(0.0f, 0.0f, 1.0f);
-	neighborVertices.reserve(0);
+	parent = nullptr;
+	vPrime = nullptr;
 }
 
 Vertex::Vertex(Color col)
@@ -22,14 +23,17 @@ Vertex::Vertex(Color col)
 	b = col.z;
 
 	normal = Vec3(0.0f, 0.0f, 1.0f);
-	neighborVertices.reserve(0);
+
+	parent = nullptr;
+	vPrime = nullptr;
 }
 
 Vertex::Vertex(double x, double y, double z, float r, float g, float b)
 	:x(x), y(y), z(z), r(r), g(g), b(b)
 {
 	normal = Vec3(0.0f, 0.0f, 1.0f);
-	neighborVertices.reserve(0);
+	parent = nullptr;
+	vPrime = nullptr;
 }
 
 Vertex::Vertex(double x, double y, double z)
@@ -40,7 +44,8 @@ Vertex::Vertex(double x, double y, double z)
 	b = 1;
 
 	normal = Vec3(0.0f, 0.0f, 1.0f);
-	neighborVertices.reserve(0);
+	parent = nullptr;
+	vPrime = nullptr;
 }
 
 Vertex::Vertex(Vec3 pos)
@@ -48,11 +53,9 @@ Vertex::Vertex(Vec3 pos)
 	x = pos.x;
 	y = pos.y;
 	z = pos.z;
-}
-
-Vertex::Vertex(const Vertex& v)
-{
-	*this = v;
+	normal = Vec3(0.0f, 0.0f, 1.0f);
+	parent = nullptr;
+	vPrime = nullptr;
 }
 
 Vertex::Vertex(Vec3 pos, Color col, Vertex* parent)
@@ -65,6 +68,9 @@ Vertex::Vertex(Vec3 pos, Color col, Vertex* parent)
 	r = col.x;
 	g = col.y;
 	b = col.z;
+
+	normal = Vec3(0.0f, 0.0f, 1.0f);
+	vPrime = nullptr;
 }
 
 void Vertex::setColor(Color color)

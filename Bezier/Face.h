@@ -13,7 +13,9 @@ class Face {
 	Vertex* facePoint;
 
 	Face* parent;
+
 	uint32_t VBO;
+	vector<Vertex> bufferPts;
 
 public:
 	Face();
@@ -30,4 +32,6 @@ public:
 
 	Vertex* getFacePoint() { return facePoint; }
 	void setFacePoint(Vertex* v) { facePoint = v; }
+
+	void updateBufferPoints();
 };

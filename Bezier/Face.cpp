@@ -87,7 +87,8 @@ void Face::CalculateNormals()
 
 void Face::updateBuffers()
 {
-	VBO = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());
+	updateBufferPoints();
+	VBO = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * bufferPts.size(), bufferPts.data());
 }
 
 void Face::SetColor(Color col)
@@ -95,5 +96,13 @@ void Face::SetColor(Color col)
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		vertices[i]->setColor(col);
+	}
+}
+
+void Face::updateBufferPoints()
+{
+	for (size_t i = 0; i < vertices.size(); i++)
+	{
+		bufferPts.push_back(*vertices[i]);
 	}
 }
