@@ -738,9 +738,14 @@ void displayGUI()
 
 	if (ImGui::CollapsingHeader("Subdivision"))
 	{
-		if (ImGui::Button("Create Cube"))
+		if (ImGui::Button("Create cube with quad"))
 		{
 			faces = GenerateCubeFaces();
+		}
+
+		if (ImGui::Button("Create cube with tris"))
+		{
+			faces = GenerateTriFaces();
 		}
 
 		if (ImGui::Button("Doo-Sabin (D)"))
