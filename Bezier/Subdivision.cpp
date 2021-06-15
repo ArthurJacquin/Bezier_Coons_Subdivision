@@ -151,7 +151,7 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 			averageFacePoint = averageFacePoint + *(inputFaces[i].getVertices()[j]);
 		}
 		
-		inputFaces[i].setFacePoint(&(averageFacePoint / inputFaces[i].getVertices().size()));
+		inputFaces[i].setFacePoint(new Vertex(averageFacePoint / inputFaces[i].getVertices().size()));
 	}
 
 	//compute edge point
@@ -167,8 +167,8 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 				averageEdgePoint = averageEdgePoint + *nFaces[f].getFacePoint();
 			}
 
-			averageEdgePoint = averageEdgePoint + *(inputFaces[i].getEdges()[j]->p0) + *(inputFaces[i].getEdges()[j]->p1);
-			inputFaces[i].getEdges()[j]->edgePoint = &(averageEdgePoint / (nFaces.size() + 2));
+			averageEdgePoint = (averageEdgePoint + *inputFaces[i].getEdges()[j]->p0 + *inputFaces[i].getEdges()[j]->p1) / (nFaces.size() + 2);
+			inputFaces[i].getEdges()[j]->edgePoint = new Vertex(averageEdgePoint);
 		}
 	}
 
@@ -198,16 +198,16 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 
 			R = R / edges.size();
 
-			inputFaces[i].getVertices()[v]->vPrime = &( (Q * 1 / n) + (R * 2 / n) + (*inputFaces[i].getVertices()[v] * (n - 3) / n) );
+			inputFaces[i].getVertices()[v]->vPrime = new Vertex( (Q * 1 / n) + (R * 2 / n) + (*inputFaces[i].getVertices()[v] * (n - 3) / n) );
 		}
 	}
 
 	//connect new faces
 	for (size_t i = 0; i < inputFaces.size(); i++)
 	{
-		for (size_t e = 0; e < inputFaces[i].getEdges().size() - 1; e++)
+		for (size_t e = 0; e < inputFaces[i].getEdges().size(); e++)
 		{
-			Face newFace({ inputFaces[i].getFacePoint(), inputFaces[i].getEdges()[e + 1]->edgePoint,
+			Face newFace({ inputFaces[i].getFacePoint(), inputFaces[i].getEdges()[(e + 1) % inputFaces[i].getEdges().size()]->edgePoint,
 							inputFaces[i].getEdges()[e]->p1->vPrime, inputFaces[i].getEdges()[e]->edgePoint });
 			catFaces.push_back(newFace);
 		}
