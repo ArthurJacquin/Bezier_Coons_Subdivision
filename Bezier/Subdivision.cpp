@@ -1,5 +1,6 @@
 #include "Subdivision.h"
 #include <cmath> 
+
 #define PI 3.141592
 
 vector<Face> DooSabin(vector<Face> inputFaces)
@@ -327,6 +328,7 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 			vector<Vertex> adjacentVertices;
 			//get adjacent edges at vertex
 			getNeighborVertex(faces, edges, inputFaces, vCurrent);
+			deleteDuplicateEdge(edges);
 
 			//get all other vertices
 			for (size_t i = 0; i < edges.size(); i++)
@@ -366,8 +368,20 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 	vector<Vertex> oddVertices;
 	for (size_t f = 0; f < inputFaces.size(); f++)
 	{
-		//Waiting for Arthur's function
+		for (size_t j = 0; j < inputFaces[f].getEdges().size(); j++)
+		{
+			vector<Face*> neighborFaces;
+			//get all faces near edge
+			neighborFaces = getNeighborFaces(inputFaces, inputFaces[f].getEdges()[j]);
 
+			//vLeft and vRight
+			vector<Vertex*> vNotInEdge = VertexNotInEdge(neighborFaces, inputFaces[f].getEdges()[j]);
+
+			Vertex e = (*inputFaces[f].getEdges()[j]->p0 + *inputFaces[f].getEdges()[j]->p1) * 3 / 8
+				     + (*vNotInEdge[0] + *vNotInEdge[1]) * 1 / 8;
+
+			oddVertices.push_back(e);
+		}
 	}
 
 	return vector<Face>();
@@ -389,4 +403,21 @@ vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e)
 	}
 
 	return pts;
+}
+
+void deleteDuplicateEdge(vector<Edge*>& edges)
+{
+
+	for (size_t i = 0; i < edges.size(); i++)
+	{
+		for (size_t j = 1; j < edges.size(); j++)
+		{
+			if (*edges[i] == *edges[j])
+			{
+				edges.erase(edges.begin() + j);
+				break;
+			}
+		}
+	}
+
 }

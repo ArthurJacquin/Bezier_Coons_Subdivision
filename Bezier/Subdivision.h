@@ -14,3 +14,4 @@ vector<Face> Kobelt(vector<Face> inputFaces);
 vector<Face> LoopAlgo(vector<Face> inputFaces);
 
 vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e);
+void deleteDuplicateEdge(vector<Edge*>& edges);
