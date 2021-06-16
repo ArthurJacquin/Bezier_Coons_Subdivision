@@ -289,7 +289,7 @@ void displayGUI()
 	ImGui::SetNextWindowSize(ImVec2(300, 600));
 	// render your GUI
 	ImGui::Begin("Curves", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
-	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Welcome in the curves world ! ");
+	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Welcome in math world ! ");
 	ImGui::Separator();
 
 	//Parameters
@@ -770,6 +770,9 @@ void displayGUI()
 		{
 			faces = Kobelt(faces);
 		}
+
+		ImGui::Separator();
+		ImGui::Text(" Delete mesh with backspace key  ");
 	}
 
 	ImGui::Text("");
