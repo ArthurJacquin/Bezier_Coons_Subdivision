@@ -4,14 +4,13 @@
 #include <unordered_set>
 #include <algorithm>
 
-
 #define PI 3.141592
 
 vector<Face> DooSabin(vector<Face> inputFaces)
 {
 	vector<Face> outputFaces;
 
-	//Generatation des faces correspondantes aux existantes (F-faces)
+	//Generate F-faces
 	for (size_t f = 0; f < inputFaces.size(); f++)
 	{
 		vector<Vertex*> pts = inputFaces[f].getVertices();
@@ -19,10 +18,10 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 		int n = pts.size();
 		float alpha = 0;
 
-		for (size_t i = 0; i < n; i++) //Pour chaque point de la face
+		for (size_t i = 0; i < n; i++) //For each point of the face
 		{
 			Vec3 newPos;
-			for (size_t j = 0; j < n; j++) //Moyenne des points 
+			for (size_t j = 0; j < n; j++) //Average of points
 			{
 				if (i == j)
 				{
@@ -42,19 +41,19 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 		outputFaces.push_back(Face(newPts, Color(1, 0, 0), &inputFaces[f]));
 	}
 
-	//Generation des faces correspondants aux edges(E-faces)
+	//Generate edge faces(E-faces)
 	vector<Face> newFaces;
 	int Nbface = outputFaces.size();
 	for (size_t i = 0; i < Nbface; i++)
 	{
 		Face* f0 = &outputFaces[i];
-		for (size_t j = 0; j < outputFaces[i].getEdges().size(); j++)//Pour chaque edge
+		for (size_t j = 0; j < outputFaces[i].getEdges().size(); j++)//for each edge
 		{
 			Edge* e0 = f0->getEdges()[j];
 			if (e0->parent == nullptr)
 				continue;
 
-			//On cherche l'edge qui à le meme parent (pas besoin de repasser par les faces deja traitées)
+			//Look for the edge with the same parent (don't need to faces already treated)
 			for (size_t k = i; k < Nbface; k++)
 			{
 				Face* f1 = &outputFaces[k];
@@ -68,9 +67,9 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 					if (e0 == e1 || e1->parent == nullptr)
 						continue;
 
-					if (e0->HavetheSameParent(*e1)) //Si elles sont issues du meme edge
+					if (e0->HavetheSameParent(*e1)) //If they are from the same edge
 					{
-						//On vérifie le sens des edges
+						//Check edge direction
 						if((e0->p0->GetPos() - e0->p1->GetPos()).dot(e1->p0->GetPos() - e1->p1->GetPos()) < 0)
 							newFaces.push_back(Face({ e0->p0, e0->p1, e1->p0, e1->p1 }, Color(0, 1, 0)));
 						else
@@ -89,11 +88,11 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 		}
 	}
 
-	//Generation des faces correspondantes aux vertices (V-Faces)
+	//Generate vertices faces (V-Faces)
 	for (size_t i = 0; i < Nbface; i++)
 	{
 		Face* f0 = &outputFaces[i];
-		for (size_t j = 0; j < outputFaces[i].getVertices().size(); j++)//Pour chaque edge
+		for (size_t j = 0; j < outputFaces[i].getVertices().size(); j++)
 		{
 			Vertex* v0 = f0->getVertices()[j];
 			if (v0->parent == nullptr)
@@ -101,7 +100,7 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 
 			vector<Vertex*> ptsFound;
 			ptsFound.push_back(v0);
-			//On cherche le vertex qui à le meme parent (pas besoin de repasser par les faces deja traitées)
+			//Look for vertices with the same parent (don't need to faces already treated)
 			for (size_t k = i; k < Nbface; k++)
 			{
 				Face* f1 = &outputFaces[k];
@@ -114,7 +113,7 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 					if (v0 == v1 || v1->parent == nullptr)
 						continue;
 
-					if (v0->HaveTheSameParent(*v1)) //Si elles sont issues du meme vertex
+					if (v0->HaveTheSameParent(*v1)) //If they are from the same parent
 					{
 						ptsFound.push_back(v1);
 						break;
@@ -122,7 +121,7 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 				}
 			}
 
-			//On enleve le parent des points traités
+			//Remove parent from treated vertices
 			for (size_t k = 0; k < ptsFound.size(); k++)
 			{
 				ptsFound[k]->parent = nullptr;
@@ -132,7 +131,7 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 		}
 	}
 
-	//Ajout des nouvelles faces
+	//Adding new faces
 	for (size_t i = 0; i < newFaces.size(); i++)
 	{
 		outputFaces.push_back(newFaces[i]);
@@ -231,71 +230,11 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 	return catFaces;
 }
 
-vector<Face*> getNeighborFaces(vector<Face>& face, const Edge* const edge)
-{
-	vector<Face*> neighborFaces;
-
-	for (size_t f = 0; f < face.size(); f++)
-	{
-		for (size_t e = 0; e < face[f].getEdges().size(); e++)
-		{
-			if (*face[f].getEdges()[e] == *edge)
-			{
-				neighborFaces.push_back(&face[f]);
-				break;
-			}
-		}
-	}
-
-	return neighborFaces;
-}
-
-void getNeighborVertex(vector<Face>& faces, vector<Edge*>& edges, const vector<Face>& inputFaces, const Vertex* const v)
-{
-	for (size_t f = 0; f < inputFaces.size(); f++)
-	{
-		bool inFaces = false;
-
-		for (size_t e = 0; e < inputFaces[f].getEdges().size(); e++)
-		{
-			if (*v == *inputFaces[f].getEdges()[e]->p0 || *v == *inputFaces[f].getEdges()[e]->p1)
-			{
-				edges.push_back(inputFaces[f].getEdges()[e]);
-				inFaces = true;
-			}
-		}
-
-		if (inFaces == true)
-		{
-			faces.push_back(inputFaces[f]);
-		}
-	}
-}
-
-vector<Vertex*> getNeighborVertices(const vector<Face>& inputFaces, const Vertex* const v)
-{
-	vector<Vertex*> output;
-
-	for (size_t i = 0; i < inputFaces.size(); i++)
-	{
-		for (size_t j = 0; j < inputFaces[i].getEdges().size(); j++)
-		{
-			if (*inputFaces[i].getEdges()[j]->p0 == *v)
-				output.push_back(inputFaces[i].getEdges()[j]->p1);
-			if (*inputFaces[i].getEdges()[j]->p1 == *v)
-				output.push_back(inputFaces[i].getEdges()[j]->p0);
-		}
-	}
-
-	deleteDuplicateInVector(output);
-	return output;
-}
-
 vector<Face> Kobelt(vector<Face> inputFaces)
 {
 	vector<Face> outputFaces;
 
-	//Calcul des centres
+	//Compute centers
 	for (size_t i = 0; i < inputFaces.size(); i++)
 	{
 		Face* face = &inputFaces[i];
@@ -309,7 +248,7 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 		center /= N;
 		face->setFacePoint(new Vertex(center));
 
-		//Connection aux vertex du triangle
+		//Connect vertices to form triangles
 		for (size_t j = 0; j < N; j++)
 		{
 			outputFaces.push_back(Face({ face->getVertices()[j], face->getVertices()[(j + 1) % N], face->getFacePoint() }, Color(1, 0, 0)));
@@ -327,13 +266,17 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 		vector<Face*> neighBorFacesOutput;
 		for (size_t j = 0; j < N; j++)
 		{
+			//Get neighbor faces
 			neighBorFacesInput = getNeighborFaces(inputFaces, face.getEdges()[j]);
 
+			//Create new faces
 			Face f0 = Face({ neighBorFacesInput[0]->getFacePoint(), neighBorFacesInput[1]->getFacePoint(), face.getEdges()[j]->p0 }, Color(1, 0, 0));
 			Face f1 = Face({ neighBorFacesInput[0]->getFacePoint(), neighBorFacesInput[1]->getFacePoint(), face.getEdges()[j]->p1 }, Color(0, 1, 0));
 
+			//Get neighbor faces from outputs
 			neighBorFacesOutput = getNeighborFaces(outputFaces, face.getEdges()[j]);
 
+			//Assign new faces
 			if(newFaces.find(neighBorFacesOutput[0]) == newFaces.end())
 				newFaces.insert(make_pair(neighBorFacesOutput[0], f0));
 			if (newFaces.find(neighBorFacesOutput[1]) == newFaces.end())
@@ -341,7 +284,7 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 		}
 	}
 
-	//Creation des nouvelles faces
+	//Creation of new faces
 	for (size_t i = 0; i < outputFaces.size(); i++)
 	{
 		Face f = newFaces[&outputFaces[i]];
@@ -362,21 +305,25 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 			int n = neighbors.size();
 			float alpha = (4 - 2 * cos(2 * PI / n)) / 9.0f;
 
+			//Summ of vertices
 			Vertex sumV;
 			for (size_t k = 0; k < n; k++)
 			{
 				sumV += *neighbors[k];
 			}
 
+			//New point
 			Vertex V = *face.getVertices()[j];
 			Vertex vPrime = V * (1 - alpha) + sumV * alpha / n;
+			
 			vPrime.parent = face.getVertices()[j];
 			vPrime.setColor(Color(0, 0, 1));
+
 			newVertices.push_back(new Vertex(vPrime));
 		}
 	}
 
-	//Modification des points pertubés dans l'output
+	//Modification of modified point in output
 	for (size_t i = 0; i < outputFaces.size(); i++)
 	{
 		Face* face = &outputFaces[i];
@@ -396,7 +343,7 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 		outputFaces[i] = Face({ face->getVertices()[0], face->getVertices()[1], face->getVertices()[2] });
 	}
 
-	//Des couleurs
+	//Colors
 	for (size_t i = 0; i < outputFaces.size(); i++)
 	{
 		outputFaces[i].SetColor(Color(), true);
@@ -502,6 +449,79 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 	return outputFaces;
 }
 
+/// <summary>
+/// Return faces that shares an edge
+/// </summary>
+vector<Face*> getNeighborFaces(vector<Face>& face, const Edge* const edge)
+{
+	vector<Face*> neighborFaces;
+
+	for (size_t f = 0; f < face.size(); f++)
+	{
+		for (size_t e = 0; e < face[f].getEdges().size(); e++)
+		{
+			if (*face[f].getEdges()[e] == *edge)
+			{
+				neighborFaces.push_back(&face[f]);
+				break;
+			}
+		}
+	}
+
+	return neighborFaces;
+}
+
+/// <summary>
+/// Return faces and edges that shares a vertex
+/// </summary>
+void getNeighborVertex(vector<Face>& faces, vector<Edge*>& edges, const vector<Face>& inputFaces, const Vertex* const v)
+{
+	for (size_t f = 0; f < inputFaces.size(); f++)
+	{
+		bool inFaces = false;
+
+		for (size_t e = 0; e < inputFaces[f].getEdges().size(); e++)
+		{
+			if (*v == *inputFaces[f].getEdges()[e]->p0 || *v == *inputFaces[f].getEdges()[e]->p1)
+			{
+				edges.push_back(inputFaces[f].getEdges()[e]);
+				inFaces = true;
+			}
+		}
+
+		if (inFaces == true)
+		{
+			faces.push_back(inputFaces[f]);
+		}
+	}
+}
+
+/// <summary>
+/// Return vertices connected to a vertex
+/// </summary>
+vector<Vertex*> getNeighborVertices(const vector<Face>& inputFaces, const Vertex* const v)
+{
+	vector<Vertex*> output;
+
+	for (size_t i = 0; i < inputFaces.size(); i++)
+	{
+		for (size_t j = 0; j < inputFaces[i].getEdges().size(); j++)
+		{
+			if (*inputFaces[i].getEdges()[j]->p0 == *v)
+				output.push_back(inputFaces[i].getEdges()[j]->p1);
+			if (*inputFaces[i].getEdges()[j]->p1 == *v)
+				output.push_back(inputFaces[i].getEdges()[j]->p0);
+		}
+	}
+
+	deleteDuplicateInVector(output);
+	return output;
+}
+
+/// <summary>
+/// For faces that share an edge
+/// Return vertices that are not on the common edge
+/// </summary>
 vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e)
 {
 	vector<Vertex*> pts;
@@ -521,6 +541,9 @@ vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e)
 	return pts;
 }
 
+/// <summary>
+/// Create a face with a random color
+/// </summary>
 Face createFace(Vertex* v1, Vertex* v2, Vertex* v3)
 {
 	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -534,6 +557,9 @@ Face createFace(Vertex* v1, Vertex* v2, Vertex* v3)
 	return newFace1;
 }
 
+/// <summary>
+/// Remove multiple occurency in a vector 
+/// </summary>
 template<typename T>
 void deleteDuplicateInVector(vector<T*>& vec)
 {   
