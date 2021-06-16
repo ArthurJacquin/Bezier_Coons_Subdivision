@@ -349,11 +349,11 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 			//get all other vertices
 			for (size_t i = 0; i < edges.size(); i++)
 			{
-				if (inputFaces[f].getVertices()[v] == edges[i]->p0)
+				if (*inputFaces[f].getVertices()[v] == *edges[i]->p0)
 				{
 					adjacentVertices.push_back(*edges[i]->p1);
 				}
-				else if (inputFaces[f].getVertices()[v] == edges[i]->p1)
+				else if (*inputFaces[f].getVertices()[v] == *edges[i]->p1)
 				{
 					adjacentVertices.push_back(*edges[i]->p0);
 				}
@@ -403,34 +403,21 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 	//create subdivide faces
 	for (size_t f = 0; f < inputFaces.size() ; f++)
 	{
-		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		outputFaces.push_back(createFace(inputFaces[f].getEvenVertices()[0], 
+			                             inputFaces[f].getOddVertices()[0], 
+			                             inputFaces[f].getOddVertices()[2]));
 
-		Face newFace1({ inputFaces[f].getEvenVertices()[0], //v2
-					   inputFaces[f].getOddVertices()[0],  //e1
-					   inputFaces[f].getOddVertices()[2] }, //e3
-			Color(r, g, b));
-		outputFaces.push_back(newFace1);
+		outputFaces.push_back(createFace(inputFaces[f].getOddVertices()[0],
+			                             inputFaces[f].getEvenVertices()[1],
+			                             inputFaces[f].getOddVertices()[1]));
 
-		Face newFace2({ inputFaces[f].getOddVertices()[0], //e1
-					   inputFaces[f].getEvenVertices()[1], //v3
-					   inputFaces[f].getOddVertices()[1] },//e2
-			Color(r, g, b));
-		outputFaces.push_back(newFace2);
+		outputFaces.push_back(createFace(inputFaces[f].getOddVertices()[0], //e1
+			                             inputFaces[f].getOddVertices()[1], //e2
+			                             inputFaces[f].getOddVertices()[2]));//e3
 
-		Face newFace3({ inputFaces[f].getOddVertices()[0], //e1
-					   inputFaces[f].getOddVertices()[1], //e2
-					   inputFaces[f].getOddVertices()[2] },//e3
-			Color(r, g, b));
-		outputFaces.push_back(newFace3);
-
-		Face newFace4({ inputFaces[f].getOddVertices()[1], //e2
-					   inputFaces[f].getEvenVertices()[2], //v1
-					   inputFaces[f].getOddVertices()[2] },//e3
-			Color(r, g, b));
-		outputFaces.push_back(newFace4);
-
+		outputFaces.push_back(createFace(inputFaces[f].getOddVertices()[1], //e2
+										 inputFaces[f].getEvenVertices()[2], //v1
+										 inputFaces[f].getOddVertices()[2]));//e3
 	}
 
 	return outputFaces;
@@ -453,6 +440,19 @@ vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e)
 	}
 
 	return pts;
+}
+
+Face createFace(Vertex* v1, Vertex* v2, Vertex* v3)
+{
+	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+	Face newFace1({ v1,
+				    v2,  
+				    v3 },
+		Color(r, g, b));
+	return newFace1;
 }
 
 template<typename T>

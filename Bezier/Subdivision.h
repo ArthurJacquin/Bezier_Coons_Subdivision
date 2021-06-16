@@ -16,3 +16,4 @@ vector<Face> LoopAlgo(vector<Face> inputFaces);
 vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e);
 template<typename T>
 void deleteDuplicateInVector(vector<T*>& vec);
+Face createFace(Vertex* v1, Vertex* v2, Vertex* v3);
