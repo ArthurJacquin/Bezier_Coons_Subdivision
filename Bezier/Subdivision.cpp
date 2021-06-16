@@ -280,15 +280,14 @@ vector<Vertex*> getNeighborVertices(const vector<Face>& inputFaces, const Vertex
 	{
 		for (size_t j = 0; j < inputFaces[i].getEdges().size(); j++)
 		{
-			if (*inputFaces[i].getEdges()[j]->p0 == *v 
-				&& find(output.begin(), output.end(), inputFaces[i].getEdges()[j]->p1) == output.end())
+			if (*inputFaces[i].getEdges()[j]->p0 == *v)
 				output.push_back(inputFaces[i].getEdges()[j]->p1);
-			if (*inputFaces[i].getEdges()[j]->p1 == *v
-				&& find(output.begin(), output.end(), inputFaces[i].getEdges()[j]->p0) == output.end())
+			if (*inputFaces[i].getEdges()[j]->p1 == *v)
 				output.push_back(inputFaces[i].getEdges()[j]->p0);
 		}
 	}
 
+	deleteDuplicateInVector(output);
 	return output;
 }
 
@@ -301,6 +300,7 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 	{
 		Face* face = &inputFaces[i];
 		int N = face->getVertices().size();
+		
 		Vertex center;
 		for (size_t j = 0; j < N; j++)
 		{
@@ -376,6 +376,7 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 		}
 	}
 
+	//Modification des points pertubés dans l'output
 	for (size_t i = 0; i < outputFaces.size(); i++)
 	{
 		Face* face = &outputFaces[i];
@@ -385,12 +386,20 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 		{
 			for (size_t k = 0; k < newVertices.size(); k++)
 			{
-				if (*newVertices[k]->parent == *face->getVertices()[j])
+				if (*newVertices[k]->parent == *face->getVertices()[j]) {
 					face->getVertices()[j] = newVertices[k];
+					break;
+				}
 			}
 		}
 
-		outputFaces[i].updateBuffers();
+		outputFaces[i] = Face({ face->getVertices()[0], face->getVertices()[1], face->getVertices()[2] });
+	}
+
+	//Des couleurs
+	for (size_t i = 0; i < outputFaces.size(); i++)
+	{
+		outputFaces[i].SetColor(Color(), true);
 	}
 	
 	return outputFaces;

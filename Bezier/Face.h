@@ -27,7 +27,7 @@ public:
 
 	void CalculateNormals();
 	void updateBuffers();
-	void SetColor(Color col);
+	void SetColor(Color col, bool random = false);
 
 	vector<Vertex*>& getVertices() { return vertices; }
 	const vector<uint32_t>& getIndices() const { return indices; }

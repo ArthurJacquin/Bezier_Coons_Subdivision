@@ -81,7 +81,18 @@ void Face::CalculateNormals()
 			}
 		}
 
-		vertices[i]->normal = (sum / shared).normalise();
+		Vec3 N = (sum / shared).normalise();
+		Vec3 origin;
+		for (size_t i = 0; i < vertices.size(); i++)
+		{
+			origin += vertices[i]->GetPos();
+		}
+		origin /= vertices.size();
+
+		if (N.dot(origin) < 0)
+			N = -N;
+
+		vertices[i]->normal = N;
 	}
 }
 
@@ -91,12 +102,22 @@ void Face::updateBuffers()
 	VBO = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * bufferPts.size(), bufferPts.data());
 }
 
-void Face::SetColor(Color col)
+void Face::SetColor(Color col, bool random)
 {
+	if (random)
+	{
+		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		col = Color(r, g, b);
+	}
+
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		vertices[i]->setColor(col);
 	}
+
+	updateBuffers();
 }
 
 void Face::updateBufferPoints()
