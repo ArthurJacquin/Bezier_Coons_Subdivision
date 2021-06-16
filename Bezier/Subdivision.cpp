@@ -137,7 +137,6 @@ vector<Face> DooSabin(vector<Face> inputFaces)
 	return outputFaces;
 }
 
-
 vector<Face> CatmullClark(vector<Face> inputFaces)
 {
 	vector<Face>catFaces;
@@ -267,6 +266,26 @@ void getNeighborVertex(vector<Face>& faces, vector<Edge*>& edges, const vector<F
 	}
 }
 
+vector<Vertex*> getNeighborVertices(const vector<Face>& inputFaces, const Vertex* const v)
+{
+	vector<Vertex*> output;
+
+	for (size_t i = 0; i < inputFaces.size(); i++)
+	{
+		for (size_t j = 0; j < inputFaces[i].getEdges().size(); j++)
+		{
+			if (*inputFaces[i].getEdges()[j]->p0 == *v 
+				&& find(output.begin(), output.end(), inputFaces[i].getEdges()[j]->p1) == output.end())
+				output.push_back(inputFaces[i].getEdges()[j]->p1);
+			if (*inputFaces[i].getEdges()[j]->p1 == *v
+				&& find(output.begin(), output.end(), inputFaces[i].getEdges()[j]->p0) == output.end())
+				output.push_back(inputFaces[i].getEdges()[j]->p0);
+		}
+	}
+
+	return output;
+}
+
 vector<Face> Kobelt(vector<Face> inputFaces)
 {
 	vector<Face> outputFaces;
@@ -287,39 +306,72 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 		//Connection aux vertex du triangle
 		for (size_t j = 0; j < N; j++)
 		{
-			outputFaces.push_back(Face({ face->getVertices()[j], face->getVertices()[(j + 1) % N], &center }, Color(1, 0, 0)));
+			outputFaces.push_back(Face({ face->getVertices()[j], face->getVertices()[(j + 1) % N], face->getFacePoint() }, Color(1, 0, 0)));
 		}
 	}
 
+	//Perturbation
+	vector<Face> newFaces;
+	for (size_t i = 0; i < inputFaces.size(); i++)
+	{
+		Face* face = &inputFaces[i];
+		int N = face->getVertices().size();
+
+		vector<Vertex*> neighbors;
+		for (size_t j = 0; j < N; j++)
+		{
+			neighbors = getNeighborVertices(inputFaces, face->getVertices()[j]);
+			int n = neighbors.size();
+			float alpha = (4 - 2 * cos(2 * PI / n)) / 9.0f;
+
+			Vertex sumV;
+			for (size_t k = 0; k < n; k++)
+			{
+				sumV += *neighbors[k];
+			}
+
+			Vertex V = *face->getVertices()[j];
+			Vertex vPrime = V * (1 - alpha) + sumV * alpha / n;
+			
+			*face->getVertices()[j] = vPrime;
+		}
+
+		newFaces.push_back(Face({ face->getVertices()[0], face->getVertices()[1], face->getVertices()[2] }));
+	}
+
 	//Flipping
-	map<Face*, Face> newFaces;
+	/*map<Face*, Face> newFaces;
 	for (size_t i = 0; i < inputFaces.size(); i++)
 	{
 		Face face = inputFaces[i];
 		int N = face.getEdges().size();
 
-		vector<Face*> neighBorFaces;
-		vector<Vertex*> newEdgePts;
+		vector<Face*> neighBorFacesInput;
+		vector<Face*> neighBorFacesOutput;
 		for (size_t j = 0; j < N; j++)
 		{
-			neighBorFaces = getNeighborFaces(inputFaces, face.getEdges()[j]);
-			newEdgePts = VertexNotInEdge(neighBorFaces, face.getEdges()[j]);
+			neighBorFacesInput = getNeighborFaces(inputFaces, face.getEdges()[j]);
 
-			if(newFaces.find(neighBorFaces[0]) == newFaces.end())
-				newFaces.insert(make_pair(neighBorFaces[0], Face({ newEdgePts[0], newEdgePts[1], face.getEdges()[j]->p0 }, Color(1, 0, 0))));
-			if (newFaces.find(neighBorFaces[1]) == newFaces.end())
-				newFaces.insert(make_pair(neighBorFaces[1], Face({ newEdgePts[0], newEdgePts[1], face.getEdges()[j]->p1 }, Color(0, 1, 0))));
+			Face f0 = Face({ neighBorFacesInput[0]->getFacePoint(), neighBorFacesInput[1]->getFacePoint(), face.getEdges()[j]->p0 }, Color(1, 0, 0));
+			Face f1 = Face({ neighBorFacesInput[0]->getFacePoint(), neighBorFacesInput[1]->getFacePoint(), face.getEdges()[j]->p1 }, Color(0, 1, 0));
+
+			neighBorFacesOutput = getNeighborFaces(outputFaces, face.getEdges()[j]);
+
+			if(newFaces.find(neighBorFacesOutput[0]) == newFaces.end())
+				newFaces.insert(make_pair(neighBorFacesOutput[0], f0));
+			if (newFaces.find(neighBorFacesOutput[1]) == newFaces.end())
+				newFaces.insert(make_pair(neighBorFacesOutput[1], f1));
 		}
 	}
 
 	//Creation des nouvelles faces
-	for (size_t i = 0; i < inputFaces.size(); i++)
+	for (size_t i = 0; i < outputFaces.size(); i++)
 	{
-		Face f = newFaces[&inputFaces[i]];
-		inputFaces[i] = f;
-	}
+		Face f = newFaces[&outputFaces[i]];
+		outputFaces[i] = f;
+	}*/
 
-	return outputFaces;
+	return newFaces;
 }
 
 vector<Face> LoopAlgo(vector<Face> inputFaces)
@@ -338,7 +390,7 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 			vector<Vertex> adjacentVertices;
 			//get adjacent edges at vertex
 			getNeighborVertex(faces, edges, inputFaces, vCurrent);
-			deleteDuplicateEdge(edges);
+			//deleteDuplicateEdge(edges);
 
 			//get all other vertices
 			for (size_t i = 0; i < edges.size(); i++)
