@@ -235,7 +235,7 @@ vector<Face*> getNeighborFaces(vector<Face> face, const Edge* const edge)
 		{
 			if (*face[f].getEdges()[e] == *edge)
 			{
-				neighborFaces.push_back(&face[f]);
+				neighborFaces.push_back(new Face(face[f]));
 				break;
 			}
 		}
@@ -380,8 +380,9 @@ vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e)
 	{
 		for (size_t j = 0; j < faces[i]->getVertices().size(); j++)
 		{
-			if (*faces[i]->getVertices()[j] != *e->p0
-				&& *faces[i]->getVertices()[j] != *e->p1)
+			Vertex* pt = faces[i]->getVertices()[j];
+			if (*pt != *e->p0
+				&& *pt != *e->p1)
 			{
 				pts.push_back(faces[i]->getVertices()[j]);
 			}
