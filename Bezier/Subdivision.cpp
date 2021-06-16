@@ -405,16 +405,17 @@ vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e)
 	return pts;
 }
 
-void deleteDuplicateEdge(vector<Edge*>& edges)
+template<typename T>
+void deleteDuplicateInVector(vector<T*>& vec)
 {
 
-	for (size_t i = 0; i < edges.size(); i++)
+	for (size_t i = 0; i < vec.size(); i++)
 	{
-		for (size_t j = 1; j < edges.size(); j++)
+		for (size_t j = 1; j < vec.size(); j++)
 		{
-			if (*edges[i] == *edges[j])
+			if (*vec[i] == *vec[j])
 			{
-				edges.erase(edges.begin() + j);
+				vec.erase(vec.begin() + j);
 				break;
 			}
 		}
