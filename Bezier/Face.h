@@ -25,7 +25,7 @@ public:
 	void updateBuffers();
 	void SetColor(Color col);
 
-	const vector<Vertex*>& getVertices() const { return vertices; }
+	vector<Vertex*>& getVertices() { return vertices; }
 	const vector<uint32_t>& getIndices() const { return indices; }
 	const vector<Edge*>& getEdges() const { return edges; }
 	uint32_t getVBO() { return VBO; }

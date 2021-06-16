@@ -47,10 +47,10 @@ std::vector<Face> GenerateTriFaces()
 		Face({p4, p7, p6}),
 		Face({p3, p2, p7}),	//Top
 		Face({p2, p6, p7}),	
-		Face({p0, p1, p4}),	//Bottom
-		Face({p1, p5, p4}),
-		Face({p0, p3, p4}),	//Left
-		Face({p3, p7, p4}),	
+		Face({p4, p5, p0}),	//Bottom
+		Face({p5, p1, p0}),
+		Face({p4, p0, p7}),	//Left
+		Face({p0, p3, p7}),	
 		Face({p1, p5, p2}),	//Right
 		Face({p5, p6, p2}),
 	};

@@ -101,6 +101,7 @@ void Face::SetColor(Color col)
 
 void Face::updateBufferPoints()
 {
+	bufferPts.clear();
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		bufferPts.push_back(*vertices[i]);
