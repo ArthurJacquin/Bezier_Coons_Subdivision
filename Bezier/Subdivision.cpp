@@ -314,11 +314,13 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 
 vector<Face> LoopAlgo(vector<Face> inputFaces)
 {
+	vector<Face> outputFaces;
+
 	//compute even vertices
-	vector<Vertex> evenVertices;
 	//for each face in cube
 	for (size_t f = 0; f < inputFaces.size(); f++)
 	{
+		//compute even vertices
 		//for each vertices in face
 		for (size_t v = 0; v < inputFaces[f].getVertices().size(); v++)
 		{
@@ -328,7 +330,7 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 			vector<Vertex> adjacentVertices;
 			//get adjacent edges at vertex
 			getNeighborVertex(faces, edges, inputFaces, vCurrent);
-			deleteDuplicateEdge(edges);
+			deleteDuplicateInVector(edges);
 
 			//get all other vertices
 			for (size_t i = 0; i < edges.size(); i++)
@@ -359,15 +361,11 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 
 			//compute vPrime
 			Vertex vPrime = (*vCurrent) * (1 - adjacentVertices.size() * alpha) + sum * alpha;
-			evenVertices.push_back(vPrime);
+			inputFaces[f].getEvenVertices().push_back(&vPrime);
 		}
-	}
 
-
-	//compute odd vertices 
-	vector<Vertex> oddVertices;
-	for (size_t f = 0; f < inputFaces.size(); f++)
-	{
+		//compute odd vertices 
+		//for edges vertices in face
 		for (size_t j = 0; j < inputFaces[f].getEdges().size(); j++)
 		{
 			vector<Face*> neighborFaces;
@@ -380,11 +378,49 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 			Vertex e = (*inputFaces[f].getEdges()[j]->p0 + *inputFaces[f].getEdges()[j]->p1) * 3 / 8
 				     + (*vNotInEdge[0] + *vNotInEdge[1]) * 1 / 8;
 
-			oddVertices.push_back(e);
+			inputFaces[f].getOddVertices().push_back(&e);
 		}
 	}
+	 
+	//create subdivide faces
+	for (size_t f = 0; f < inputFaces.size(); f++)
+	{
+		//loop on evenVertices and oddVertices
+		/*for (size_t i = 0; i < inputFaces[f].getEvenVertices().size(); i++)
+		{
 
-	return vector<Face>();
+		}*/
+		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+		Face newFace1({ inputFaces[f].getEvenVertices()[0], //v2
+					   inputFaces[f].getOddVertices()[0],  //e1
+					   inputFaces[f].getOddVertices()[2] }, //e3
+			Color(r, g, b));
+		outputFaces.push_back(newFace1);
+
+		Face newFace2({ inputFaces[f].getOddVertices()[0], //e1
+					   inputFaces[f].getEvenVertices()[1], //v3
+					   inputFaces[f].getOddVertices()[1] },//e2
+			Color(r, g, b));
+		outputFaces.push_back(newFace2);
+
+		Face newFace3({ inputFaces[f].getOddVertices()[0], //e1
+					   inputFaces[f].getOddVertices()[1], //e2
+					   inputFaces[f].getOddVertices()[2] },//e3
+			Color(r, g, b));
+		outputFaces.push_back(newFace3);
+
+		Face newFace4({ inputFaces[f].getOddVertices()[2], //e3
+					   inputFaces[f].getOddVertices()[1], //e2
+					   inputFaces[f].getEvenVertices()[2] },//v1
+			Color(r, g, b));
+		outputFaces.push_back(newFace4);
+
+	}
+
+	return outputFaces;
 }
 
 vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e)
