@@ -738,24 +738,27 @@ void displayGUI()
 
 	if (ImGui::CollapsingHeader("Subdivision"))
 	{
-		if (ImGui::Button("Create cube with quad"))
+		ImGui::Text("         With quad mesh   ");
+		if (ImGui::Button("Create quad cube"))
 		{
 			faces = GenerateCubeFaces();
 		}
-
-		if (ImGui::Button("Create cube with tris"))
-		{
-			faces = GenerateTriFaces();
-		}
-
 		if (ImGui::Button("Doo-Sabin (D)"))
 		{
 			faces = DooSabin(faces);
 		}
-
 		if (ImGui::Button("CatmulClark (C)"))
 		{
 			faces = CatmullClark(faces);
+		}
+
+		ImGui::Text("");
+		ImGui::Separator();
+		ImGui::Text("        With triangulate mesh   ");
+
+		if (ImGui::Button("Create tris cube"))
+		{
+			faces = GenerateTriFaces();
 		}
 
 		if (ImGui::Button("Loop (L)"))

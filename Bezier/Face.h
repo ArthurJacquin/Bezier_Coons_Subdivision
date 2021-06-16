@@ -35,8 +35,8 @@ public:
 	uint32_t getVBO() { return VBO; }
 
 	Vertex* getFacePoint() { return facePoint; }
-	vector<Vertex*> getEvenVertices() { return evenVertices; }
-	vector<Vertex*> getOddVertices() { return oddVertices; }
+	vector<Vertex*>& getEvenVertices() { return evenVertices; }
+	vector<Vertex*>& getOddVertices() { return oddVertices; }
 	void setFacePoint(Vertex* v) { facePoint = v; }
 
 	void updateBufferPoints();

@@ -1,6 +1,10 @@
 #include "Subdivision.h"
 #include <cmath> 
 #include <map>
+#include <unordered_set>
+#include <algorithm>
+
+
 #define PI 3.141592
 
 vector<Face> DooSabin(vector<Face> inputFaces)
@@ -358,9 +362,9 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 			//compute alpha
 			float alpha = 0;
 			if (adjacentVertices.size() == 3)
-				alpha = 3 / 16;
+				alpha = 3.f / 16.f;
 			else
-				alpha = 1 / adjacentVertices.size() * (5 / 8 - pow(3 / 8 + 1 / 4 * cos(2 * PI / adjacentVertices.size()), 2.0));
+				alpha = 1.f / adjacentVertices.size() * (5.f / 8.f - pow(3.f / 8.f + 1.f / 4.f * cos(2.f * PI / adjacentVertices.size()), 2.f));
 
 			//get sum of vertices
 			Vertex sum;
@@ -370,8 +374,8 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 			}
 
 			//compute vPrime
-			Vertex vPrime = (*vCurrent) * (1 - adjacentVertices.size() * alpha) + sum * alpha;
-			inputFaces[f].getEvenVertices().push_back(&vPrime);
+			Vertex vPrime = (*vCurrent) * (1.f - adjacentVertices.size() * alpha) + sum * alpha;
+			inputFaces[f].getEvenVertices().push_back(new Vertex(vPrime));
 		}
 
 		//compute odd vertices 
@@ -384,22 +388,21 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 
 			//vLeft and vRight
 			vector<Vertex*> vNotInEdge = VertexNotInEdge(neighborFaces, inputFaces[f].getEdges()[j]);
+			Vertex e;
+			if(vNotInEdge.size() > 1)
+				e = (*inputFaces[f].getEdges()[j]->p0 + *inputFaces[f].getEdges()[j]->p1) * 3 / 8
+						 + (*vNotInEdge[0] + *vNotInEdge[1]) * 1 / 8;
+			else
+				e = (*inputFaces[f].getEdges()[j]->p0 + *inputFaces[f].getEdges()[j]->p1) * 3 / 8
+				+ (*vNotInEdge[0]) * 1 / 8;
 
-			Vertex e = (*inputFaces[f].getEdges()[j]->p0 + *inputFaces[f].getEdges()[j]->p1) * 3 / 8
-				     + (*vNotInEdge[0] + *vNotInEdge[1]) * 1 / 8;
-
-			inputFaces[f].getOddVertices().push_back(&e);
+			inputFaces[f].getOddVertices().push_back(new Vertex(e));
 		}
 	}
 	 
 	//create subdivide faces
-	for (size_t f = 0; f < inputFaces.size(); f++)
+	for (size_t f = 0; f < inputFaces.size() ; f++)
 	{
-		//loop on evenVertices and oddVertices
-		/*for (size_t i = 0; i < inputFaces[f].getEvenVertices().size(); i++)
-		{
-
-		}*/
 		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -422,9 +425,9 @@ vector<Face> LoopAlgo(vector<Face> inputFaces)
 			Color(r, g, b));
 		outputFaces.push_back(newFace3);
 
-		Face newFace4({ inputFaces[f].getOddVertices()[2], //e3
-					   inputFaces[f].getOddVertices()[1], //e2
-					   inputFaces[f].getEvenVertices()[2] },//v1
+		Face newFace4({ inputFaces[f].getOddVertices()[1], //e2
+					   inputFaces[f].getEvenVertices()[2], //v1
+					   inputFaces[f].getOddVertices()[2] },//e3
 			Color(r, g, b));
 		outputFaces.push_back(newFace4);
 
@@ -454,18 +457,17 @@ vector<Vertex*> VertexNotInEdge(const vector<Face*>& faces, const Edge* e)
 
 template<typename T>
 void deleteDuplicateInVector(vector<T*>& vec)
-{
-
+{   
 	for (size_t i = 0; i < vec.size(); i++)
 	{
-		for (size_t j = 1; j < vec.size(); j++)
+		for (size_t j = i + 1; j < vec.size(); j++)
 		{
 			if (*vec[i] == *vec[j])
 			{
 				vec.erase(vec.begin() + j);
-				break;
+				j -= 1;
 			}
 		}
 	}
-
+	
 }
