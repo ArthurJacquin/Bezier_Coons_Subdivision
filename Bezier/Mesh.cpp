@@ -99,6 +99,16 @@ void Mesh::CalculateNormals()
 	}
 }
 
+void Mesh::setColor(Color col)
+{
+	for (size_t i = 0; i < vertices.size(); i++)
+	{
+		vertices[i].setColor(col);
+	}
+
+	updateBuffers();
+}
+
 void Mesh::updateBuffers()
 {
 	VBO = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * vertices.size(), vertices.data());

@@ -6,8 +6,15 @@
 
 using namespace std;
 
+enum class CurveType {
+	None,
+	Bezier,
+	Chaikin
+};
+
 class Curve
 {
+
 	vector<Vertex> controlPoints;
 	vector<Vertex> curvePoints;
 	float step;
@@ -19,9 +26,11 @@ class Curve
 	float v;
 	float iteration;
 
+	CurveType type;
+
 public:
 	Curve();
-	Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color col);
+	Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color col, CurveType type);
 	//Chaikin curves
 	Curve(vector<Vertex> controlPoints, float u, float v, float iteration, Color color);
 	//Beziers curves

@@ -69,7 +69,7 @@ int height = 800;
 float u = 1.0f / 3.0f;
 float v = 1.0f / 4.0f;
 float iteration = 1.0;
-float step = 1.0;
+float step = 0.1;
 
 float extrudeHeight = 2;
 float extrudeScale = 0.5f;
@@ -288,7 +288,7 @@ void displayGUI()
 	ImGui::NewFrame();
 	ImGui::SetNextWindowSize(ImVec2(300, 600));
 	// render your GUI
-	ImGui::Begin("Curves", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+	ImGui::Begin("Creation menu", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::TextColored(ImVec4(0.9, 0.1, 0.1, 1.0), "  Welcome in math world ! ");
 	ImGui::Separator();
 
@@ -322,6 +322,7 @@ void displayGUI()
 		{
 			curves.clear();
 			selectedCurves.clear();
+			selectedPointId = 0;
 		}
 	}
 
@@ -332,7 +333,7 @@ void displayGUI()
 	ImGui::Text("");
 	ImGui::Separator();
 	ImGui::Text("");
-	ImGui::Text("  Move a point");
+	ImGui::Text("  Move a control point");
 	ImGui::Text("  Alt + right click");
 	ImGui::Text("");
 	ImGui::Separator();
@@ -366,22 +367,21 @@ void displayGUI()
 		ImGui::Columns(1);
 		ImGui::Text("step :");
 		ImGui::SameLine();
-		ImGui::Text("%0.1f", step);
+		ImGui::Text("%0.2f", step);
 		ImGui::SameLine();
 		if (ImGui::Button("-"))
 		{
-			step = step - 0.5f;
-			if (step < 0.00)
-				step = 0.00;
+			step = step - 0.05f;
+			if (step < 0.00f)
+				step = 0.00001f;
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("+"))
 		{
-			step = step + 0.5f;
-			if (step > 10)
-				step = 10;
+			step = step + 0.05f;
+			if (step > 1.0f)
+				step = 1.0f;
 		}
-
 	
 		//fermer la forme
 		if (ImGui::Button("Close curve"))
@@ -407,7 +407,7 @@ void displayGUI()
 		{
 			if (vertices.size() > 2)
 			{
-				Curve c(vertices, u, v, iteration, choosedColor);
+				Curve c(vertices, step, choosedColor);
 				curves.push_back(c);
 				vertices.clear();
 			}
@@ -518,10 +518,10 @@ void displayGUI()
 		}
 
 		//Revolution
-		if (ImGui::CollapsingHeader("Revolution"))
+		if (ImGui::CollapsingHeader("Revolution##0"))
 		{
 			ImGui::InputFloat("Step", &revolutionStep);
-			if (ImGui::Button("Revolution"))
+			if (ImGui::Button("Revolution##1"))
 			{
 				if (selectedCurves.size() != 0)
 				{
@@ -535,20 +535,6 @@ void displayGUI()
 
 					selectedCurves.clear();
 				}
-			}
-		}
-
-		//Generic extrusion 
-		if (ImGui::CollapsingHeader("Generic extrusion"))
-		{
-			if (ImGui::Button("Extrude"))
-			{
-				if (selectedCurves.size() == 2)
-				{
-					meshes.push_back(curves[selectedCurves[0]].GenericExtrusion(curves[selectedCurves[1]]));
-				}
-
-				selectedCurves.clear();
 			}
 		}
 
@@ -703,36 +689,47 @@ void displayGUI()
 				};
 #endif
 
-				curves.push_back(Curve(pointsTop, u, v, iteration, Color(0, 0, 0)));
-				curves.push_back(Curve(pointsDown, u, v, iteration, Color(0, 0, 0)));
-				curves.push_back(Curve(pointsLeft, u, v, iteration, Color(0, 0, 0)));
-				curves.push_back(Curve(pointsRight, u, v, iteration, Color(0, 0, 0)));
-
-				meshes.push_back(generateCoon(curves, u, v));
+				curves.push_back(Curve(pointsTop, u, v, iteration, Color(1, 1, 1)));
+				curves.push_back(Curve(pointsDown, u, v, iteration, Color(1, 1, 1)));
+				curves.push_back(Curve(pointsLeft, u, v, iteration, Color(1, 1, 1)));
+				curves.push_back(Curve(pointsRight, u, v, iteration, Color(1, 1, 1)));
+				
+				Mesh coon = generateCoon(curves, u, v);
+				coon.setColor(Color(color[0], color[1], color[2]));
+				meshes.push_back(coon);
 			}
 
-			ImGui::Text(" ");
-			ImGui::Columns(1);
-			ImGui::Text("Etape coons :");
-			ImGui::SameLine();
-			ImGui::Text("%d", etape);
-			ImGui::SameLine();
-			if (ImGui::Button("-##4"))
+			if (meshes.size() != 0)
 			{
-				etape = etape - 1;
-				if (iteration < 0)
-					iteration = 0;
-				meshes.clear();
-				meshes.push_back(generateCoon(curves, u, v));
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("+##4"))
-			{
-				etape = etape + 1;
-				if (etape > 3)
-					etape = 3;
-				meshes.clear();
-				meshes.push_back(generateCoon(curves, u, v));
+				ImGui::Text(" ");
+				ImGui::Columns(1);
+				ImGui::Text("Etape coons :");
+				ImGui::SameLine();
+				ImGui::Text("%d", etape);
+				ImGui::SameLine();
+				if (ImGui::Button("-##4"))
+				{
+					etape = etape - 1;
+					if (iteration < 0)
+						iteration = 0;
+
+					meshes.clear();
+					Mesh coon = generateCoon(curves, u, v);
+					coon.setColor(Color(color[0], color[1], color[2]));
+					meshes.push_back(coon);
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("+##4"))
+				{
+					etape = etape + 1;
+					if (etape > 3)
+						etape = 3;
+
+					meshes.clear();
+					Mesh coon = generateCoon(curves, u, v);
+					coon.setColor(Color(color[0], color[1], color[2]));
+					meshes.push_back(coon);
+				}
 			}
 		}
 		ImGui::Text("");

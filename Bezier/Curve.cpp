@@ -17,10 +17,11 @@ Curve::Curve()
 	u = 0.25f;
 	v = 0.25f;
 	iteration = 2.f;
+	type = CurveType::None;
 }
 
-Curve::Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color color)
-: controlPoints(controlPoints), curvePoints(curvePoints), step(0.1f), color(color)
+Curve::Curve(vector<Vertex> controlPoints, vector<Vertex> curvePoints, Color color, CurveType type)
+: controlPoints(controlPoints), curvePoints(curvePoints), step(0.1f), color(color), type(type)
 {
 	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
 	VBOCurve = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * curvePoints.size(), curvePoints.data());
@@ -32,6 +33,7 @@ Curve::Curve(vector<Vertex> controlPoints, float u, float v, float iteration, Co
 	this->u = u;
 	this->v = v;
 	this->iteration = iteration;
+	this->type = CurveType::Chaikin;
 
 	curvePoints = cornerCuttings(controlPoints, u, v, iteration);
 	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
@@ -41,7 +43,8 @@ Curve::Curve(vector<Vertex> controlPoints, float u, float v, float iteration, Co
 Curve::Curve(vector<Vertex> controlPoints, float s, Color color)
 : controlPoints(controlPoints), color(color)
 {
-	step = s;
+	this->step = s;
+	this->type = CurveType::Bezier;
 
 	createBeziers(curvePoints, controlPoints, step, color);
 	VBOControl = CreateBufferObject(BufferType::VBO, sizeof(Vertex) * controlPoints.size(), controlPoints.data());
@@ -85,8 +88,15 @@ void Curve::createBeziers(std::vector<Vertex>& tabBezierPoints, std::vector<Vert
 
 void Curve::updateCurve()
 {
-	Curve newCurve(this->controlPoints, this->u, this->v, this->iteration, this->color);
-	*this = newCurve;
+	if (type == CurveType::Chaikin) {
+		Curve newCurve(this->controlPoints, this->u, this->v, this->iteration, this->color);
+		*this = newCurve;
+	}
+	else
+	{
+		Curve newCurve(this->controlPoints, this->step, this->color);
+		*this = newCurve;
+	}
 }
 
 void Curve::updateBuffers()

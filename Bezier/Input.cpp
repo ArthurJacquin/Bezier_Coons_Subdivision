@@ -82,7 +82,6 @@ void Input::select(float x, float y)
 	}
 }
 
-
 void Input::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	double xpos, ypos;

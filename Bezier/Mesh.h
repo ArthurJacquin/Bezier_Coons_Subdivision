@@ -19,6 +19,7 @@ struct Mesh
 
 	void CalculateIndices(int rows, int cols);
 	void CalculateNormals();
+	void setColor(Color col);
 
 	void updateBuffers();
 
