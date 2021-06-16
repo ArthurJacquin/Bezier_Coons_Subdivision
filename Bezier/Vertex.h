@@ -4,7 +4,7 @@
 #include "Vec3.h"
 #include <vector>
 
-#define EPSI  0.01F
+#define EPSI  0.0001F
 
 struct Vertex
 {
