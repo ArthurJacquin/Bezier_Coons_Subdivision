@@ -316,37 +316,8 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 		}
 	}
 
-	//Perturbation
-	vector<Face> newFaces;
-	for (size_t i = 0; i < inputFaces.size(); i++)
-	{
-		Face* face = &inputFaces[i];
-		int N = face->getVertices().size();
-
-		vector<Vertex*> neighbors;
-		for (size_t j = 0; j < N; j++)
-		{
-			neighbors = getNeighborVertices(inputFaces, face->getVertices()[j]);
-			int n = neighbors.size();
-			float alpha = (4 - 2 * cos(2 * PI / n)) / 9.0f;
-
-			Vertex sumV;
-			for (size_t k = 0; k < n; k++)
-			{
-				sumV += *neighbors[k];
-			}
-
-			Vertex V = *face->getVertices()[j];
-			Vertex vPrime = V * (1 - alpha) + sumV * alpha / n;
-			
-			*face->getVertices()[j] = vPrime;
-		}
-
-		newFaces.push_back(Face({ face->getVertices()[0], face->getVertices()[1], face->getVertices()[2] }));
-	}
-
 	//Flipping
-	/*map<Face*, Face> newFaces;
+	map<Face*, Face> newFaces;
 	for (size_t i = 0; i < inputFaces.size(); i++)
 	{
 		Face face = inputFaces[i];
@@ -375,9 +346,54 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 	{
 		Face f = newFaces[&outputFaces[i]];
 		outputFaces[i] = f;
-	}*/
+	}
 
-	return newFaces;
+	//Perturbation
+	vector<Vertex*> newVertices;
+	for (size_t i = 0; i < inputFaces.size(); i++)
+	{
+		Face face = inputFaces[i];
+		int N = face.getVertices().size();
+
+		vector<Vertex*> neighbors;
+		for (size_t j = 0; j < N; j++)
+		{
+			neighbors = getNeighborVertices(inputFaces, face.getVertices()[j]);
+			int n = neighbors.size();
+			float alpha = (4 - 2 * cos(2 * PI / n)) / 9.0f;
+
+			Vertex sumV;
+			for (size_t k = 0; k < n; k++)
+			{
+				sumV += *neighbors[k];
+			}
+
+			Vertex V = *face.getVertices()[j];
+			Vertex vPrime = V * (1 - alpha) + sumV * alpha / n;
+			vPrime.parent = face.getVertices()[j];
+			vPrime.setColor(Color(0, 0, 1));
+			newVertices.push_back(new Vertex(vPrime));
+		}
+	}
+
+	for (size_t i = 0; i < outputFaces.size(); i++)
+	{
+		Face* face = &outputFaces[i];
+		int N = face->getVertices().size();
+
+		for (size_t j = 0; j < N; j++)
+		{
+			for (size_t k = 0; k < newVertices.size(); k++)
+			{
+				if (*newVertices[k]->parent == *face->getVertices()[j])
+					face->getVertices()[j] = newVertices[k];
+			}
+		}
+
+		outputFaces[i].updateBuffers();
+	}
+	
+	return outputFaces;
 }
 
 vector<Face> LoopAlgo(vector<Face> inputFaces)
