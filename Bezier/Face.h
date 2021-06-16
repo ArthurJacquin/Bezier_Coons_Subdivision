@@ -12,6 +12,10 @@ class Face {
 	//Catmull Clark
 	Vertex* facePoint;
 
+	//Loop Algo
+	vector<Vertex*> oddVertices;
+	vector<Vertex*> evenVertices;
+
 	Face* parent;
 
 	uint32_t VBO;
@@ -31,6 +35,8 @@ public:
 	uint32_t getVBO() { return VBO; }
 
 	Vertex* getFacePoint() { return facePoint; }
+	vector<Vertex*>& getEvenVertices() { return evenVertices; }
+	vector<Vertex*>& getOddVertices() { return oddVertices; }
 	void setFacePoint(Vertex* v) { facePoint = v; }
 
 	void updateBufferPoints();
