@@ -1,5 +1,6 @@
 #include "Subdivision.h"
 #include <cmath> 
+#include <map>
 #define PI 3.141592
 
 vector<Face> DooSabin(vector<Face> inputFaces)
@@ -225,7 +226,7 @@ vector<Face> CatmullClark(vector<Face> inputFaces)
 	return catFaces;
 }
 
-vector<Face*> getNeighborFaces(vector<Face> face, const Edge* const edge)
+vector<Face*> getNeighborFaces(vector<Face>& face, const Edge* const edge)
 {
 	vector<Face*> neighborFaces;
 
@@ -235,7 +236,7 @@ vector<Face*> getNeighborFaces(vector<Face> face, const Edge* const edge)
 		{
 			if (*face[f].getEdges()[e] == *edge)
 			{
-				neighborFaces.push_back(new Face(face[f]));
+				neighborFaces.push_back(&face[f]);
 				break;
 			}
 		}
@@ -291,6 +292,7 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 	}
 
 	//Flipping
+	map<Face*, Face> newFaces;
 	for (size_t i = 0; i < inputFaces.size(); i++)
 	{
 		Face face = inputFaces[i];
@@ -303,9 +305,18 @@ vector<Face> Kobelt(vector<Face> inputFaces)
 			neighBorFaces = getNeighborFaces(inputFaces, face.getEdges()[j]);
 			newEdgePts = VertexNotInEdge(neighBorFaces, face.getEdges()[j]);
 
-			neighBorFaces[0] = new Face({ newEdgePts[0], newEdgePts[1], face.getEdges()[j]->p0 }, Color(1, 0, 0));
-			neighBorFaces[1] = new Face({ newEdgePts[0], newEdgePts[1], face.getEdges()[j]->p1 }, Color(0, 1, 0));
+			if(newFaces.find(neighBorFaces[0]) == newFaces.end())
+				newFaces.insert(make_pair(neighBorFaces[0], Face({ newEdgePts[0], newEdgePts[1], face.getEdges()[j]->p0 }, Color(1, 0, 0))));
+			if (newFaces.find(neighBorFaces[1]) == newFaces.end())
+				newFaces.insert(make_pair(neighBorFaces[1], Face({ newEdgePts[0], newEdgePts[1], face.getEdges()[j]->p1 }, Color(0, 1, 0))));
 		}
+	}
+
+	//Creation des nouvelles faces
+	for (size_t i = 0; i < inputFaces.size(); i++)
+	{
+		Face f = newFaces[&inputFaces[i]];
+		inputFaces[i] = f;
 	}
 
 	return outputFaces;
