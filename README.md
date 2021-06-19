@@ -28,7 +28,7 @@ Implementation of Bezier curve algorithm with step parameters.
 Implementation of Chaikin curve algorithm with u, v and iteration parameters.
 * translation of any control points and regeneration of Chaikin curve in realtime
 <p align="middle">
-  <img width="500" height="250" src="/Bezier/screenshots/ChaikinCurve.png">
+  <img width="500" height="250" src="/Bezier/screenshots/ChaikinCurves.PNG">
 </p>
 
 ### Coons surface
