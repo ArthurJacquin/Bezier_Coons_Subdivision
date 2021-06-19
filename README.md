@@ -51,7 +51,7 @@ Implementation of 3 meshes subdivisions algorithms iterations by iterations. All
 #### Loop 
 
 <p align="middle">
-  <img width="500" height="250" src="/Bezier/screenshots/CatmullClark-3Iter.png">
+  <img width="500" height="250" src="/Bezier/screenshots/Loop-3Iter.png">
 </p>
 
 #### Kobelt
